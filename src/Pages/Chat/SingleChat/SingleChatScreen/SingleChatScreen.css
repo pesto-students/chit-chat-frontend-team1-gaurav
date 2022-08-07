@@ -180,6 +180,7 @@
 }
 
 
+
 .single-image-display{
     height: 17vh;
     width: 17vw;
@@ -210,9 +211,63 @@
     color:#000000 !important
 }
 
+.single-document-header{
+    display: flex;
+}
+
+.three-dot-icon{
+    height: 2vh;
+    cursor: pointer;
+}
+
+.three-dot-icon img{
+    height: 100%;
+    width: 100%;
+}
+
+.single-document-content{
+    display: flex;
+
+}
+
+.download-document-icon{
+    height: 2.7vw;
+    width: 2.7vw;
+    cursor: pointer;
+}
+
+.download-document-icon img{
+    height: 100%;
+    width: 100%;
+}
 
 
 
+.single-document-details{
+    display: flex;
+    flex-direction: column;
+    margin-left: 1vw;
+    width: 70%;
+}
+
+.single-document-name{
+    color: #ffffff;
+    font-size: calc(1vh + .5vw);
+    text-align: start;
+    text-transform: capitalize;
+}
+
+.single-document-detail{
+    color: #808080;
+    font-size: calc( 1vh + .3vw);
+    font-weight: 700;
+    text-align:start;
+    margin-top: 1vh;
+}
+
+.single-document-detail span{
+    margin-left: .5vw;
+}
 
 .single-chat-footer{
     position: relative;

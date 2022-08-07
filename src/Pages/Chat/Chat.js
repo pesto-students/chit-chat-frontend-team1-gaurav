@@ -1,5 +1,6 @@
 import React from 'react';
 import SingleChatScreen from "../Chat/SingleChat/SingleChatScreen/SingleChatScreen";
+import GroupChatScreen from "../Chat/GroupChat/GroupChatScreen/GroupChatScreen";
 import './Chat.css';
 
 function Chat() {
@@ -10,6 +11,7 @@ function Chat() {
         <section className='contact-list'></section>
         <section className='main-chat-screen'>
             <SingleChatScreen/>
+            {/* <GroupChatScreen/> */}
         </section>
         <section className='media-section'></section>
     </div>

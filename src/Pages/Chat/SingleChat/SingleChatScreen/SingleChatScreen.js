@@ -9,6 +9,10 @@ import emoji  from "../../../../Assets/emoji.png";
 import imageAttachment  from "../../../../Assets/image-attachment.png";
 import documentAttachment  from "../../../../Assets/document-attachment.png";
 import displayImage  from "../../../../Assets/display-image.png";
+import downloadDocument  from "../../../../Assets/download-document.png";
+import threeDot  from "../../../../Assets/three-dot.png";
+import darkDocument  from "../../../../Assets/dark-download.png";
+import darkThreeDot  from "../../../../Assets/dark-three-dot.png";
 // import   from "../../../../Assets/search.png";
 import "./SingleChatScreen.css";
 
@@ -89,6 +93,9 @@ function SingleChatScreen() {
                   </div>
                   <div className='single-img-timestamp'>22:21</div>
               </div>
+
+
+           
 
             </fieldset>
 
