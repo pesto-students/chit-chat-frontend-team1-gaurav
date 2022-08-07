@@ -104,7 +104,7 @@ function ForgotPassword() {
 
           <header className="header-forpass">
             <div>
-              <img src={Logo} alt="chit-chat" />
+              <img className="header-img-forpass" src={Logo} alt="chit-chat" />
             </div>
             <div onClick={() => { navigate("/"); }}>Home</div>
             <div onClick={() => { navigate("/login"); }}>Login</div>

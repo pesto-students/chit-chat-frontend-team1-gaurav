@@ -58,9 +58,9 @@ function Login() {
         <div className="container-login">
 
 
-          <header>
+          <header className="login-header">
             <div>
-              <img src={Logo} alt="chit-chat"/>
+              <img className="login-header-img" src={Logo} alt="chit-chat"/>
             </div>
             <div onClick={() => { navigate("/"); }}>Home</div>
             <div onClick={() => { navigate("/signup"); }}>Sign Up</div>

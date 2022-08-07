@@ -1,4 +1,4 @@
-header {
+.signup-header {
   display: flex;
   color: #ffffff;
   align-items: center;
@@ -7,11 +7,11 @@ header {
   padding-top: 4vh;
 }
 
-header div {
+.signup-header div {
   cursor: pointer;
 }
 
-img {
+.header-img-signup {
   height: 80px;
   width: 80px;
 }

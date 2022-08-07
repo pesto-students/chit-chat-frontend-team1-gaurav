@@ -4,6 +4,9 @@ import  Signup  from "./Pages/Signup/Signup";
 import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword"
 import Login from "./Pages/Login/Login"
 import Profile from "./Pages/Profile/Profile"
+import Chat from "./Pages/Chat/Chat";
+
+
 import "./App.css";
 
 function App() {
@@ -14,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/Chat" element={<Chat />} />
       </Routes>
   </div>;
 }
