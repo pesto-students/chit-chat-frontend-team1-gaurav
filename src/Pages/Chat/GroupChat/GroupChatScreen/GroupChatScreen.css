@@ -179,7 +179,7 @@
 
 
 .group-message-message {
-  font-size: 0.7rem;
+  font-size: calc(0.7vh + 0.5vw);;
   color: #ffffff;
   text-align: start;
 }
@@ -217,6 +217,28 @@
 .self{
     background-color: #F7E6A6 !important;
     color: #000000 !important;
+    
+  }
+
+  .group-flex{
+  display: flex;
+  justify-content: space-between;
+  }
+
+.group-tick-icon{
+  height: 1.2vh;
+  width: calc(1.3vh + .5vw);
+  margin-left:.5vw;
+}
+
+.group-tick-icon img{
+  height: 100%;
+  width: 100%;
+}
+
+.single-tick-document-sent{
+  display: flex;
+  justify-content: space-between;
 }
 
 .group-document-header{
@@ -339,11 +361,16 @@
   width: 2.3vw;
   margin-left: 1.5vw;
   cursor: pointer;
+  transition:.3s ease;
 }
 
 .group-attach-icon img {
   height: 100%;
   width: 100%;
+}
+
+.group-attach-icon:hover{
+  transform: translateY(-2px);
 }
 
 .group-footer-message {
@@ -359,6 +386,7 @@
   color: #808080;
   font-size: 1rem;
   width: 100%;
+  color:#ffffff;
 }
 
 .group-footer-right-icons {
@@ -371,9 +399,13 @@
   width: 1.3vw;
   margin-right: 2vw;
   cursor: pointer;
+  transition: .3s ease;
 }
 
 .group-footer-right-icon img {
   height: 100%;
   width: 100%;
+}
+.group-footer-right-icon:hover {
+  transform: translateY(-2px);
 }

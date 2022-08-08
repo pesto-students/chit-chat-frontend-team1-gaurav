@@ -133,7 +133,7 @@
     padding: 1.5vh;
     color: #ffffff;
     border-radius: 20px;
-    font-size: .7rem;
+    font-size: calc(0.7vh + 0.5vw);
     width: max-content;
     margin-top: 1vh;
     max-width: 70%;
@@ -168,6 +168,11 @@
     color: #000000 !important;
 }
 
+.single-flex{
+    display: flex;
+    justify-content:space-between;
+}
+
 .single-image{
     display: flex;
     align-items: flex-end;
@@ -176,7 +181,7 @@
 
 .single-image-content{
     background-color:#3B3546;
-    border-radius: 10px;
+    border-radius: 20px;
 }
 
 
@@ -209,6 +214,12 @@
 
 .self-image{
     color:#000000 !important
+}
+
+.document-flex{
+    display: flex;
+    padding: 1vw;
+    border-radius: 20px;
 }
 
 .single-document-header{
@@ -328,11 +339,17 @@
     width: 2.3vw;
     margin-left: 1.5vw;
     cursor: pointer;
+    transition: .3s ease;
+
 }
 
 .single-attach-icon img{
     height: 100%;
     width: 100%;
+}
+
+.single-attach-icon:hover{
+    transform: translateY(-2px);
 }
 
 .single-footer-message{
@@ -360,9 +377,14 @@
     width: 1.3vw;
     margin-right: 2vw;
     cursor: pointer;
+    transition: .3s ease;
 }
 
 .single-footer-right-icon img{
     height: 100%;
     width: 100%;
+}
+
+.single-footer-right-icon:hover{
+    transform: translateY(-2px);
 }

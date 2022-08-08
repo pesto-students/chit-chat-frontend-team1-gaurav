@@ -6,3 +6,19 @@
     grid-row-gap: 0px;
     height: 100vh;
 }
+
+.sidebar{
+    width: 5vw;
+}
+
+.contact-list{
+    width: 20vw;
+}
+
+.main-chat-screen{
+    width: 55vw;
+}
+
+.media-section{
+    width: 20vw;
+}
