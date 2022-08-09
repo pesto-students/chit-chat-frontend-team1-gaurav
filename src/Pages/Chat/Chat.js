@@ -1,7 +1,8 @@
 import React from 'react';
 import SingleChatScreen from "../Chat/SingleChat/SingleChatScreen/SingleChatScreen";
 import GroupChatScreen from "../Chat/GroupChat/GroupChatScreen/GroupChatScreen";
-import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMediaSection"
+import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMediaSection";
+import GroupMediaSection from "./GroupChat/GroupMediaSection/GroupMediaSection";
 import './Chat.css';
 
 function Chat() {
@@ -15,7 +16,8 @@ function Chat() {
             {/* <GroupChatScreen/> */}
         </section>
         <section className='media-section'>
-          <SingleMediaSection/>
+          {/* <SingleMediaSection/> */}
+          <GroupMediaSection/>
         </section>
     </div>
 
