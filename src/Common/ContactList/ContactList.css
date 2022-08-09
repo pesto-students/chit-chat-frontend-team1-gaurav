@@ -14,7 +14,7 @@
     padding: 1rem 0.8rem;
     border-bottom: 1px solid #808080;
     border-right: 1px solid #808080;
-    max-height: 20vh;
+    max-height: 65px;
   }
   
   .chat-list .recent-heading {
@@ -24,6 +24,11 @@
     font-weight: 900;
     text-transform: uppercase;
     max-height: 10vh;
+  }
+
+  .chat-list-header img{
+    height: 65px;
+    width: 65px;
   }
   
   .recent-chat {
