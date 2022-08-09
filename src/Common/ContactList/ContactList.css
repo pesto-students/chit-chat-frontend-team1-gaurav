@@ -2,41 +2,55 @@
     width: 100%;
     background-color: #1f2029;
     text-align: left;
-    height: calc(100vh - 10px);
-    border-right: 1px solid #808080;
+    height: 100vh;
+    border-right: 1px solid rgba(128, 128, 128, 0.4);
   }
   
   .chat-list-header {
     display: flex;
     color: white;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
     padding: 1rem 0.8rem;
-    border-bottom: 1px solid #808080;
-    border-right: 1px solid #808080;
-    max-height: 65px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.4);
+    height: 9vh;
   }
   
+  .recent-chat-container{
+    height: 45.5vh;
+  }
+
+  .group-chat-container{
+    height: 45.5vh;
+  }
+
   .chat-list .recent-heading {
-    padding: 1rem 0.5rem;
+    padding: 1vh 1vw;
     color: #808080;
-    font-size: 1rem;
-    font-weight: 900;
+    font-size: calc(1.2vh + .5vw);
+    font-weight: 700;
     text-transform: uppercase;
     max-height: 10vh;
   }
 
   .chat-list-header img{
-    height: 65px;
-    width: 65px;
+    height: calc(2.5vh + 2vw);
+    width: calc(2.5vh + 2vw);
+    margin-left: 1vw;
   }
+
+  .chat-list-header h1{
+    font-size: calc(1.8vh + 1.3vw);
+    margin-left: 1.5vw;
+  }
+
   
   .recent-chat {
-    max-height: 35vh;
+    max-height: 38vh;
     overflow-y: scroll;
   }
   
   .recent-group {
-    max-height: 35vh;
+    max-height: 38vh;
     overflow-y: scroll;
   }

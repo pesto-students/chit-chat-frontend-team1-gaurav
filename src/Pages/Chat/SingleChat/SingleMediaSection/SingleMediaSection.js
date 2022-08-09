@@ -96,9 +96,9 @@ function SingleMediaSection() {
                         <div className='single-media-see'>See All</div>
                 </div>
             
-                <div className='single-message width-90'>
+                  <div className='single-message width-90'>
                   <div className='single-message-content last-reveived-message star-flex'>Can i get result today or tommorow?<div className='single-star-received-icon'><img src={starReveived} alt=''></img></div> </div>
-                </div>
+                  </div>
                   <div className='single-time-stamp single-media-star'>22Jan 2021 <span>22:21</span></div>
 
 

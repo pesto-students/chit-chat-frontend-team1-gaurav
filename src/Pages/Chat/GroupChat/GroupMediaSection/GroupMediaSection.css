@@ -3,7 +3,7 @@
  flex-direction: column;
  background-color: #1F2029;
  height: 100vh;
- border-left: 1px solid #808080;   
+ border-left: 1px solid rgba(128, 128, 128, 0.4);   
 }
 .group-online-section{
     display: flex;
@@ -20,11 +20,13 @@
     border: none;
     text-align: left;
     outline: none;
-    font-size: calc(1.3vh + .6vw);
-    border-bottom: 1px solid #808080;
+    font-size: calc(1.3vh + .5vw);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.4);
+    border-top: 1px solid rgba(128, 128, 128, 0.4);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 9vh;
 }
 
 
@@ -41,8 +43,8 @@
 }
 
 .group-collipsible-icon{
-    height: .7vw;
-    width: .7vw;
+    height: .6vw;
+    width: .6vw;
     margin-right: 1vw;
     text-align: center;
 }
@@ -57,11 +59,34 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height .2s ease;
+}
 
+.media-collipsible-content{
+    display: flex;
+    justify-content: space-around;
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .2s ease;
+}
+
+.files-collipsible-content{
+    display: flex;
+    flex-direction: column;
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease;
+}
+
+.mt{
+    margin-top:4vh;
 }
 
 .show{
-    max-height: 100vh;
+    height: 64vh;
+    max-height: 64vh;
+    overflow-y: scroll;
 }
 
 .online-members{
@@ -106,3 +131,4 @@
 .offline{
     color:#808080;
 }
+

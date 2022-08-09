@@ -9,13 +9,18 @@ function ContactList() {
           <img src={UserPic} />
           <h1>Dhruvin </h1>
         </div>
+        <div className='recent-chat-container'>
         <h2 className="recent-heading">Recent Chat</h2>
         <div className="recent-chat">
           <ChartCard />
           <ChartCard />
           <ChartCard />
           <ChartCard />
+          <ChartCard />
         </div>
+        </div>
+
+        <div className='group-chat-container'>
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
           <ChartCard />
@@ -23,6 +28,7 @@ function ContactList() {
           <ChartCard />
           <ChartCard />
           <ChartCard />
+        </div>
         </div>
       </div>
   )

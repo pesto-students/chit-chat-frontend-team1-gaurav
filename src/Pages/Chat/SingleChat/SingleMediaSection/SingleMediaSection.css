@@ -8,7 +8,7 @@
         grid-row-gap: 0px;
         height: 100vh;
         background:#1F2029;
-        border-left: 1px solid #808080;
+        border-left: 1px solid rgba(128, 128, 128, 0.4);
     }
 
     .single-media-section{
@@ -16,7 +16,7 @@
         padding-bottom: 1.5vh;
         margin-left: 1vw;
         margin-right: 1vw;
-        border-bottom: 1px solid #808080;
+        border-bottom:  1px solid rgba(128, 128, 128, 0.4);
 
     }
 
@@ -90,7 +90,7 @@
     .single-files-container{
         display: flex;
         align-items: center;
-        border-bottom: 1px solid #808080;
+        border-bottom:  1px solid rgba(128, 128, 128, 0.3);
         padding-bottom: 1vh;
         margin-top: 1vh;
         /* justify-content: center; */
@@ -140,7 +140,7 @@
         padding:2vh 0;
         margin-left:1.3vw;
         padding-right:1.3vw;
-        border-top:1px solid #808080;
+        border-top:1px solid rgba(128, 128, 128, 0.4);
 
     }
     

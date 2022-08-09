@@ -21,6 +21,6 @@ code {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 20%;
-  background-color: #808080;
+  background-color: rgba(128, 128, 128, 0.5);
   outline: none;
 }

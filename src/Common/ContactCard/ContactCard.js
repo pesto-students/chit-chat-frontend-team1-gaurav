@@ -22,7 +22,7 @@ export default function ContactCard() {
         onClick={() => {
           setActive(!active);
         }}
-        className="chatcard-container"
+        className={"chatcard-container " +  (active && 'border-bottom-none')}
       >
         {active && <div className="overlay"></div>}
         <img

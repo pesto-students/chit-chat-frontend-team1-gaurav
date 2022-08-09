@@ -5,7 +5,7 @@
     width: 100%;
     height: 100%;
     background-color: #1f2029;
-    border-right: 1px solid #808080;
+    border-right: 1px solid rgba(128, 128, 128, 0.4);
   }
   
   .navigation ul {
@@ -21,11 +21,10 @@
   
   .navigation .active {
     border-left: 3px solid white;
-    background-color: rgba(31, 32, 41, 0.5);
+    background-color:  rgba(255, 255, 255, 0.1);
   }
   
   .navigation ul li img {
-    width: 80%;
-    max-width: 30px;
-    height: 30px;
+    width: calc(1vh + 1vw);
+    height: calc(1vh + 1vw);
   }

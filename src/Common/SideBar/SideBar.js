@@ -19,10 +19,10 @@ export default function SideBar() {
             <img name='message' onClick={onClickHandler} src={NavMessage} />
           </li>
           <li name='search' onClick={onClickHandler} className={active==='search' && 'active'}>
-            <img name='message' onClick={onClickHandler} src={NavSearch} />
+            <img name='search' onClick={onClickHandler} src={NavSearch} />
           </li>
           <li name='profile' onClick={onClickHandler} className={active==='profile' && 'active'}>
-            <img name='message' onClick={onClickHandler} src={NavProfile} />
+            <img name='profile' onClick={onClickHandler} src={NavProfile} />
           </li>
         </ul>
     </div>
