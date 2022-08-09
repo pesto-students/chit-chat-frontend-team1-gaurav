@@ -1,0 +1,31 @@
+.navigation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #1f2029;
+    border-right: 1px solid #808080;
+  }
+  
+  .navigation ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .navigation ul li {
+    padding: 15px;
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  .navigation .active {
+    border-left: 3px solid white;
+    background-color: rgba(31, 32, 41, 0.5);
+  }
+  
+  .navigation ul li img {
+    width: 80%;
+    max-width: 30px;
+    height: 30px;
+  }
