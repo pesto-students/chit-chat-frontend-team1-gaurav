@@ -19,7 +19,7 @@ import doubletickread  from "../../../../Assets/double-tick-read.png";
 // import   from "../../../../Assets/search.png";
 import "./SingleChatScreen.css";
 
-function SingleChatScreen() {
+function SingleChatScreen({socket}) {
 
   const [showAttachment,setAttachmentToggle] = useState(false);
 
