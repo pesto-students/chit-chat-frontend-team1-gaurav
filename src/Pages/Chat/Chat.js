@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useInsertionEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import expired from '../../Common/Common'
 import SideBar from "../../Common/SideBar/SideBar";
 import ContactList from "../../Common/ContactList/ContactList";
 import DefaultPage from "./DefaultPage/DefaultPage";
@@ -27,29 +28,62 @@ function Chat() {
   var socket = useRef();
 
   useEffect(() => {
-    debugger
-    if(localStorage.getItem('token') === null 
-      || localStorage.getItem('token') === undefined 
-      || localStorage.getItem('token') === ''){
-        toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
-        navigate('/');
+ debugger;
+      var JWTtoken = localStorage.getItem('token');
+
+      if(JWTtoken)
+      {
+        var jwtPayload = JSON.parse(window.atob(JWTtoken.split('.')[1]))
+    
+        var tokenExpired = (jwtPayload.exp*1000) <= Date.now();
+  
+        if(!tokenExpired){
+  
+          socket.current = io("http://localhost:5000");
+          socket.current.emit("add-user", localStorage.getItem("userid"));
+
+        }
+        else{
+          localStorage.removeItem('token');
+          localStorage.removeItem('userid');
+          localStorage.removeItem('username');
+          toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
+          navigate('/login');
+        }
       }
       else{
-        socket.current = io("http://localhost:5000");
-        socket.current.emit("add-user", localStorage.getItem("userid"));
+  
+        toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
+        navigate('/login');
       }
+
   }, []);
 
   useEffect(() => {
-    if(localStorage.getItem('token') === null || localStorage.getItem('token') === undefined || localStorage.getItem('token') === ''){
-      navigate('/');
+    var JWTtoken = localStorage.getItem('token');
+
+    if(JWTtoken)
+    {
+      var jwtPayload = JSON.parse(window.atob(JWTtoken.split('.')[1]))
+  
+      var tokenExpired = (jwtPayload.exp*1000) <= Date.now();
+
+      if(!tokenExpired){
+
+        socket.current.on("online-users", (data) => {
+          console.log(data);
+        });
+      }
+      else{
+        navigate('/');
+      }
     }
     else{
+      navigate('/');
+    }
 
-    socket.current.on("online-users", (data) => {
-      console.log(data);
-    });
-  }
+   
+   
   }, [socket]);
 
 

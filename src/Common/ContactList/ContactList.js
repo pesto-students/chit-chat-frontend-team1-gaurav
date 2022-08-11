@@ -1,8 +1,12 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import ChartCard from "../ContactCard/ContactCard"
 import UserPic from "../../Assets/ProfilePic.png"
 import "./ContactList.css"
 function ContactList({changescreen}) {
+
+ 
+
+
   return (
     <div className="chat-list">
         <div className="chat-list-header">

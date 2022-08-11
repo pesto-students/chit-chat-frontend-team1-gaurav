@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import ChangePassword from './ChangePassword/ChangePassword'
-import ChangeContact from './Change Contact/ChangeContact'
+import ChangePassword from "./ChangePassword/ChangePassword";
+import ChangeContact from "./Change Contact/ChangeContact";
 import profileimg from "../../Assets/profile.png";
 import editIcon from "../../Assets/edit-profile.png";
-import SideBar from "../../Common/SideBar/SideBar"
+import SideBar from "../../Common/SideBar/SideBar";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-
-
 toast.configure();
 
-
 function Profile() {
-
   let navigate = useNavigate();
-
 
   const [profileDetails, setProfileDetails] = useState({
     userName: "",
@@ -66,65 +61,71 @@ function Profile() {
   };
 
   const updateClickHandler = (e) => {
-    
     axios
-    .post("http://localhost:5000/authentication/editprofile", {
-        userid:localStorage.getItem('userid'),
+      .post("http://localhost:5000/authentication/editprofile", {
+        userid: localStorage.getItem("userid"),
         firstName: profileDetails.fullName,
         userName: profileDetails.userName,
         email: profileDetails.email,
-        phoneNumber: profileDetails.contact
-    })
-    .then((res) => {
-     
-        if(res.data.statusCode === 200){
-            toast.success('Profile Updated Successfully!',{autoClose:1000})
+        phoneNumber: profileDetails.contact,
+      })
+      .then((res) => {
+        if (res.data.statusCode === 200) {
+          toast.success("Profile Updated Successfully!", { autoClose: 1000 });
+        } else {
+          toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
         }
-        else
-        {
-            toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-        }
-     
-    })
-    .catch((err) => {
-      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-    });
+      })
+      .catch((err) => {
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+      });
   };
-
-
 
   useEffect(() => {
 
-      if(localStorage.getItem('token') === null 
-      || localStorage.getItem('token') === undefined 
-      || localStorage.getItem('token') === ''){
-        toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
-        navigate('/');
-      }
-      else{     
-    axios
-    .post("http://localhost:5000/authentication/getprofile", {
-        userid:localStorage.getItem('userid')
-    })
-    .then((res) => {
-     
-        setProfileDetails({
+    var JWTtoken = localStorage.getItem('token');
+
+    if(JWTtoken)
+    {
+      var jwtPayload = JSON.parse(window.atob(JWTtoken.split('.')[1]))
+  
+      var tokenExpired = (jwtPayload.exp*1000) <= Date.now();
+
+      if(!tokenExpired){
+
+        axios
+        .post("http://localhost:5000/authentication/getprofile", {
+          userid: localStorage.getItem("userid"),
+        })
+        .then((res) => {
+          setProfileDetails({
             ...Profile,
             userName: res.data.username,
             fullName: res.data.fullname,
             email: res.data.email,
             contact: res.data.phonenumber,
+          });
         })
-     
-    })
-    .catch((err) => {
-      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-    });
+        .catch((err) => {
+          toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+        });
+
       }
-  }, [])
-  
+      else{
+        localStorage.removeItem('token');
+        localStorage.removeItem('userid');
+        localStorage.removeItem('username');
+        toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
+        navigate('/');
+      }
+    }
+    else{
 
+      toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
+      navigate('/');
+    }
 
+  }, []);
 
   return (
     <div className="profilePageContainer">
@@ -210,8 +211,6 @@ function Profile() {
       </div>
       </div>
 );
-
-
 }
 
 export default Profile;

@@ -39,7 +39,6 @@ export default function SideBar() {
  }
 
   useEffect(() => {
-    debugger;
       if(window.location.pathname === '/profile'){
         setActive('profile')
       }
