@@ -7,12 +7,20 @@
     height: 100vh;
 }
 
+.default{
+    grid-template-columns: 1fr 4fr 15fr;
+}
+
 .sidebar{
     width: 5vw;
 }
 
 .contact-list{
     width: 20vw;
+}
+
+.default-page{
+    width: 75vw;
 }
 
 .main-chat-screen{

@@ -10,14 +10,27 @@ import Chat from "./Pages/Chat/Chat";
 import "./App.css";
 
 function App() {
+
+const loggedin = () =>{
+  debugger;
+  if(localStorage.getItem('token') === null 
+  || localStorage.getItem('token') === undefined 
+  || localStorage.getItem('token') === ''){
+    return false;
+  }
+  else{
+    return true;
+  }
+}
+
   return <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/Chat" element={<Chat />} />
+        <Route path="/profile" element={loggedin?<Profile />:<Home/>} />
+        <Route path="/Chat" element={loggedin?<Chat />:<Home/>} />
       </Routes>
   </div>;
 }

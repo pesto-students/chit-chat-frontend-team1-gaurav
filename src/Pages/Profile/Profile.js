@@ -5,14 +5,21 @@ import ChangePassword from './ChangePassword/ChangePassword'
 import ChangeContact from './Change Contact/ChangeContact'
 import profileimg from "../../Assets/profile.png";
 import editIcon from "../../Assets/edit-profile.png";
+import SideBar from "../../Common/SideBar/SideBar"
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+
 
 
 toast.configure();
 
 
 function Profile() {
+
+  let navigate = useNavigate();
+
+
   const [profileDetails, setProfileDetails] = useState({
     userName: "",
     fullName: "",
@@ -87,7 +94,14 @@ function Profile() {
 
 
   useEffect(() => {
-      
+
+      if(localStorage.getItem('token') === null 
+      || localStorage.getItem('token') === undefined 
+      || localStorage.getItem('token') === ''){
+        toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
+        navigate('/');
+      }
+      else{     
     axios
     .post("http://localhost:5000/authentication/getprofile", {
         userid:localStorage.getItem('userid')
@@ -106,7 +120,7 @@ function Profile() {
     .catch((err) => {
       toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
     });
-  
+      }
   }, [])
   
 
@@ -114,7 +128,7 @@ function Profile() {
 
   return (
     <div className="profilePageContainer">
-      <div className="sidebar"></div>
+      <div className="sidebar"><SideBar/></div>
 
       <div className="Profilepage-sub-container">
         <div className="profilepage-content">

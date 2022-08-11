@@ -37,7 +37,9 @@ function Login() {
         if(res.data.statusCode === 200){
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);
+          localStorage.setItem('username',res.data.username);
           toast.success("Logged in Successfully!!", { autoClose: 1000 });
+          navigate("/chat");
         }
         else if(res.data.statusCode === 202){
           toast.warning("Invalid Credentials!", { autoClose: 1000 });

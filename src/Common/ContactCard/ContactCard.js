@@ -2,7 +2,7 @@ import React,{useState} from "react";
 import Sample from "../../Assets/SampleUserImg1.png";
 import "./ContactCard.css";
 
-export default function ContactCard() {
+export default function ContactCard({changescreen,chatType}) {
     let mockProps = {
       profileImg: Sample,
       name: "Bruce Wayne",
@@ -21,6 +21,14 @@ export default function ContactCard() {
       <div
         onClick={() => {
           setActive(!active);
+          if(chatType === 'single')
+          {
+            changescreen(false,false);
+          }
+          else{
+            changescreen(false,true);
+          }
+          
         }}
         className={"chatcard-container " +  (active && 'border-bottom-none')}
       >

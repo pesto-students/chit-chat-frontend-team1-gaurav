@@ -21,7 +21,7 @@ function Home() {
         </ul>
 
         <ul className={styles.navList}>
-          <li>Login</li>
+          <li onClick={()=>{ navigate('/login')}}>Login</li>
           <li>About Us</li>
           <li>Support</li>
           <li>Blog</li>
