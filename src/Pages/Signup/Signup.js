@@ -5,7 +5,6 @@ import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
 import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
-// import OtpInput from 'react-otp-input';
 import Logo from "../../Assets/Logo.png";
 import "react-toastify/dist/ReactToastify.css";
 import "./Signup.css";
