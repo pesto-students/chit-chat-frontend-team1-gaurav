@@ -59,6 +59,7 @@ function GroupMediaSection() {
                   <div className='online-member-icon'><img src={gmi1} alt=''></img></div>
                   <div className='online-member-name offline'>Tarun</div>
                 </div>
+                
                 <div className='online-member'>
                   <div className='online-member-icon'><img src={gmi1} alt=''></img></div>
                   <div className='online-member-name offline'>Tarun</div>
