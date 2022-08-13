@@ -132,6 +132,7 @@ function GroupMediaSection() {
               <div className='group-collipsible-icon'>
                 <img src={!activeflags.files?uparrow:downarrow} alt=''></img>
               </div>
+              
             </button>
 
             <div className={'files-collipsible-content ' + (!activeflags.files?'':'show')}>
