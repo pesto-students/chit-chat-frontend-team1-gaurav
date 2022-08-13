@@ -8,7 +8,7 @@ import DefaultPage from "./DefaultPage/DefaultPage";
 import SingleChatScreen from "../Chat/SingleChat/SingleChatScreen/SingleChatScreen";
 import GroupChatScreen from "../Chat/GroupChat/GroupChatScreen/GroupChatScreen";
 import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMediaSection";
-import GroupMediaSection from "../Chat/GroupChat/GroupMediaSection/GroupMediaSection";
+import GroupMediaSection from "./GroupChat/GroupMediaSection/GroupMediaSection";
 import { useNavigate } from "react-router-dom";
 import Profile from "../Profile/Profile"
 import { io } from "socket.io-client";
@@ -24,11 +24,13 @@ function Chat() {
 
   const [showdefault, setDefault] = useState(true);
   const [showgroup, setGroup] = useState(false);
+  const [userdetails,setuserdetails] = useState({userid:'',username:'',chatid:''});
+  const [groupid,setgroupid] = useState('');
+  const [onlineusers,setonlineusers] = useState([]);
 
   var socket = useRef();
 
   useEffect(() => {
- debugger;
       var JWTtoken = localStorage.getItem('token');
 
       if(JWTtoken)
@@ -71,7 +73,7 @@ function Chat() {
       if(!tokenExpired){
 
         socket.current.on("online-users", (data) => {
-          console.log(data);
+          setonlineusers(data);
         });
       }
       else{
@@ -82,14 +84,19 @@ function Chat() {
       navigate('/');
     }
 
-   
-   
   }, [socket]);
 
 
-  const changescreen =(setdefault,settype) =>{
+  const changescreen =(setdefault,settype,chatDetails) =>{
     setDefault(setdefault);
-    setGroup(settype);
+    if(settype === 'single') {
+      setGroup(false);
+      setuserdetails(chatDetails); 
+    } 
+    else{
+      setGroup(true);
+      setgroupid(chatDetails.userid);
+    }
   }
 
   return (
@@ -109,10 +116,10 @@ function Chat() {
       ) : (
         <>
           <section className="main-chat-screen">
-            {showgroup ? <GroupChatScreen /> : <SingleChatScreen />}
+            {showgroup ? <GroupChatScreen /> : <SingleChatScreen userdetails={userdetails} socket={socket} receivedonlineusers={onlineusers}/>}
           </section>
           <section className="media-section">
-            {showgroup ? <GroupMediaSection /> : <SingleMediaSection />}
+            {showgroup ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket} receivedonlineusers={onlineusers}/>}
           </section>
         </>
       )}

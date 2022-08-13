@@ -50,6 +50,7 @@
 .single-person-name{
     color:#ffffff;
     font-size: 1.5rem;
+    text-transform: capitalize;
 }
 
 .single-status{
@@ -66,6 +67,10 @@
     background-color: #32CD30;
     display: inline-block;
     /* margin-left: 1vmax; */
+}
+
+.ofline{
+    background-color: #808080;
 }
 
 .single-status-name{
@@ -104,9 +109,10 @@
 .single-main-section{
     background: #2B2C34;
     padding:2vw;
-    /* position: relative; */
     height: 82vh;
     overflow-y: scroll;
+    display: flex;
+    align-items: flex-end;
 }
 
 .day-container{

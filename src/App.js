@@ -12,7 +12,6 @@ import "./App.css";
 function App() {
 
 const loggedin = () =>{
-  debugger;
   if(localStorage.getItem('token') === null 
   || localStorage.getItem('token') === undefined 
   || localStorage.getItem('token') === ''){

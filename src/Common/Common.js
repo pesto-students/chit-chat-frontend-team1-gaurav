@@ -2,7 +2,6 @@
 
 
 const expired = () => {
-    debugger;
     const JWTtoken = localStorage.getItem('token');
 
     const jwtPayload = JSON.parse(window.atob(JWTtoken.split('.')[1]))

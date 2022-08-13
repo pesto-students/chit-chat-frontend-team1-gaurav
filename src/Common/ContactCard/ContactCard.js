@@ -2,10 +2,10 @@ import React,{useState} from "react";
 import Sample from "../../Assets/SampleUserImg1.png";
 import "./ContactCard.css";
 
-export default function ContactCard({changescreen,chatType}) {
+export default function ContactCard({changescreen,chatType,chatDetails}) {
     let mockProps = {
       profileImg: Sample,
-      name: "Bruce Wayne",
+      name: chatDetails?chatDetails.username:'',
       lastChatMessage: "See ya!!",
       lastChatTime: "12:12",
       unseenMsgs:'2'
@@ -23,10 +23,10 @@ export default function ContactCard({changescreen,chatType}) {
           setActive(!active);
           if(chatType === 'single')
           {
-            changescreen(false,false);
+            changescreen(false,chatType,chatDetails);
           }
           else{
-            changescreen(false,true);
+            changescreen(false,chatType,chatDetails);
           }
           
         }}

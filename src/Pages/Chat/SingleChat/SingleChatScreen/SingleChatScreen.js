@@ -1,4 +1,8 @@
-import React,{useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React,{useState,useEffect} from 'react';
+import ReceivedMessages from './CommonComponents/ReceivedMessages'
+import SentMessages from './CommonComponents/SentMessages'
+import axios from 'axios';
 import singleHeaderImg from "../../../../Assets/single-header-img.png";
 import search  from "../../../../Assets/search.png";
 import audioCall  from "../../../../Assets/audio-call.png";
@@ -8,25 +12,106 @@ import send  from "../../../../Assets/send.png";
 import emoji  from "../../../../Assets/emoji.png";
 import imageAttachment  from "../../../../Assets/image-attachment.png";
 import documentAttachment  from "../../../../Assets/document-attachment.png";
-import displayImage  from "../../../../Assets/display-image.png";
-import downloadDocument  from "../../../../Assets/download-document.png";
-import threeDot  from "../../../../Assets/three-dot.png";
-import darkDocument  from "../../../../Assets/dark-download.png";
-import darkThreeDot  from "../../../../Assets/dark-three-dot.png";
-import singletick  from "../../../../Assets/single-tick.png";
-import doubletick  from "../../../../Assets/double-tick.png";
-import doubletickread  from "../../../../Assets/double-tick-read.png";
-// import   from "../../../../Assets/search.png";
 import "./SingleChatScreen.css";
 
-function SingleChatScreen({socket}) {
+function SingleChatScreen({userdetails,socket,receivedonlineusers}) {
 
   const [showAttachment,setAttachmentToggle] = useState(false);
+  const[onlineusers,setonlineusers] = useState(receivedonlineusers);
+  const[isuseronline,setuseronline] = useState(false);
+  const[messageArray,setMessageArray] = useState([]);
+  const[newMessage,setNewMessage] = useState('');
+
+  useEffect(()=>{
+    debugger;
+    axios
+    .post("http://localhost:5000/chat/loadchat",{
+      chatid:userdetails.chatid
+    })
+    .then((res) => {
+      debugger
+      setMessageArray(res.data);
+    })
+    .catch((err) => {
+      
+      // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+    });
+
+    for (const user of receivedonlineusers) {
+        if(user.userid === userdetails.userid){
+          setuseronline(true);
+          return;
+        }
+        else{
+          setuseronline(false);
+        }
+    }
+  },[])
+
+
+
+  useEffect(()=>{
+    socket.current.on("online-users", (data) => {
+      setonlineusers(data);
+    });
+
+    socket.current.on("receive-message", (data) => {
+
+      let newMessagearray = messageArray.push(data);
+      setMessageArray(newMessagearray);
+
+    });
+
+  },[socket])
+
+
+
+  useEffect(()=>{
+    for (const user of onlineusers) {
+        if(user.userid === userdetails.userid){
+          setuseronline(true);
+        }
+        else{
+          setuseronline(false);
+        }
+    }
+  },[onlineusers])
+
+
+
+  const sendMessage =() =>{
+debugger;
+    let messagePayload = {
+          type:'message',
+          message:newMessage,
+          senderid:localStorage.getItem('userid'),
+          receiverid:userdetails.userid,
+          chatid:userdetails.chatid
+    }
+
+    axios
+      .post("http://localhost:5000/chat/updatemessagearray",messagePayload)
+      .then((res) => {
+        debugger;
+          if(res.data.message){
+            socket.current.emit('send-message',res.data);
+
+            messageArray.push(res.data);
+            setMessageArray(messageArray);
+            setNewMessage('')
+
+          }
+      })
+      .catch((err) => {
+        
+        // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+      });
+
+  }
+
 
   return (
     <div className='single-main-container'>
-
-      {/* Header */}
 
 
         <header className='single-chat-header'>
@@ -35,10 +120,10 @@ function SingleChatScreen({socket}) {
                     <img src={singleHeaderImg} alt='chat-logo'></img>
                 </div>
                 <div className='single-header-info'>
-                  <h1 className='single-person-name'>Peter Parker</h1>
+                  <h1 className='single-person-name'>{userdetails.username}</h1>
                   <div className='single-status'>
-                      <span class="single-status-dot"></span>
-                      <div className='single-status-name'>Online</div>
+                      <span class={"single-status-dot " + (isuseronline?'':'ofline')}></span>
+                      <div className='single-status-name'>{isuseronline?'Online':'Ofline'}</div>
                   </div>
                 </div>
             </div>
@@ -60,96 +145,52 @@ function SingleChatScreen({socket}) {
             <fieldset className='day-container'>
               <legend> Yesterday </legend>
 
+             {
+                messageArray.map(message =>{
+                  if(message.senderid === userdetails.userid){
+                    if(message.type === 'message' && false)
+                    return <ReceivedMessages messagetype='normal-message' payload={message.message}/>
 
-              <div className='single-message'>
-                  <div className='single-message-content'>Hello,how are u?</div>
-                  {/* <div className='single-time-stamp'>22:21</div> */}
-              </div>
+                    if(message.type === 'message' && true)
+                    return <ReceivedMessages messagetype='last-received-message' payload={message.message}/>
 
-              <div className='single-message'>
-                  <div className='single-message-content'>Did you have a good Weekend?</div>
-                  {/* <div className='single-time-stamp'>22:21</div> */}
-              </div>
+                    if(message.type === 'image' && false)
+                    return <ReceivedMessages messagetype='noramal-image' payload={message.message}/>
 
+                    if(message.type === 'message' && true)
+                    return <ReceivedMessages messagetype='last-received-image' payload={message.message}/>
 
-              <div className='single-message'>
-                  <div className='single-message-content last-reveived-message'>Can i get result today or tommorow?</div>
-                  <div className='single-time-stamp'>22:21 </div>
-              </div>
-               
+                    if(message.type === 'document' && false)
+                    return <ReceivedMessages messagetype='normal-document' payload={message.message}/>
 
-              <div className='single-message self-sent'>
-                  <div className='single-message-content self single-flex'>Hey,Sure <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
-                  {/* <div className='single-time-stamp'>22:21</div> */}
-              </div>
+                    if(message.type === 'message' && true)
+                    return <ReceivedMessages messagetype='last-received-document' payload={message.message}/>
 
-              <div className='single-message self-sent'>
-                  <div className='single-time-stamp'>22:21</div>
-                  <div className='single-message-content self last-sent-message single-flex'>some random stuff <div className='group-tick-icon'><img src={singletick} alt=''></img></div></div>
-              </div>
+                  }else{
 
+                    if(message.type === 'message' && false)
+                    return <SentMessages messagetype='normal-message' payload={message.message}/>
 
-              <div className='single-image'>
-                  <div className='single-image-content last-reveived-message'>
-                    <div className='single-image-display'><img src={displayImage} alt=''></img></div>
-                    <div className='single-image-desc'>Done Mate</div>
-                  </div>
-                  <div className='single-img-timestamp'>22:21</div>
-              </div>
+                    if(message.type === 'message' && true)
+                    return <SentMessages messagetype='last-sent-message' payload={message.message}/>
 
-              <div className='single-image'>
-                  <div className='single-image-content last-reveived-message document-flex'>
-                    
-                    <div className='download-document-icon'><img src={downloadDocument} alt=''></img></div>
-                    <div className='group-document-details'>
-                          <div className='single-document-name'>tourist Location.pdf</div>
-                          <div className='single-document-detail'>12MB <span>pdf</span></div>
-                    </div>
-                    <div className='three-dot-icon'><img src={threeDot} alt=''></img></div>
+                    if(message.type === 'image' && false)
+                    return <SentMessages messagetype='noramal-image' payload={message.message}/>
 
-                  </div>
-                  <div className='single-img-timestamp'>22:21</div>
-              </div>
-           
+                    if(message.type === 'message' && true)
+                    return <SentMessages messagetype='last-sent-image' payload={message.message}/>
+
+                    if(message.type === 'document' && false)
+                    return <SentMessages messagetype='normal-document' payload={message.message}/>
+
+                    if(message.type === 'message' && true)
+                    return <SentMessages messagetype='last-sent-document' payload={message.message}/>
+
+                  }
+                })
+              }
 
             </fieldset>
-
-
-            <fieldset className='day-container'>
-             <legend>Today</legend>
-
-            
-
-             <div className='single-message self-sent'>
-                  <div className='single-time-stamp'>22:21</div>
-                  <div className='single-message-content self last-sent-message single-flex'>some random stuff <div className='group-tick-icon'><img src={doubletickread} alt=''></img></div></div>
-              </div>
-
-              <div className='single-image self-sent'>
-                  <div className='single-img-timestamp'>22:21</div>
-                  <div className='single-image-content self last-sent-message'>
-                    <div className='single-image-display'><img src={displayImage} alt=''></img></div>
-                    <div className='single-image-desc self-image single-flex'>Done Mate <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
-                  </div>
-              </div>
-
-              <div className='single-image self-sent'>
-                  <div className='single-img-timestamp'>22:21</div>
-                  <div className='single-image-content self last-sent-message document-flex'>
-                    
-                    <div className='download-document-icon'><img src={darkDocument} alt=''></img></div>
-                    <div className='group-document-details'>
-                          <div className='single-document-name self'>tourist Location.pdf</div>
-                          <div className='single-document-detail single-flex'><div>12MB <span>pdf</span></div> <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
-                    </div>
-                    <div className='three-dot-icon'><img src={darkThreeDot} alt=''></img></div>
-
-                  </div>
-              </div>
-              
-            </fieldset>
-
-           
 
         </section>
 
@@ -174,13 +215,13 @@ function SingleChatScreen({socket}) {
           <div className='single-attach-icon' onClick={()=>{setAttachmentToggle(!showAttachment)}}><img src={attachment} alt="attach"></img></div>
 
           <div className='single-footer-message'>
-              <input type='text' placeholder='write a message for peter...'></input>
+              <input type='text' value={newMessage} placeholder='write a message for peter...' onChange={(e) =>{setNewMessage(e.target.value)}}></input>
           </div>
 
           <div className='single-footer-right-icons'>
 
             <div className='single-footer-right-icon'><img src={emoji} alt="emoji"></img></div>
-            <div className='single-footer-right-icon'><img src={send} alt="send"></img></div>
+            <div className='single-footer-right-icon' onClick={sendMessage}><img src={send} alt="send"></img></div>
 
           </div>
 

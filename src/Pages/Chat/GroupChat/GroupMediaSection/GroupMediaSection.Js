@@ -1,5 +1,4 @@
 import React,{useState} from 'react';
-import Collapsible from 'react-collapsible';
 import uparrow from '../../../../Assets/up-arrow.png';
 import downarrow from '../../../../Assets/down-arrow.png';
 import gmi1  from "../../../../Assets/group-message-image-1.png";
@@ -31,7 +30,6 @@ function GroupMediaSection() {
                 <img src={!activeflags.members?uparrow:downarrow} alt=''></img>
               </div>
             </button>
-
 
             <div className={'online-collipsible-content ' + (!activeflags.members?'':'show')}>
               
