@@ -30,7 +30,10 @@ function SingleChatScreen({userdetails,socket,receivedonlineusers}) {
     })
     .then((res) => {
       debugger
+      console.clear();
+      console.log('in first asdfs');
       setMessageArray(res.data);
+
     })
     .catch((err) => {
       
@@ -56,9 +59,8 @@ function SingleChatScreen({userdetails,socket,receivedonlineusers}) {
     });
 
     socket.current.on("receive-message", (data) => {
-
-      let newMessagearray = messageArray.push(data);
-      setMessageArray(newMessagearray);
+      debugger;
+      setMessageArray((prev)=>{ return [data,...prev] })
 
     });
 
@@ -96,7 +98,7 @@ debugger;
           if(res.data.message){
             socket.current.emit('send-message',res.data);
 
-            messageArray.push(res.data);
+            messageArray.unshift(res.data);
             setMessageArray(messageArray);
             setNewMessage('')
 
@@ -146,7 +148,7 @@ debugger;
               <legend> Yesterday </legend>
 
              {
-                messageArray.map(message =>{
+                messageArray.slice(0).reverse().map(message =>{
                   if(message.senderid === userdetails.userid){
                     if(message.type === 'message' && false)
                     return <ReceivedMessages messagetype='normal-message' payload={message.message}/>
