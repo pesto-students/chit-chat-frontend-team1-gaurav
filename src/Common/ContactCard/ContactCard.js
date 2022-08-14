@@ -7,7 +7,7 @@ import "./ContactCard.css";
 
 
 
-export  function ContactCard({chatDetails,activeUserId,setActiveUserid}) {
+export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}) {
 
   const dispatch=useDispatch();
 
@@ -21,7 +21,21 @@ export  function ContactCard({chatDetails,activeUserId,setActiveUserid}) {
     };
   
 
-    let isActive = (activeUserId === ((chatDetails !== undefined)?chatDetails.userid:''));
+    // var isActive =(activeUserId === ((chatDetails !== undefined)?chatDetails.userid:''));
+debugger;
+    var isActive;
+
+    if(chatType === 'single'){
+      if(activeUserId === ((chatDetails !== undefined)?chatDetails.userid:'')){
+        isActive = true;
+      }
+    }
+    else{
+      if(activeUserId === ((chatDetails !== undefined)?chatDetails._id:'')){
+        isActive = true;
+      }
+    }
+
 
     return (
       <div

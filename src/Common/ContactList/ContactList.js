@@ -12,18 +12,17 @@ function ContactList({socket}) {
   let [activeUserId, setActiveUserid] = useState('');
 
   const state = useSelector((state) => state.SingleChatReducer);  
-  const groupState =useSelector((state) => state.GroupChatReducer);
-
+  const Groupstate = useSelector((state) => state.GroupChatReducer); 
   var {currentContacts} = state;
-  var {currentGroups}=groupState;
-  console.log('currentGroups',currentGroups);
+  var {currentGroups}=Groupstate;
   const dispatch=useDispatch();
 
 
   useEffect(() =>{
    
-    dispatch(loadCurrentContacts());
+    dispatch(loadCurrentContacts())
     dispatch(loadCurrentGroups());
+
   },[])
 
  
@@ -39,11 +38,11 @@ function ContactList({socket}) {
         <div className="recent-chat">
 
 
-        {/* {currentContacts.map(contact =>{
+        {currentContacts.map(contact =>{
            return  <ContactCard   
            chatType='single' chatDetails = {contact} 
            activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
-        })} */}
+        })}
 
 
         </div>
@@ -52,13 +51,14 @@ function ContactList({socket}) {
         <div className='group-chat-container'>
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
-        {currentGroups.length!==0  && currentGroups.map(contact =>{
+     
+
+        {currentGroups.map(contact =>{
            return  <ContactCard   
-           chatType='group' chatDetails = {contact} 
+           chatType='group' activeUserId={activeUserId} setActiveUserid={setActiveUserid}  chatDetails = {contact} 
            />
         })}
-          <ContactCard  chatType='group'/>
-          <ContactCard  chatType='group'/>
+
         </div>
         </div>
       </div>

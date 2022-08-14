@@ -4,6 +4,7 @@ import {
   } from "../Types/GroupChatTypes";
  
   export const loadCurrentGroups = () => {
+
     console.log('group action',localStorage.getItem('userid'));
     return (dispatch) => {
       axios
