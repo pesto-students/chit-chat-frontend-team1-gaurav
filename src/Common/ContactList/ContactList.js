@@ -21,6 +21,18 @@ function ContactList({changescreen}) {
       // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
     });
 
+    //fetch all groups enrolled by the user
+    axios
+    .post("http://localhost:5000/chat/currentcontacts", {
+      userid: localStorage.getItem("userid"),
+    })
+    .then((res) => {
+        setcontactlist(res.data);
+    })
+    .catch((err) => {
+      // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+    });
+
   },[])
 
 

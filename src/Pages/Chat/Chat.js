@@ -28,6 +28,8 @@ function Chat() {
   const [groupid,setgroupid] = useState('');
   const [onlineusers,setonlineusers] = useState([]);
 
+  const [groupDetails, setGroupDetails]=useState({});
+
   var socket = useRef();
 
   useEffect(() => {
