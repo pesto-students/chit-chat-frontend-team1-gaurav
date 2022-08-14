@@ -6,70 +6,22 @@ import { useSelector,useDispatch } from "react-redux";
 import "./ContactList.css"
 import {loadCurrentContacts,changeflag} from "Redux/Actions/SingleChatActions"
 
-function ContactList({socket,changescreen}) {
+function ContactList({socket}) {
 
   let [activeUserId, setActiveUserid] = useState('');
-  const[contactlist,setcontactlist] = useState([]);
-  const[groupcontactlist,setgroupcontactlist] = useState([]);
- 
-  const state = useSelector((state) => console.log('state',state));
+
+  const state = useSelector((state) => state.SingleChatReducer);  
+  var {currentContacts} = state;
   const dispatch=useDispatch();
 
 
   useEffect(() =>{
    
     dispatch(loadCurrentContacts())
-    console.log('state',state)
-    axios
-    .post("http://localhost:5000/chat/currentcontacts", {
-      userid: localStorage.getItem("userid"),
-    })
-    .then((res) => {
-        setcontactlist(res.data);
-    })
-    .catch((err) => {
-      // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-    });
-
-    //fetch all groups enrolled by the user
-    axios
-    .post("http://localhost:5000/chat/currentcontacts", {
-      userid: localStorage.getItem("userid"),
-    })
-    .then((res) => {
-        setcontactlist(res.data);
-    })
-    .catch((err) => {
-      // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-    });
 
   },[])
 
-  
-  
-    const makeActive = (activeflag) =>[
-      setActiveUserid(activeflag)
-    ]
-
-  useEffect(()=>{
-    debugger;
-    if(socket.current !== undefined)
-    socket.current.on("reload-contacts", (data) => {
-    debugger;
-      axios
-      .post("http://localhost:5000/chat/currentcontacts", {
-        userid: localStorage.getItem("userid"),
-      })
-      .then((res) => {
-          setcontactlist(res.data);
-      })
-      .catch((err) => {
-        // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-      });
-    });
-
-  },[socket]);
-
+ 
 
   return (
     <div className="chat-list">
@@ -82,8 +34,8 @@ function ContactList({socket,changescreen}) {
         <div className="recent-chat">
 
 
-        {contactlist.map(contact =>{
-           return  <ContactCard changescreen = {changescreen}  
+        {currentContacts.map(contact =>{
+           return  <ContactCard   
            chatType='single' chatDetails = {contact} 
            activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
         })}
@@ -95,11 +47,11 @@ function ContactList({socket,changescreen}) {
         <div className='group-chat-container'>
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
-          <ContactCard changescreen = {changescreen} chatType='group'/>
-          <ContactCard changescreen = {changescreen} chatType='group'/>
-          <ContactCard changescreen = {changescreen} chatType='group'/>
-          <ContactCard changescreen = {changescreen} chatType='group'/>
-          <ContactCard changescreen = {changescreen} chatType='group'/>
+          <ContactCard  chatType='group'/>
+          <ContactCard  chatType='group'/>
+          <ContactCard  chatType='group'/>
+          <ContactCard  chatType='group'/>
+          <ContactCard  chatType='group'/>
         </div>
         </div>
       </div>

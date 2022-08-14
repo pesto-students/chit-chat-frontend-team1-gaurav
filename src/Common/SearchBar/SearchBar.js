@@ -22,7 +22,7 @@ function SearchBar({changescreen,changeContact}) {
                 text:e.target.value
             })
             .then((res) => {
-                debugger;
+                
                 setContact(res.data);
             })
             .catch((err) => {
@@ -35,7 +35,7 @@ function SearchBar({changescreen,changeContact}) {
     return (
         <div className="chat-list">
             <div className="search-header">
-            <div className='search-back-arrow' onClick={()=>{changeContact(true)}}><img src={backArrow} alt=''></img></div>
+            {/* <div className='search-back-arrow' onClick={()=>{changeContact(true)}}><img src={backArrow} alt=''></img></div> */}
             <input className='search-input' type='text' placeholder='Search...' onChange={useDebouncedCallback(searchContacts,500)}></input>
             <div className='search-search'><img src={Search} alt=''></img></div>
             </div>

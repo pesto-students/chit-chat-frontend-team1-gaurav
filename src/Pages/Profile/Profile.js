@@ -46,7 +46,6 @@ function Profile() {
     setProfileDetails((prevState) => {
       return { ...prevState, profileImg: e.target.files[0] };
     });
-    console.log(e.target.files[0]);
   };
 
   const editClickHandler = (e) => {

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
@@ -16,34 +17,32 @@ import emoji from "../../../../Assets/emoji.png";
 import imageAttachment from "../../../../Assets/image-attachment.png";
 import documentAttachment from "../../../../Assets/document-attachment.png";
 import "./SingleChatScreen.css";
+import {
+  loadCurrentChat,
+  setCurrentOnlinUsers,
+  updateChatInfo,
+  loadCurrentContacts,
+  updateCurrentChat
+} from "Redux/Actions/SingleChatActions";
 
 toast.configure();
 
-function SingleChatScreen({ userdetails, socket, receivedonlineusers }) {
+function SingleChatScreen({ userDetails, socket }) {
   const [showAttachment, setAttachmentToggle] = useState(false);
-  const [onlineusers, setonlineusers] = useState(receivedonlineusers);
-  const [isuseronline, setuseronline] = useState(false);
+  const [isuseronline, setuseronline] = useState(true);
   const [isreceivertyping, setreceivertyping] = useState(false);
-  const [messageArray, setMessageArray] = useState([]);
-  const [chatinfo, setchatinfo] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
-  useEffect(() => {
-    debugger;
-    axios
-      .post("http://localhost:5000/chat/loadchat", {
-        chatid: userdetails.chatid,
-      })
-      .then((res) => {
-        setMessageArray(res.data.messageArray);
-        setchatinfo(res.data.chatInfo);
-      })
-      .catch((err) => {
-        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-      });
+  const state = useSelector((state) => state.SingleChatReducer);
+  var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =state;
+  const dispatch = useDispatch();
 
-    for (const user of receivedonlineusers) {
-      if (user.userid === userdetails.userid) {
+  useEffect(() => {
+    
+debugger;
+
+    for (const user of onlineUsers) {
+      if (user.userid === receiverDetails.userid) {
         setuseronline(true);
         return;
       } else {
@@ -53,106 +52,128 @@ function SingleChatScreen({ userdetails, socket, receivedonlineusers }) {
   }, []);
 
   useEffect(() => {
-    debugger;
-    socket.current.on("online-users", (data) => {
-      setonlineusers(data);
-    });
-
-    socket.current.on("receive-message", (data) => {
-      setMessageArray((prev) => {
-        return [data, ...prev];
+    if (socket.current !== undefined) {
+      socket.current.on("online-users", (data) => {
+        dispatch(setCurrentOnlinUsers(data));
       });
-    });
 
-    socket.current.on("receiver-typing", (data) => {
-      setreceivertyping(true);
-    });
+      socket.current.on("receive-message", (data) => {
+        debugger;
+        dispatch(loadCurrentChat(receiverDetails.chatid));
 
-    socket.current.on("receiver-stops-typing", (data) => {
-      setreceivertyping(false);
-    });
+      });
+
+      socket.current.on("receiver-typing", (data) => {
+        setreceivertyping(true);
+      });
+
+      socket.current.on("receiver-stops-typing", (data) => {
+        setreceivertyping(false);
+      });
+    }
   }, [socket]);
 
+
+
   useEffect(() => {
-    for (const user of onlineusers) {
-      if (user.userid === userdetails.userid) {
+    for (const user of onlineUsers) {
+      if (user.userid === receiverDetails.userid) {
         setuseronline(true);
+        return;
       } else {
         setuseronline(false);
       }
     }
-  }, [onlineusers]);
+  }, [onlineUsers]);
+
+
 
   const typingHandler = (e) => {
-    debugger;
+    
     setNewMessage(e.target.value);
-    socket.current.emit("user-typing", userdetails.userid);
+    socket.current.emit("user-typing", receiverDetails.userid);
   };
+
+
 
   const keyUpHandler = () => {
-    socket.current.emit("user-stops-typing", userdetails.userid);
+    socket.current.emit("user-stops-typing", receiverDetails.userid);
   };
 
+
+
   const sendMessage = async () => {
-    debugger;
+    
     // let encryptedMessage = CryptoJS.AES.encrypt(newMessage, 'dhruvin').toString();
 
     var updateOrder = false;
     var order = 0;
 
+    let orderVar = JSON.parse(localStorage.getItem("order"))[0];
 
-    let orderVar = JSON.parse(localStorage.getItem('order'))[0];
-
-
-    if(orderVar === ''){
-      localStorage.setItem('order',JSON.stringify([userdetails.userid,1]))
+    if (orderVar === "") {
+      localStorage.setItem(
+        "order",
+        JSON.stringify([receiverDetails.userid, 1])
+      );
       updateOrder = true;
       order = 1;
-    }
-    else if(orderVar !== userdetails.userid){
+    } else if (orderVar !== receiverDetails.userid) {
       updateOrder = true;
-      order = JSON.parse(localStorage.getItem('order'))[1] + 1;
-      localStorage.setItem('order',JSON.stringify([userdetails.userid,order]))
-    }
-    else if(orderVar === userdetails.userid){
+      order = JSON.parse(localStorage.getItem("order"))[1] + 1;
+      localStorage.setItem(
+        "order",
+        JSON.stringify([receiverDetails.userid, order])
+      );
+    } else if (orderVar === receiverDetails.userid) {
       // updateOrder:false;
     }
-
 
 
     let messagePayload = {
       type: "message",
       message: newMessage,
       senderid: localStorage.getItem("userid"),
-      receiverid: userdetails.userid,
-      chatid: userdetails.chatid,
-      updateOrder:updateOrder,
-      order:order,
+      receiverid: receiverDetails.userid,
+      chatid: receiverDetails.chatid,
+      updateOrder: updateOrder,
+      order: order,
     };
 
     axios
       .post("http://localhost:5000/chat/updatemessagearray", messagePayload)
       .then((res) => {
-        debugger;
+        
         if (res.data.message) {
           socket.current.emit("send-message", res.data);
-          
-          messageArray.unshift(res.data);
-          setMessageArray(messageArray);
+
+          dispatch(loadCurrentContacts());
+
+          debugger;
+
+          let newMessageArray = [res.data,...SingleChatMessageArray];
+
+         dispatch(updateCurrentChat(newMessageArray));
           setNewMessage("");
 
-          if (!chatinfo.senderaddedtoreceiver) {
+          if (!SingleChatInfo.senderaddedtoreceiver) {
             axios
               .post("http://localhost:5000/chat/addSenderToReceiver", {
                 senderid: localStorage.getItem("userid"),
-                receiverid: userdetails.userid,
-                chatid: userdetails.chatid,
+                receiverid: receiverDetails.userid,
+                chatid: receiverDetails.chatid,
               })
               .then((res) => {
                 if (res.data.statusCode === 200) {
-                  setchatinfo({ ...chatinfo, senderaddedtoreceiver: true });
+                  dispatch(
+                    updateChatInfo({
+                      ...SingleChatInfo,
+                      senderaddedtoreceiver: true,
+                    })
+                  );
+
                   socket.current.emit("contact-added", {
-                    receiverid: userdetails.userid,
+                    receiverid: receiverDetails.userid,
                   });
                 }
               })
@@ -167,6 +188,8 @@ function SingleChatScreen({ userdetails, socket, receivedonlineusers }) {
       });
   };
 
+
+
   return (
     <div className="single-main-container">
       <header className="single-chat-header">
@@ -175,11 +198,13 @@ function SingleChatScreen({ userdetails, socket, receivedonlineusers }) {
             <img src={singleHeaderImg} alt="chat-logo"></img>
           </div>
           <div className="single-header-info">
-            <h1 className="single-person-name">{userdetails.username}</h1>
+            <h1 className="single-person-name">
+              {receiverDetails !== undefined ? receiverDetails.username : ""}
+            </h1>
             <div className="single-status">
               {isreceivertyping ? (
                 <div className="typing">
-                  {userdetails.username} is typing...
+                  {receiverDetails.username} is typing...
                 </div>
               ) : (
                 <>
@@ -216,17 +241,23 @@ function SingleChatScreen({ userdetails, socket, receivedonlineusers }) {
         <fieldset className="day-container">
           <legend> Yesterday </legend>
 
-          {messageArray
-            .slice(0)
+          {console.log(SingleChatMessageArray)}{ 
+          SingleChatMessageArray.slice(0)
             .reverse()
             .map((message) => {
-              if (message.senderid === userdetails.userid) {
+              if (message.senderid === receiverDetails.userid) {
                 return (
-                  <ReceivedMessages messagetype={message.type} payload={message.message}/>
+                  <ReceivedMessages
+                    messagetype={message.type}
+                    payload={message.message}
+                  />
                 );
               } else {
                 return (
-                  <SentMessages messagetype={message.type} payload={message.message}/>
+                  <SentMessages
+                    messagetype={message.type}
+                    payload={message.message}
+                  />
                 );
               }
             })}
@@ -264,7 +295,7 @@ function SingleChatScreen({ userdetails, socket, receivedonlineusers }) {
           <input
             type="text"
             value={newMessage}
-            placeholder="write a message for peter..."
+            placeholder='write a message for  ...'
             onChange={typingHandler}
             onKeyUp={useDebouncedCallback(keyUpHandler, 1500)}
             // onKeyDown={keyDownHandler}

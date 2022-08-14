@@ -16,14 +16,11 @@ export default function SideBar({changeContact}) {
  const [active,setActive]=useState('message');
 
  const onClickHandler=(e)=>{
-  debugger;
+  
     setActive(e.target.getAttribute('name'));
-    console.log('check',e.target.getAttribute('name'))
-    console.log('active',active)
 
     if(e.target.getAttribute('name') === 'message')
     {
-      changeContact(true);
       navigate('/chat');
     }
     else if(e.target.getAttribute('name') === 'profile')
@@ -35,7 +32,7 @@ export default function SideBar({changeContact}) {
 
  const searchHandler = () =>{
     setActive('search');
-    changeContact(false);
+    navigate('/search');
  }
 
  const logoutHandler = () =>{
@@ -48,6 +45,9 @@ export default function SideBar({changeContact}) {
   useEffect(() => {
       if(window.location.pathname === '/profile'){
         setActive('profile')
+      }
+      else if(window.location.pathname === '/search'){
+        setActive('search')
       }
   }, [])
   

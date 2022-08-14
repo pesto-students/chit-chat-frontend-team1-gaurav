@@ -1,11 +1,15 @@
 import React,{useState} from "react";
+import { useDispatch } from "react-redux";
 import Sample from "../../Assets/SampleUserImg1.png";
+import {setReceiverDetails,loadCurrentChat} from "Redux/Actions/SingleChatActions"
 import "./ContactCard.css";
 
 
 
 
-export  function ContactCard({changescreen,chatType,chatDetails,activeUserId,setActiveUserid}) {
+export  function ContactCard({chatDetails,activeUserId,setActiveUserid}) {
+
+  const dispatch=useDispatch();
 
  
     let mockProps = {
@@ -22,14 +26,11 @@ export  function ContactCard({changescreen,chatType,chatDetails,activeUserId,set
     return (
       <div
         onClick={() => {
+
+          dispatch(setReceiverDetails(chatDetails))
+          dispatch(loadCurrentChat(chatDetails.chatid));
           setActiveUserid(chatDetails.userid);
-          if(chatType === 'single')
-          {
-            changescreen(false,chatType,chatDetails,true);
-          }
-          else{
-            changescreen(false,chatType,chatDetails,true);
-          }
+        
           
         }}
         className={"chatcard-container " +  (isActive && 'border-bottom-none')}

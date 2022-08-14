@@ -34,12 +34,13 @@ function Login() {
         password: password,
       })
       .then((res) => {
+        
         if(res.data.statusCode === 200){
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);
           localStorage.setItem('username',res.data.username);
 
-          if(localStorage.getItem('order') !== undefined || localStorage.getItem('order') !== '' || localStorage.getItem('order') !== null){
+          if(localStorage.getItem('order') === undefined || localStorage.getItem('order') === '' || localStorage.getItem('order') === null){
             localStorage.setItem('order',JSON.stringify(['',0]));
           }
 

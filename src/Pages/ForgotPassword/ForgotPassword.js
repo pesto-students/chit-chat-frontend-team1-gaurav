@@ -76,8 +76,6 @@ function ForgotPassword() {
         phonenumber: phoneNumber,
       })
       .then((res) => {
-        console.clear();
-        console.log(res);
 
         if (res.data.statusCode === 200) {
           setotpkey(res.data.otpKey);
@@ -87,8 +85,6 @@ function ForgotPassword() {
         }
       })
       .catch((err) => {
-        console.clear();
-        console.log(err);
         toast.warning("Oops! Something Went Wrong!", { autoClose: 1000 });
 
       });

@@ -5,15 +5,14 @@ import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword"
 import Login from "./Pages/Login/Login"
 import Profile from "./Pages/Profile/Profile"
 import Chat from "./Pages/Chat/Chat";
+import SearchSingleContact from 'Pages/Chat/SearchSingleContact/SearchSingleContact'
 import { useSelector,useDispatch } from "react-redux";
 
 import "./App.css";
 
 function App() {
-  const state = useSelector((state) => console.log('state',state));
+  // const state = useSelector((state) => console.log('state',state));
 
-  // console.clear();
-  // console.log('state',state)
 const loggedin = () =>{
   if(localStorage.getItem('token') === null 
   || localStorage.getItem('token') === undefined 
@@ -33,6 +32,7 @@ const loggedin = () =>{
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/profile" element={loggedin?<Profile />:<Home/>} />
         <Route path="/Chat" element={loggedin?<Chat />:<Home/>} />
+        <Route path="/search" element={loggedin?<SearchSingleContact />:<Home/>} />
       </Routes>
   </div>;
 }

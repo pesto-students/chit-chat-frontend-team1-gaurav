@@ -2,7 +2,7 @@
 import React, { useEffect, useInsertionEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import expired from '../../Common/Common'
+import { useSelector,useDispatch } from "react-redux";
 import SideBar from "../../Common/SideBar/SideBar";
 import SearchBar from "Common/SearchBar/SearchBar";
 import ContactList from "../../Common/ContactList/ContactList";
@@ -13,6 +13,8 @@ import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMedi
 import GroupMediaSection from "./GroupChat/GroupMediaSection/GroupMediaSection";
 import Profile from "../Profile/Profile"
 import { io } from "socket.io-client";
+import {setCurrentOnlinUsers,loadCurrentContacts} from "Redux/Actions/SingleChatActions"
+
 import "./Chat.css";
 
 toast.configure();
@@ -20,19 +22,16 @@ toast.configure();
 
 function Chat() {
 
+  const state = useSelector((state) => state.SingleChatReducer);  
+  var {receiverDetails} = state;
+  const dispatch=useDispatch();
+
   let navigate = useNavigate();
 
 
-  const [showdefault, setDefault] = useState(true);
-  const [showcontacts, setContacts] = useState(true);
-  const [showgroup, setGroup] = useState(false);
-  const [userdetails,setuserdetails] = useState({userid:'',username:'',chatid:''});
   const [groupid,setgroupid] = useState('');
-  const [onlineusers,setonlineusers] = useState([]);
 
-  const [groupDetails, setGroupDetails]=useState({});
-
-  var socket = useRef();
+  var socket = useRef()
 
   useEffect(() => {
       var JWTtoken = localStorage.getItem('token');
@@ -66,7 +65,7 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    debugger;
+    
     var JWTtoken = localStorage.getItem('token');
 
     if(JWTtoken)
@@ -78,7 +77,11 @@ function Chat() {
       if(!tokenExpired){
 
         socket.current.on("online-users", (data) => {
-          setonlineusers(data);
+          dispatch(setCurrentOnlinUsers(data));
+        });
+
+        socket.current.on("reload-contacts", (data) => {
+          dispatch(loadCurrentContacts());
         });
       }
       else{
@@ -92,44 +95,33 @@ function Chat() {
   }, [socket]);
 
 
-  const changescreen =(setdefault,settype,chatDetails,showcontactlist) =>{
-    setDefault(setdefault);
-    setContacts(showcontactlist);
-    if(settype === 'single') {
-      setGroup(false);
-      setuserdetails(chatDetails); 
-    } 
-    else{
-      setGroup(true);
-      setgroupid(chatDetails.userid);
-    }
-  }
+  
 
 
-  const changeContact = (showContact) =>{
-    setContacts(showContact);
-  }
+  // const changeContact = (showContact) =>{
+  //   setContacts(showContact);
+  // }
 
   return (
     <div className="main-container">
       <section className="sidebar">
-        <SideBar changeContact={changeContact} />
+        <SideBar />
       </section>
       <section className="contact-list">
-        {showcontacts ? <ContactList changescreen={changescreen} socket={socket} /> : <SearchBar changescreen={changescreen} changeContact={changeContact}/>}
+         <ContactList socket={socket} /> 
       </section>
 
-      {showdefault ? (
+      {JSON.stringify(receiverDetails) === '{}' ? (
         <seciton className="default-page">
           <DefaultPage />
         </seciton>
       ) : (
         <>
           <section className="main-chat-screen">
-            {showgroup ? <GroupChatScreen /> : <SingleChatScreen userdetails={userdetails} socket={socket} receivedonlineusers={onlineusers}/>}
+            { JSON.stringify(receiverDetails) === '{}'? <GroupChatScreen /> : <SingleChatScreen  socket={socket}/>}
           </section>
           <section className="media-section">
-            {showgroup ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket} receivedonlineusers={onlineusers}/>}
+            {JSON.stringify(receiverDetails) === '{}'? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket}/>}
           </section>
         </>
       )}

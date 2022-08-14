@@ -2,12 +2,21 @@ import React from 'react'
 import { toast } from "react-toastify";
 import Sample from "Assets/SampleUserImg1.png";
 import axios from 'axios';
+import {useDispatch } from "react-redux";
+import {setReceiverDetails,loadCurrentChat} from "Redux/Actions/SingleChatActions"
+import { useNavigate } from "react-router-dom";
+
+
 
 
 toast.configure();
 
 
-function SearchedContactCard({chatDetails,changescreen}) {
+function SearchedContactCard({chatDetails}) {
+
+  let navigate = useNavigate();
+  const dispatch=useDispatch();
+
     let mockProps = {
         profileImg: Sample,
         name: chatDetails?chatDetails.username:'',
@@ -28,7 +37,11 @@ function SearchedContactCard({chatDetails,changescreen}) {
         .then(res =>{
             if(res.data.statusCode === 200){
                 toast.success(`User ${chatDetails.username} Added in Your Contact List`, { autoClose: 1000 });
-                changescreen(false,'single',{userid:chatDetails.userid,username:chatDetails.username,chatid:res.data.chatid},true);
+                dispatch(setReceiverDetails(chatDetails));
+                dispatch(loadCurrentChat(res.data.chatid));
+
+                navigate('/chat');
+
             }
             else{
                 toast.warning("Oops! Something Went Wrong!", { autoClose: 1000 });

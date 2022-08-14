@@ -14,18 +14,15 @@ function ChangePassword({ setShowModal }) {
       };
     
       const closeModalHandler = (e) => {
-        console.log("close the modal");
         setShowModal((prev) => {
           return { ...prev, password: false };
         });
       };
     
       const otpClickHandler = (e) => {
-        console.log("phonenumber", formData.phoneNumber);
       };
     
       const updateClickHandler = (e) => {
-        console.log("data", formData);
         setShowModal((prev) => {
           return { ...prev, contact: false };
         });
