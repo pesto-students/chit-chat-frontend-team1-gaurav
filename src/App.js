@@ -6,6 +6,7 @@ import Login from "./Pages/Login/Login"
 import Profile from "./Pages/Profile/Profile"
 import Chat from "./Pages/Chat/Chat";
 import SearchSingleContact from 'Pages/Chat/SearchSingleContact/SearchSingleContact'
+import CreateGroupChat from "./Pages/Chat/CreateGroupChat/CreateGroupChat";
 import { useSelector,useDispatch } from "react-redux";
 
 import "./App.css";
@@ -33,6 +34,7 @@ const loggedin = () =>{
         <Route path="/profile" element={loggedin?<Profile />:<Home/>} />
         <Route path="/Chat" element={loggedin?<Chat />:<Home/>} />
         <Route path="/search" element={loggedin?<SearchSingleContact />:<Home/>} />
+        <Route path="/creategroup" element={loggedin?<CreateGroupChat />:<Home/>} />
       </Routes>
   </div>;
 }

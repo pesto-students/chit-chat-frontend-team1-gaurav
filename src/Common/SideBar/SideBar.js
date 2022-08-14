@@ -3,6 +3,7 @@ import React,{useState,useEffect} from 'react'
 import NavMessage from "../../Assets/NavMessage.png"
 import NavProfile from "../../Assets/NavProfile.png"
 import NavSearch from "../../Assets/NavSearch.png"
+import CreateGroup from "Assets/CreateGroup.png"
 import logout from "../../Assets/logout.png"
 import { useNavigate } from "react-router-dom";
 import "./SideBar.css"
@@ -35,6 +36,11 @@ export default function SideBar({changeContact}) {
     navigate('/search');
  }
 
+ const groupHandler = () =>{
+  setActive('group');
+  navigate('/creategroup');
+}
+
  const logoutHandler = () =>{
   localStorage.removeItem('token');
   localStorage.removeItem('userid');
@@ -48,6 +54,10 @@ export default function SideBar({changeContact}) {
       }
       else if(window.location.pathname === '/search'){
         setActive('search')
+      }
+
+      if(window.location.pathname ==='/creategroup'){
+        setActive('group')
       }
   }, [])
   
@@ -66,6 +76,9 @@ export default function SideBar({changeContact}) {
           </li>
           <li name='profile' onClick={onClickHandler} className={active==='profile' && 'active'}>
             <img name='profile' onClick={onClickHandler} src={NavProfile} />
+          </li>
+          <li name='group' onClick={groupHandler} className={active==='group' && 'active'}>
+            <img name='group' onClick={onClickHandler} src={CreateGroup} />
           </li>
         </ul>
 

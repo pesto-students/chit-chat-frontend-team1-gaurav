@@ -5,20 +5,25 @@ import UserPic from "../../Assets/ProfilePic.png"
 import { useSelector,useDispatch } from "react-redux";
 import "./ContactList.css"
 import {loadCurrentContacts,changeflag} from "Redux/Actions/SingleChatActions"
+import {loadCurrentGroups} from "Redux/Actions/GroupChatActions"
 
 function ContactList({socket}) {
 
   let [activeUserId, setActiveUserid] = useState('');
 
   const state = useSelector((state) => state.SingleChatReducer);  
+  const groupState =useSelector((state) => state.GroupChatReducer);
+
   var {currentContacts} = state;
+  console.log('currentContacts',currentContacts);
+  var {groupContacts}=groupState;
   const dispatch=useDispatch();
 
 
   useEffect(() =>{
    
-    dispatch(loadCurrentContacts())
-
+    dispatch(loadCurrentContacts());
+    dispatch(loadCurrentGroups());
   },[])
 
  
@@ -47,9 +52,11 @@ function ContactList({socket}) {
         <div className='group-chat-container'>
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
-          <ContactCard  chatType='group'/>
-          <ContactCard  chatType='group'/>
-          <ContactCard  chatType='group'/>
+        {/* {groupContacts && groupContacts.map(contact =>{
+           return  <ContactCard   
+           chatType='group' chatDetails = {contact} 
+           />
+        })} */}
           <ContactCard  chatType='group'/>
           <ContactCard  chatType='group'/>
         </div>
