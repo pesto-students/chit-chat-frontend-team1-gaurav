@@ -1,7 +1,7 @@
 import React,{useState} from "react";
 import { useDispatch } from "react-redux";
 import Sample from "../../Assets/SampleUserImg1.png";
-import {setReceiverDetails,loadCurrentChat} from "Redux/Actions/SingleChatActions"
+import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
 import "./ContactCard.css";
 
 
@@ -29,6 +29,7 @@ export  function ContactCard({chatDetails,activeUserId,setActiveUserid}) {
 
           dispatch(setReceiverDetails(chatDetails))
           dispatch(loadCurrentChat(chatDetails.chatid));
+          dispatch(getStaredMessages(chatDetails.chatid));
           setActiveUserid(chatDetails.userid);
         
           

@@ -6,6 +6,7 @@ import {
   UPDATE_CHAT_INFO,
   SET_RECEIVER_DETAILS,
   UPDATE_CURRENT_CHAT,
+  GET_STARED_MESSAGES
 } from "../Types/SingleChatTypes";
 
 // export function loadCurrentContacts(){
@@ -48,6 +49,29 @@ export const loadCurrentChat = (chatid) => {
       .catch((err) => {
         dispatch({
           type: LOAD_CURRENT_CHAT,
+          payload: err,
+        });
+      });
+  };
+};
+
+
+export const getStaredMessages = (chatid) => {
+  debugger;
+  return (dispatch) => {
+    axios
+      .post("http://localhost:5000/chat/loadchat", {
+        chatid: chatid,
+      })
+      .then((res) => {
+        dispatch({
+          type: GET_STARED_MESSAGES,
+          payload: res.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_STARED_MESSAGES,
           payload: err,
         });
       });
