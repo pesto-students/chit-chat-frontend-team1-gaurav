@@ -51,6 +51,7 @@
     color:#ffffff;
     font-size: 1.5rem;
     text-transform: capitalize;
+    text-align: start;
 }
 
 .single-status{
@@ -71,6 +72,13 @@
 
 .ofline{
     background-color: #808080;
+}
+
+.typing{
+    color: #32CD30;
+    font-size: .8rem;
+
+
 }
 
 .single-status-name{
@@ -112,7 +120,7 @@
     height: 82vh;
     overflow-y: scroll;
     display: flex;
-    align-items: flex-end;
+    /* align-items: flex-end; */
 }
 
 .day-container{

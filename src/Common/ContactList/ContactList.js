@@ -1,15 +1,15 @@
 import React,{useEffect, useState} from 'react';
 import axios from 'axios';
-import ChartCard from "../ContactCard/ContactCard"
+import {ContactCard} from "../ContactCard/ContactCard"
 import UserPic from "../../Assets/ProfilePic.png"
 import "./ContactList.css"
-function ContactList({changescreen}) {
+function ContactList({socket,changescreen}) {
 
+  let [activeUserId, setActiveUserid] = useState('');
   const[contactlist,setcontactlist] = useState([]);
   const[groupcontactlist,setgroupcontactlist] = useState([]);
  
   useEffect(() =>{
-
     axios
     .post("http://localhost:5000/chat/currentcontacts", {
       userid: localStorage.getItem("userid"),
@@ -35,6 +35,31 @@ function ContactList({changescreen}) {
 
   },[])
 
+  
+  
+    const makeActive = (activeflag) =>[
+      setActiveUserid(activeflag)
+    ]
+
+  useEffect(()=>{
+    debugger;
+    if(socket.current !== undefined)
+    socket.current.on("reload-contacts", (data) => {
+    debugger;
+      axios
+      .post("http://localhost:5000/chat/currentcontacts", {
+        userid: localStorage.getItem("userid"),
+      })
+      .then((res) => {
+          setcontactlist(res.data);
+      })
+      .catch((err) => {
+        // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+      });
+    });
+
+  },[socket]);
+
 
   return (
     <div className="chat-list">
@@ -48,7 +73,9 @@ function ContactList({changescreen}) {
 
 
         {contactlist.map(contact =>{
-           return  <ChartCard changescreen = {changescreen} chatType='single' chatDetails = {contact}/>
+           return  <ContactCard changescreen = {changescreen}  
+           chatType='single' chatDetails = {contact} 
+           activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
         })}
 
 
@@ -58,11 +85,11 @@ function ContactList({changescreen}) {
         <div className='group-chat-container'>
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
+          <ContactCard changescreen = {changescreen} chatType='group'/>
+          <ContactCard changescreen = {changescreen} chatType='group'/>
+          <ContactCard changescreen = {changescreen} chatType='group'/>
+          <ContactCard changescreen = {changescreen} chatType='group'/>
+          <ContactCard changescreen = {changescreen} chatType='group'/>
         </div>
         </div>
       </div>

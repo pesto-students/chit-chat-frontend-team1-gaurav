@@ -38,6 +38,11 @@ function Login() {
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);
           localStorage.setItem('username',res.data.username);
+
+          if(localStorage.getItem('order') !== undefined || localStorage.getItem('order') !== '' || localStorage.getItem('order') !== null){
+            localStorage.setItem('order',JSON.stringify(['',0]));
+          }
+
           toast.success("Logged in Successfully!!", { autoClose: 1000 });
           navigate("/chat");
         }

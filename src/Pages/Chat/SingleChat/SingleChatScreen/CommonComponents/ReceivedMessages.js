@@ -14,7 +14,7 @@ function ReceivedMessages({ messagetype, payload }) {
     );
 
 
-  } else if (messagetype === "last-received-message") {
+  } else if (messagetype === "message") {
 
 
     return (
@@ -39,7 +39,7 @@ function ReceivedMessages({ messagetype, payload }) {
     );
 
 
-  } else if (messagetype === "last-received-image") {
+  } else if (messagetype === "image") {
 
 
     return (
@@ -71,7 +71,7 @@ function ReceivedMessages({ messagetype, payload }) {
     );
 
 
-  } else if (messagetype === "last-received-document") {
+  } else if (messagetype === "document") {
 
 
     return (
