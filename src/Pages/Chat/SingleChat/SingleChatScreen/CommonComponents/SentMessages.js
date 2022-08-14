@@ -1,5 +1,6 @@
 import React from "react";
 import displayImage from "Assets/display-image.png";
+import CryptoJS from "crypto-js";
 import singletick from "Assets/single-tick.png";
 import doubletick from "Assets/double-tick.png";
 import doubletickread from "Assets/double-tick-read.png";
@@ -21,7 +22,7 @@ function SentMessages({ messagetype, payload }) {
     );
 
 
-  } else if (messagetype === "last-sent-message") {
+  } else if (messagetype === "message") {
 
 
     return (
@@ -51,7 +52,7 @@ function SentMessages({ messagetype, payload }) {
     );
 
 
-  } else if (messagetype === "last-sent-image") {
+  } else if (messagetype === "image") {
 
 
     return (
@@ -88,7 +89,7 @@ function SentMessages({ messagetype, payload }) {
     );
 
 
-  } else if (messagetype === "last-sent-document") {
+  } else if (messagetype === "document") {
 
 
     return (

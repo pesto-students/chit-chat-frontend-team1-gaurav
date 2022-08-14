@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useInsertionEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import expired from '../../Common/Common'
 import SideBar from "../../Common/SideBar/SideBar";
+import SearchBar from "Common/SearchBar/SearchBar";
 import ContactList from "../../Common/ContactList/ContactList";
 import DefaultPage from "./DefaultPage/DefaultPage";
 import SingleChatScreen from "../Chat/SingleChat/SingleChatScreen/SingleChatScreen";
 import GroupChatScreen from "../Chat/GroupChat/GroupChatScreen/GroupChatScreen";
 import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMediaSection";
 import GroupMediaSection from "./GroupChat/GroupMediaSection/GroupMediaSection";
-import { useNavigate } from "react-router-dom";
 import Profile from "../Profile/Profile"
 import { io } from "socket.io-client";
 import "./Chat.css";
@@ -23,10 +24,12 @@ function Chat() {
 
 
   const [showdefault, setDefault] = useState(true);
+  const [showcontacts, setContacts] = useState(true);
   const [showgroup, setGroup] = useState(false);
   const [userdetails,setuserdetails] = useState({userid:'',username:'',chatid:''});
   const [groupid,setgroupid] = useState('');
   const [onlineusers,setonlineusers] = useState([]);
+
 
   var socket = useRef();
 
@@ -62,6 +65,7 @@ function Chat() {
   }, []);
 
   useEffect(() => {
+    debugger;
     var JWTtoken = localStorage.getItem('token');
 
     if(JWTtoken)
@@ -87,8 +91,9 @@ function Chat() {
   }, [socket]);
 
 
-  const changescreen =(setdefault,settype,chatDetails) =>{
+  const changescreen =(setdefault,settype,chatDetails,showcontactlist) =>{
     setDefault(setdefault);
+    setContacts(showcontactlist);
     if(settype === 'single') {
       setGroup(false);
       setuserdetails(chatDetails); 
@@ -99,19 +104,23 @@ function Chat() {
     }
   }
 
+
+  const changeContact = (showContact) =>{
+    setContacts(showContact);
+  }
+
   return (
     <div className="main-container">
       <section className="sidebar">
-        <SideBar />
+        <SideBar changeContact={changeContact} />
       </section>
       <section className="contact-list">
-        <ContactList changescreen={changescreen} />
+        {showcontacts ? <ContactList changescreen={changescreen} socket={socket} /> : <SearchBar changescreen={changescreen} changeContact={changeContact}/>}
       </section>
 
       {showdefault ? (
         <seciton className="default-page">
           <DefaultPage />
-          {/* <Profile /> */}
         </seciton>
       ) : (
         <>

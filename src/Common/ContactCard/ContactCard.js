@@ -2,7 +2,12 @@ import React,{useState} from "react";
 import Sample from "../../Assets/SampleUserImg1.png";
 import "./ContactCard.css";
 
-export default function ContactCard({changescreen,chatType,chatDetails}) {
+
+
+
+export  function ContactCard({changescreen,chatType,chatDetails,activeUserId,setActiveUserid}) {
+
+ 
     let mockProps = {
       profileImg: Sample,
       name: chatDetails?chatDetails.username:'',
@@ -11,28 +16,25 @@ export default function ContactCard({changescreen,chatType,chatDetails}) {
       unseenMsgs:'2'
     };
   
-    let [active, setActive] = useState(false);
 
-    let activeStateProp = {
-      active: true
-    };
-  
+    let isActive = (activeUserId === ((chatDetails !== undefined)?chatDetails.userid:''));
+
     return (
       <div
         onClick={() => {
-          setActive(!active);
+          setActiveUserid(chatDetails.userid);
           if(chatType === 'single')
           {
-            changescreen(false,chatType,chatDetails);
+            changescreen(false,chatType,chatDetails,true);
           }
           else{
-            changescreen(false,chatType,chatDetails);
+            changescreen(false,chatType,chatDetails,true);
           }
           
         }}
-        className={"chatcard-container " +  (active && 'border-bottom-none')}
+        className={"chatcard-container " +  (isActive && 'border-bottom-none')}
       >
-        {active && <div className="overlay"></div>}
+        {isActive && <div className="overlay"></div>}
         <img
           alt="profile-img"
           className="profile-img"
@@ -51,3 +53,5 @@ export default function ContactCard({changescreen,chatType,chatDetails}) {
       </div>
     );
   }
+
+
