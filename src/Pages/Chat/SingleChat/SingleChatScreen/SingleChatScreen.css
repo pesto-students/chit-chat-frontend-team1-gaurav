@@ -141,7 +141,13 @@
 .single-message{
     display: flex;
     align-items: flex-end;
+   
 }
+
+
+
+
+
 
 .single-message-content{
     background-color: #3B3546;
@@ -153,7 +159,24 @@
     margin-top: 1vh;
     max-width: 70%;
     text-align: start;
+    position: relative;
 }
+
+.hover-star{
+    position: absolute;
+    left: 1vw;
+    top: 1.5vh;
+    cursor: pointer;
+}
+
+.hover-star img{
+    height: 100%;
+    width: 100%;
+}
+
+
+
+
 
 .single-time-stamp{
     font-size: .6rem;

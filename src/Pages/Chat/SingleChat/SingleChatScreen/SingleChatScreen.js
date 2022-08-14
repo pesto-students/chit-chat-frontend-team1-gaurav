@@ -22,7 +22,7 @@ import {
   setCurrentOnlinUsers,
   updateChatInfo,
   loadCurrentContacts,
-  updateCurrentChat
+  updateCurrentChat,
 } from "Redux/Actions/SingleChatActions";
 
 toast.configure();
@@ -34,13 +34,11 @@ function SingleChatScreen({ userDetails, socket }) {
   const [newMessage, setNewMessage] = useState("");
 
   const state = useSelector((state) => state.SingleChatReducer);
-  var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =state;
+  var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =
+    state;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    
-debugger;
-
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);
@@ -58,9 +56,7 @@ debugger;
       });
 
       socket.current.on("receive-message", (data) => {
-        debugger;
         dispatch(loadCurrentChat(receiverDetails.chatid));
-
       });
 
       socket.current.on("receiver-typing", (data) => {
@@ -73,8 +69,6 @@ debugger;
     }
   }, [socket]);
 
-
-
   useEffect(() => {
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
@@ -86,24 +80,16 @@ debugger;
     }
   }, [onlineUsers]);
 
-
-
   const typingHandler = (e) => {
-    
     setNewMessage(e.target.value);
     socket.current.emit("user-typing", receiverDetails.userid);
   };
-
-
 
   const keyUpHandler = () => {
     socket.current.emit("user-stops-typing", receiverDetails.userid);
   };
 
-
-
   const sendMessage = async () => {
-    
     // let encryptedMessage = CryptoJS.AES.encrypt(newMessage, 'dhruvin').toString();
 
     var updateOrder = false;
@@ -129,33 +115,33 @@ debugger;
       // updateOrder:false;
     }
 
-
     let messagePayload = {
       type: "message",
+      messageid:Math.random().toString(16).slice(2),
       message: newMessage,
       senderid: localStorage.getItem("userid"),
       receiverid: receiverDetails.userid,
       chatid: receiverDetails.chatid,
       updateOrder: updateOrder,
       order: order,
+      starmarked:false
     };
 
     axios
       .post("http://localhost:5000/chat/updatemessagearray", messagePayload)
       .then((res) => {
-        
         if (res.data.message) {
           socket.current.emit("send-message", res.data);
 
           dispatch(loadCurrentContacts());
 
-          debugger;
-
-          let newMessageArray = [res.data,...SingleChatMessageArray];
-
-         dispatch(updateCurrentChat(newMessageArray));
+          
+          let newMessageArray = [res.data, ...SingleChatMessageArray];
+          
+          dispatch(updateCurrentChat(newMessageArray));
           setNewMessage("");
-
+          debugger;
+          
           if (!SingleChatInfo.senderaddedtoreceiver) {
             axios
               .post("http://localhost:5000/chat/addSenderToReceiver", {
@@ -187,8 +173,6 @@ debugger;
         toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
       });
   };
-
-
 
   return (
     <div className="single-main-container">
@@ -241,26 +225,30 @@ debugger;
         <fieldset className="day-container">
           <legend> Yesterday </legend>
 
-          {console.log(SingleChatMessageArray)}{ 
-          SingleChatMessageArray.slice(0)
+          {console.log(SingleChatMessageArray)}
+          {SingleChatMessageArray.slice(0)
             .reverse()
             .map((message) => {
+
               if (message.senderid === receiverDetails.userid) {
                 return (
                   <ReceivedMessages
                     messagetype={message.type}
-                    payload={message.message}
+                    payload={message}
+                    chatid={receiverDetails.chatid}
                   />
                 );
               } else {
                 return (
                   <SentMessages
                     messagetype={message.type}
-                    payload={message.message}
+                    payload={message}
+                    chatid={receiverDetails.chatid}
                   />
                 );
               }
-            })}
+            }
+            )}
         </fieldset>
       </section>
 
@@ -295,7 +283,7 @@ debugger;
           <input
             type="text"
             value={newMessage}
-            placeholder='write a message for  ...'
+            placeholder="write a message for  ..."
             onChange={typingHandler}
             onKeyUp={useDebouncedCallback(keyUpHandler, 1500)}
             // onKeyDown={keyDownHandler}

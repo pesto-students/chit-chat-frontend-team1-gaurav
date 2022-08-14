@@ -1,23 +1,61 @@
 import React from "react";
 import displayImage from "Assets/display-image.png";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
 import CryptoJS from "crypto-js";
 import singletick from "Assets/single-tick.png";
 import doubletick from "Assets/double-tick.png";
 import doubletickread from "Assets/double-tick-read.png";
 import darkDocument from "Assets/dark-download.png";
 import darkThreeDot from "Assets/dark-three-dot.png";
+import starBlack from "Assets/star-black.svg";
+import axios from "axios";
 
-function SentMessages({ messagetype, payload }) {
+toast.configure();
+
+
+function SentMessages({ messagetype, payload,chatid }) {
+
+  const dispatch=useDispatch();
+
+
+  const starMessage =() =>{
+    debugger;
+      axios
+      .post('http://localhost:5000/chat/starmarkmessage',{
+        chatid:chatid,
+        messageid:payload.messageid
+      })
+      .then(res=>{
+        if(res.data.statusCode === 200){
+
+          toast.success("Message Marked Successfully!", { autoClose: 1000 });
+
+          dispatch(getStaredMessages(chatid));
+
+        }
+        else{
+          toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+        }
+      })
+      .catch(err=>{
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+      })
+  }
+
   if (messagetype === "normal-message") {
-
 
     return (
       <div className="single-message self-sent">
-        <div className="single-message-content self single-flex">{payload}
+        <div className="single-message-content self single-flex">{payload.message}
           <div className="group-tick-icon">
             <img src={doubletick} alt=""></img>
           </div>
         </div>
+        <div className="hover-star"><img src={starBlack} alt='star'></img></div>
       </div>
     );
 
@@ -27,10 +65,12 @@ function SentMessages({ messagetype, payload }) {
 
     return (
       <div className="single-message self-sent">
-        <div className="single-time-stamp">22:21</div>
-        <div className="single-message-content self last-sent-message single-flex">{payload}
-          <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
+        <div className="single-time-stamp">{new Date(payload.timestamp).getHours() + ':' + new Date(payload.timestamp).getMinutes()}</div>
+        <div className="single-message-content self last-sent-message single-flex">{payload.message}
+          <div className="group-tick-icon" ><img src={doubletick} alt=""></img></div>
+        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
         </div>
+
       </div>
     );
 
