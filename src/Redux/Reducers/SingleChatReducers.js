@@ -1,3 +1,4 @@
+import {LOAD_CURRENT_CONTACTS} from "../Types/SingleChatTypes"
 var SingleChatState = {
 
     onlineUsers:[],
@@ -8,13 +9,18 @@ var SingleChatState = {
     },
     currentContacts:[],
     curerntSingleChatDetails:[],
-
+    flag:false
 }
 
 
-function SingleChatReducer(SingleChatState ,action){
+
+export function SingleChatReducer(currentState = SingleChatState,action){
     
     switch(action.type){
-       
+        case 'CHANGE_FLAG': return {...currentState,flag:action.payload}
+        case LOAD_CURRENT_CONTACTS:
+            return {...currentState, currentContacts:action.payload};
+        default:
+            return currentState;
     }
 }

@@ -2,14 +2,24 @@ import React,{useEffect, useState} from 'react';
 import axios from 'axios';
 import {ContactCard} from "../ContactCard/ContactCard"
 import UserPic from "../../Assets/ProfilePic.png"
+import { useSelector,useDispatch } from "react-redux";
 import "./ContactList.css"
+import {loadCurrentContacts,changeflag} from "Redux/Actions/SingleChatActions"
+
 function ContactList({socket,changescreen}) {
 
   let [activeUserId, setActiveUserid] = useState('');
   const[contactlist,setcontactlist] = useState([]);
   const[groupcontactlist,setgroupcontactlist] = useState([]);
  
+  const state = useSelector((state) => console.log('state',state));
+  const dispatch=useDispatch();
+
+
   useEffect(() =>{
+   
+    dispatch(loadCurrentContacts())
+    console.log('state',state)
     axios
     .post("http://localhost:5000/chat/currentcontacts", {
       userid: localStorage.getItem("userid"),
