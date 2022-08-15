@@ -44,7 +44,6 @@ export function SingleChatReducer(currentState = SingleChatState, action) {
         receiverDetails: action.payload,
       };
       case UPDATE_CURRENT_CHAT:
-        debugger;
       return {
         ...currentState,
         SingleChatMessageArray: action.payload,

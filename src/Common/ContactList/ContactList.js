@@ -15,6 +15,8 @@ function ContactList({socket}) {
   const Groupstate = useSelector((state) => state.GroupChatReducer); 
   var {currentContacts} = state;
   var {currentGroups}=Groupstate;
+ 
+  
   const dispatch=useDispatch();
 
 
@@ -38,7 +40,7 @@ function ContactList({socket}) {
         <div className="recent-chat">
 
 
-        {currentContacts.map(contact =>{
+        {currentContacts.length!==0 && currentContacts.map(contact =>{
            return  <ContactCard   
            chatType='single' chatDetails = {contact} 
            activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
@@ -53,7 +55,7 @@ function ContactList({socket}) {
         <div className="recent-group">
      
 
-        {currentGroups.map(contact =>{
+        {currentGroups.length!==0 && currentGroups.map(contact =>{
            return  <ContactCard   
            chatType='group' activeUserId={activeUserId} setActiveUserid={setActiveUserid}  chatDetails = {contact} 
            />

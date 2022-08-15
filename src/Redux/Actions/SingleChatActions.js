@@ -57,7 +57,7 @@ export const loadCurrentChat = (chatid) => {
 
 
 export const getStaredMessages = (chatid) => {
-  debugger;
+
   return (dispatch) => {
     axios
       .post("http://localhost:5000/chat/loadchat", {
@@ -107,7 +107,6 @@ export const setReceiverDetails = (data) => {
 
 
 export const updateCurrentChat = (data) => {
-  debugger;
   return (dispatch) => {
     dispatch({
       type: UPDATE_CURRENT_CHAT,

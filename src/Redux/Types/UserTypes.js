@@ -1,0 +1,1 @@
+exports.CHANGE_VIEW = 'CHANGE_VIEW'; 

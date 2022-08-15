@@ -21,7 +21,6 @@ function SentMessages({ messagetype, payload,chatid }) {
 
 
   const starMessage =() =>{
-    debugger;
       axios
       .post('http://localhost:5000/chat/starmarkmessage',{
         chatid:chatid,

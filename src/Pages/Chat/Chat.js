@@ -23,7 +23,12 @@ toast.configure();
 function Chat() {
 
   const state = useSelector((state) => state.SingleChatReducer);  
+  const groupstate = useSelector((state) => state.GroupChatReducer);
+  const userstate = useSelector((state) => state.UserReducer);  
   var {receiverDetails} = state;
+  var {receiverGroupDetails}=groupstate
+  let {view}=userstate;
+  console.log('receiver details', receiverDetails, receiverGroupDetails);
   const dispatch=useDispatch();
 
   let navigate = useNavigate();
@@ -111,17 +116,17 @@ function Chat() {
          <ContactList socket={socket} /> 
       </section>
 
-      {JSON.stringify(receiverDetails) === '{}' ? (
+      {view=='default' ? (
         <seciton className="default-page">
           <DefaultPage />
         </seciton>
       ) : (
         <>
           <section className="main-chat-screen">
-            { JSON.stringify(receiverDetails) === '{}'? <GroupChatScreen /> : <SingleChatScreen  socket={socket}/>}
+            {view=='group' ? <GroupChatScreen /> : <SingleChatScreen  socket={socket}/>}
           </section>
           <section className="media-section">
-            {JSON.stringify(receiverDetails) === '{}'? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket}/>}
+            {view=='group' ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket}/>}
           </section>
         </>
       )}

@@ -140,7 +140,7 @@ function SingleChatScreen({ userDetails, socket }) {
           
           dispatch(updateCurrentChat(newMessageArray));
           setNewMessage("");
-          debugger;
+         
           
           if (!SingleChatInfo.senderaddedtoreceiver) {
             axios
