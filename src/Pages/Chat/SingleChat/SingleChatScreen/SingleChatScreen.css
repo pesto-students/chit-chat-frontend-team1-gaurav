@@ -427,3 +427,76 @@
 .single-footer-right-icon:hover{
     transform: translateY(-2px);
 }
+
+.send-media-screen{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    background-color: #1F2029;
+    bottom: 10vh;
+    left: 2vw;
+    border-radius: 10px;
+    padding: 2vh;
+    z-index: 2;
+    height: 60vh;
+    width: 52vw;
+}
+
+.display-image-single-send{
+    height: calc(15vh + 10vw);
+    width: calc(15vh + 10vw);
+    /* margin-top: 5vh; */
+}
+
+.image-close{
+    height: calc(1vh + 1vw);
+    width: calc(1vh + 1vw);
+    align-self: flex-end;
+    cursor: pointer;
+}
+
+.image-close img{
+    height: 100%;
+    width: 100%;
+}
+
+.display-image-single-send img{
+    height: 100%;
+    width: 100%;
+}
+
+.image-message{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top:5vh
+}
+
+.image-message input{
+    border: none;
+    outline:none;
+    width: 25vw;
+    border-radius: 10px;
+    background-color: #3B3546;
+    color:#ffffff;
+    padding: calc(1vh + .5vw);
+    font-size: 1vw;
+}
+
+.img-send {
+    height: calc(2.5vh + 1vw);
+    width: calc(2.5vh + 1.3vw);
+    margin-left: 2vw;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.img-send img{
+    height: 100%;
+    width: 100%;
+}
+
+.img-send:hover {
+   transform: translateX(3px);
+}
