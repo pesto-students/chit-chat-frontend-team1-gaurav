@@ -53,6 +53,7 @@ export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}
         else {
           dispatch(setView('group'));
           dispatch(setReceiverGroupDetails(chatDetails));
+          debugger;
           dispatch(loadCurrentGroupChat(chatDetails._id));
        
           setActiveUserid(chatDetails._id);
