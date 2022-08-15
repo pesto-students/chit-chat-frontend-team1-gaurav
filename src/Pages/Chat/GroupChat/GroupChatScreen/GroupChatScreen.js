@@ -11,12 +11,16 @@ import send  from "Assets/send.png";
 import emoji  from "Assets/emoji.png";
 import imageAttachment  from "Assets/image-attachment.png";
 import documentAttachment  from "Assets/document-attachment.png";
+import { useSelector } from 'react-redux';
 
 import "./GroupChatScreen.css";
 
 function GroupChatScreen() {
 
   const [showAttachment,setAttachmentToggle] = useState(false);
+  const groupDetails=useSelector((state)=> state.GroupChatReducer)
+
+  console.log('group Details', groupDetails);
 
   return (
     <div className='group-main-container'>
@@ -54,7 +58,6 @@ function GroupChatScreen() {
 
             <fieldset className='day-container'>
              
-            {console.clear()}
           {console.log(process.env.MESSAGE_SECRET_KEY)}
           {[].slice(0)
             .reverse()
