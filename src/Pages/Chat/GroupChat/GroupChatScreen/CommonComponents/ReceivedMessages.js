@@ -7,7 +7,7 @@ import starWhite from "Assets/star-white.svg";
 import starBlack from "Assets/star-black.svg";
 import { useDispatch } from "react-redux";
 import gmi1  from "Assets/group-message-image-1.png";
-import gmi2  from "/group-message-image-2.png";
+import gmi2  from "Assets/group-message-image-2.png";
 import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 
 

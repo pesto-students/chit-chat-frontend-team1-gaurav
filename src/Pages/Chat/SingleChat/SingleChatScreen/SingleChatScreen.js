@@ -7,15 +7,16 @@ import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
 import CryptoJS from "crypto-js";
 import axios from "axios";
-import singleHeaderImg from "../../../../Assets/single-header-img.png";
-import search from "../../../../Assets/search.png";
-import audioCall from "../../../../Assets/audio-call.png";
-import videoCall from "../../../../Assets/videocallchat.png";
-import attachment from "../../../../Assets/attachment.png";
-import send from "../../../../Assets/send.png";
-import emoji from "../../../../Assets/emoji.png";
-import imageAttachment from "../../../../Assets/image-attachment.png";
-import documentAttachment from "../../../../Assets/document-attachment.png";
+import InputEmoji from 'react-input-emoji'
+import singleHeaderImg from "Assets/single-header-img.png";
+import search from "Assets/search.png";
+import audioCall from "Assets/audio-call.png";
+import videoCall from "Assets/videocallchat.png";
+import attachment from "Assets/attachment.png";
+import send from "Assets/send.png";
+import emoji from "Assets/emoji.png";
+import imageAttachment from "Assets/image-attachment.png";
+import documentAttachment from "Assets/document-attachment.png";
 import sendMedia from "Assets/send-media.png";
 import crossWhite from "Assets/cross-white.png";
 import "./SingleChatScreen.css";
@@ -31,7 +32,7 @@ toast.configure();
 
 function SingleChatScreen({ socket }) {
   const [showAttachment, setAttachmentToggle] = useState(false);
-  const [showMeiaScreen, setMeidaToggle] = useState(false);
+  const [showMeiaScreen, setMeidaToggle] = useState(true);
   const [isuseronline, setuseronline] = useState(true);
   const [isreceivertyping, setreceivertyping] = useState(false);
   const [newMessage, setNewMessage] = useState("");
@@ -126,8 +127,8 @@ function SingleChatScreen({ socket }) {
       messageid: Math.random().toString(16).slice(2),
       message:
         messageType === "message"
-          ? CryptoJS.AES.encrypt(newMessage,process.env.MESSAGE_SECRET_KEY).toString()
-          : CryptoJS.AES.encrypt(imgMessage,'edde').toString(),
+          ? CryptoJS.AES.encrypt(newMessage,'dhruvin').toString()
+          : CryptoJS.AES.encrypt(imgMessage,'dhruvin').toString(),
      
       senderid: localStorage.getItem("userid"),
       receiverid: receiverDetails.userid,
@@ -194,6 +195,12 @@ function SingleChatScreen({ socket }) {
     setMeidaToggle(false);
     UpdateChat("image");
   };
+
+  const closeHandler = () =>{
+    setimgMessage("");
+    setSelectedFile("");
+    setMeidaToggle(false);
+  }
 
   return (
     <div className="single-main-container">
@@ -292,11 +299,9 @@ function SingleChatScreen({ socket }) {
         <div className={"send-media-screen " + (!showMeiaScreen ? "hide" : "")}>
           <div
             className="image-close"
-            onClick={() => {
-              setMeidaToggle(false);
-            }}
+            onClick={closeHandler}
           >
-            <img src={crossWhite} alt=""></img>
+            <img src={crossWhite} alt="" ></img>
           </div>
           <div className="display-image-single-send">
             <img src={selectedFile} alt=""></img>
@@ -338,8 +343,15 @@ function SingleChatScreen({ socket }) {
         </div>
 
         <div className="single-footer-right-icons">
+            <InputEmoji
+          // value={text}
+          // onChange={setText}
+          // cleanOnEnter
+          // onEnter={handleOnEnter}
+          placeholder="Type a message"
+        />
           <div className="single-footer-right-icon">
-            <img src={emoji} alt="emoji"></img>
+            {/* <img src={emoji} alt="emoji"></img> */}
           </div>
           <div className="single-footer-right-icon" onClick={sendMessage}>
             <img src={send} alt="send"></img>

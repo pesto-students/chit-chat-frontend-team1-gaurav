@@ -19,6 +19,13 @@ function SentMessages({ messagetype, payload,chatid }) {
 
   const dispatch=useDispatch();
 
+  const getDesiredTimeStamp = (timestamp) => {
+    return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
+  }
+
+  const getDecryptedMessage = (message) => {
+    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+  }
 
   const starMessage =() =>{
       axios
@@ -49,7 +56,7 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-message self-sent">
-        <div className="single-message-content self single-flex">{payload.message}
+        <div className="single-message-content self single-flex">{getDecryptedMessage(payload.message)}
           <div className="group-tick-icon">
             <img src={doubletick} alt=""></img>
           </div>
@@ -64,8 +71,8 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-message self-sent">
-        <div className="single-time-stamp">{new Date(payload.timestamp).getHours() + ':' + new Date(payload.timestamp).getMinutes()}</div>
-        <div className="single-message-content self last-sent-message single-flex">{payload.message}
+        <div className="single-time-stamp">{getDesiredTimeStamp(payload.timestamp)}</div>
+        <div className="single-message-content self last-sent-message single-flex">{getDecryptedMessage(payload.message)}
           <div className="group-tick-icon" ><img src={doubletick} alt=""></img></div>
         <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
         </div>
@@ -79,11 +86,11 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-image self-sent">
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self ">
           <div className="single-image-display"><img src={payload.url} alt=""></img>
           </div>
-          <div className="single-image-desc self-image single-flex">Done Mate
+          <div className="single-image-desc self-image single-flex">{getDecryptedMessage(payload.message)}
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
           </div>
         </div>
@@ -96,10 +103,10 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-image self-sent">
-        <div className="single-img-timestamp">{new Date(payload.timestamp).getHours() + ':' + new Date(payload.timestamp).getMinutes()}</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self last-sent-message">
           <div className="single-image-display"><img src={payload.url} alt=""></img></div>
-          <div className="single-image-desc self-image single-flex">{payload.message}
+          <div className="single-image-desc self-image single-flex">{getDecryptedMessage(payload.message)}
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
           </div>
         </div>
@@ -112,7 +119,7 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-image self-sent">
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self  document-flex">
           <div className="download-document-icon"><img src={darkDocument} alt=""></img></div>
           <div className="group-document-details">
@@ -133,7 +140,7 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-image self-sent">
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self last-sent-message document-flex">
           <div className="download-document-icon"><img src={darkDocument} alt=""></img></div>
           <div className="group-document-details">
