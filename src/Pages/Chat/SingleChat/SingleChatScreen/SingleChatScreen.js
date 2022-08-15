@@ -16,6 +16,8 @@ import send from "../../../../Assets/send.png";
 import emoji from "../../../../Assets/emoji.png";
 import imageAttachment from "../../../../Assets/image-attachment.png";
 import documentAttachment from "../../../../Assets/document-attachment.png";
+import sendMedia from "Assets/send-media.png";
+import crossWhite from "Assets/cross-white.png";
 import "./SingleChatScreen.css";
 import {
   loadCurrentChat,
@@ -27,11 +29,14 @@ import {
 
 toast.configure();
 
-function SingleChatScreen({ userDetails, socket }) {
+function SingleChatScreen({ socket }) {
   const [showAttachment, setAttachmentToggle] = useState(false);
+  const [showMeiaScreen, setMeidaToggle] = useState(false);
   const [isuseronline, setuseronline] = useState(true);
   const [isreceivertyping, setreceivertyping] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [imgMessage, setimgMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState("");
 
   const state = useSelector((state) => state.SingleChatReducer);
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =
@@ -89,9 +94,10 @@ function SingleChatScreen({ userDetails, socket }) {
     socket.current.emit("user-stops-typing", receiverDetails.userid);
   };
 
-  const sendMessage = async () => {
+  const UpdateChat = async (messageType) => {
     // let encryptedMessage = CryptoJS.AES.encrypt(newMessage, 'dhruvin').toString();
 
+    debugger;
     var updateOrder = false;
     var order = 0;
 
@@ -116,15 +122,20 @@ function SingleChatScreen({ userDetails, socket }) {
     }
 
     let messagePayload = {
-      type: "message",
-      messageid:Math.random().toString(16).slice(2),
-      message: newMessage,
+      type: messageType,
+      messageid: Math.random().toString(16).slice(2),
+      message:
+        messageType === "message"
+          ? CryptoJS.AES.encrypt(newMessage,process.env.MESSAGE_SECRET_KEY).toString()
+          : CryptoJS.AES.encrypt(imgMessage,'edde').toString(),
+     
       senderid: localStorage.getItem("userid"),
       receiverid: receiverDetails.userid,
       chatid: receiverDetails.chatid,
       updateOrder: updateOrder,
       order: order,
-      starmarked:false
+      starmarked: false,
+      url: messageType === "image" ? "Assets/send-media.png" : "",
     };
 
     axios
@@ -135,13 +146,11 @@ function SingleChatScreen({ userDetails, socket }) {
 
           dispatch(loadCurrentContacts());
 
-          
           let newMessageArray = [res.data, ...SingleChatMessageArray];
-          
+
           dispatch(updateCurrentChat(newMessageArray));
-          setNewMessage("");
-          debugger;
           
+
           if (!SingleChatInfo.senderaddedtoreceiver) {
             axios
               .post("http://localhost:5000/chat/addSenderToReceiver", {
@@ -172,6 +181,18 @@ function SingleChatScreen({ userDetails, socket }) {
       .catch((err) => {
         toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
       });
+  };
+
+  const sendMessage = () =>{
+    setNewMessage("");
+    UpdateChat('message');
+  }
+
+  const sendImage = () => {
+    setimgMessage("");
+    setSelectedFile("");
+    setMeidaToggle(false);
+    UpdateChat("image");
   };
 
   return (
@@ -224,12 +245,11 @@ function SingleChatScreen({ userDetails, socket }) {
       <section className="single-main-section">
         <fieldset className="day-container">
           <legend> Yesterday </legend>
-
-          {console.log(SingleChatMessageArray)}
+          {console.clear()}
+          {console.log(process.env.MESSAGE_SECRET_KEY)}
           {SingleChatMessageArray.slice(0)
             .reverse()
             .map((message) => {
-
               if (message.senderid === receiverDetails.userid) {
                 return (
                   <ReceivedMessages
@@ -247,8 +267,7 @@ function SingleChatScreen({ userDetails, socket }) {
                   />
                 );
               }
-            }
-            )}
+            })}
         </fieldset>
       </section>
 
@@ -267,6 +286,34 @@ function SingleChatScreen({ userDetails, socket }) {
               <img src={documentAttachment} alt="img-attachment"></img>
             </div>
             <div className="single-attachment-text">Documents</div>
+          </div>
+        </div>
+
+        <div className={"send-media-screen " + (!showMeiaScreen ? "hide" : "")}>
+          <div
+            className="image-close"
+            onClick={() => {
+              setMeidaToggle(false);
+            }}
+          >
+            <img src={crossWhite} alt=""></img>
+          </div>
+          <div className="display-image-single-send">
+            <img src={selectedFile} alt=""></img>
+          </div>
+          <div className="image-message">
+            <input
+              type="text"
+              //  onChange={typingHandler}
+              placeholder="Type a Message...."
+              value={imgMessage}
+              onChange={(e) => {
+                setimgMessage(e.target.value);
+              }}
+            ></input>
+            <div className="img-send" onClick={sendImage}>
+              <img src={sendMedia} alt=""></img>
+            </div>
           </div>
         </div>
 

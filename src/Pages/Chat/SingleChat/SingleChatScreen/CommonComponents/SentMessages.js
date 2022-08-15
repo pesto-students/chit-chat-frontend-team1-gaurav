@@ -21,7 +21,6 @@ function SentMessages({ messagetype, payload,chatid }) {
 
 
   const starMessage =() =>{
-    debugger;
       axios
       .post('http://localhost:5000/chat/starmarkmessage',{
         chatid:chatid,
@@ -82,7 +81,7 @@ function SentMessages({ messagetype, payload,chatid }) {
       <div className="single-image self-sent">
         <div className="single-img-timestamp">22:21</div>
         <div className="single-image-content self ">
-          <div className="single-image-display"><img src={displayImage} alt=""></img>
+          <div className="single-image-display"><img src={payload.url} alt=""></img>
           </div>
           <div className="single-image-desc self-image single-flex">Done Mate
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
@@ -97,10 +96,10 @@ function SentMessages({ messagetype, payload,chatid }) {
 
     return (
       <div className="single-image self-sent">
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{new Date(payload.timestamp).getHours() + ':' + new Date(payload.timestamp).getMinutes()}</div>
         <div className="single-image-content self last-sent-message">
-          <div className="single-image-display"><img src={displayImage} alt=""></img></div>
-          <div className="single-image-desc self-image single-flex">Done Mate
+          <div className="single-image-display"><img src={payload.url} alt=""></img></div>
+          <div className="single-image-desc self-image single-flex">{payload.message}
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
           </div>
         </div>

@@ -22,7 +22,7 @@ export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}
   
 
     // var isActive =(activeUserId === ((chatDetails !== undefined)?chatDetails.userid:''));
-debugger;
+
     var isActive;
 
     if(chatType === 'single'){
