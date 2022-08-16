@@ -1,5 +1,5 @@
 import {
-    LOAD_CURRENT_GROUPS,LOAD_CURRENT_GROUPCHAT,SET_RECEIVER_GROUPDETAILS
+    LOAD_CURRENT_GROUPS,LOAD_CURRENT_GROUPCHAT,SET_RECEIVER_GROUPDETAILS,UPDATE_MESSAGE_ARRAY
   } from "../Types/GroupChatTypes";
 
 var GroupChatState = {
@@ -20,6 +20,9 @@ var GroupChatState = {
       
       case SET_RECEIVER_GROUPDETAILS:
         return {...currentState, receiverGroupDetails:action.payload}  
+
+        case UPDATE_MESSAGE_ARRAY:
+          return {...currentState, GroupChatMessageArray:[action.payload,...currentState.GroupChatMessageArray]} 
       default:
         return currentState;
     }

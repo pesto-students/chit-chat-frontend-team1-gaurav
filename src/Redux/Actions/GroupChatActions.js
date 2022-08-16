@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-    LOAD_CURRENT_GROUPS,LOAD_CURRENT_GROUPCHAT,SET_RECEIVER_GROUPDETAILS
+    LOAD_CURRENT_GROUPS,LOAD_CURRENT_GROUPCHAT,SET_RECEIVER_GROUPDETAILS,UPDATE_MESSAGE_ARRAY
   } from "../Types/GroupChatTypes";
  
   export const loadCurrentGroups = () => {
@@ -52,6 +52,16 @@ import {
     return (dispatch) => {
       dispatch({
         type: SET_RECEIVER_GROUPDETAILS,
+        payload: data,
+      });
+    };
+  };
+
+
+  export const updateMessageArray = (data) => {
+    return (dispatch) => {
+      dispatch({
+        type: UPDATE_MESSAGE_ARRAY,
         payload: data,
       });
     };

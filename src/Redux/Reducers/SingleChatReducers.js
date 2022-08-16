@@ -44,9 +44,10 @@ export function SingleChatReducer(currentState = SingleChatState, action) {
         receiverDetails: action.payload,
       };
       case UPDATE_CURRENT_CHAT:
+        
       return {
         ...currentState,
-        SingleChatMessageArray: action.payload,
+        SingleChatMessageArray: [action.payload,...currentState.SingleChatMessageArray],
       };
       case GET_STARED_MESSAGES:
         return {

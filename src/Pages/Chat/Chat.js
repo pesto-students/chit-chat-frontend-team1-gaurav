@@ -123,7 +123,7 @@ function Chat() {
       ) : (
         <>
           <section className="main-chat-screen">
-            {view=='group' ? <GroupChatScreen /> : <SingleChatScreen  socket={socket}/>}
+            {view=='group' ? <GroupChatScreen socket={socket} /> : <SingleChatScreen  socket={socket}/>}
           </section>
           <section className="media-section">
             {view=='group' ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket}/>}

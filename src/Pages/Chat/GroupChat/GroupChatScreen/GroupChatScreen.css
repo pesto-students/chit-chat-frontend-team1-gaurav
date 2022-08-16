@@ -98,9 +98,10 @@
 }
 
 .group-main-section {
+  display: flex;
+  flex-direction: column-reverse;
   background: #2b2c34;
   padding: 2vw;
-  /* position: relative; */
   height: 82vh;
   overflow-y: scroll;
 }
@@ -111,10 +112,14 @@
   border-right: none !important;
   border-bottom: none !important;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   margin-bottom: 3vh;
   width: 100%;
   align-self: flex-end;
+}
+
+.day-container:last-child{
+  margin-bottom: 0;
 }
 
 .day-container legend {

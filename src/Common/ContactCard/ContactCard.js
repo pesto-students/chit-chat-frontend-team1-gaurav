@@ -1,31 +1,49 @@
 import React,{useState} from "react";
 import { useDispatch } from "react-redux";
+import CryptoJS from "crypto-js";
 import Sample from "../../Assets/SampleUserImg1.png";
 import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
 import { setReceiverGroupDetails, loadCurrentGroupChat } from "../../Redux/Actions/GroupChatActions";
 import { setView } from "../../Redux/Actions/UserActions";
+import doubletick from "Assets/double-tick.png";
+
 import "./ContactCard.css";
 
 
 
 
-export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}) {
+export  function ContactCard({socket,chatDetails,chatType,activeUserId,setActiveUserid}) {
 
   const dispatch=useDispatch();
+
+  const getTimeStamp = (timestamp) => {
+    
+     if(timestamp === "" || timestamp === undefined || timestamp === null) {
+      return '';
+     }
+     else{
+
+      return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
+     }
+  }
+
+  const getDecryptedMessage = (message) => {
+    return message === undefined?'': CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8);
+  }
 
  
     let mockProps = {
       profileImg: Sample,
       name: chatDetails?chatDetails.username:'',
-      lastChatMessage: "See ya!!",
-      lastChatTime: "12:12",
+      lastChatMessage: chatDetails?getDecryptedMessage(chatDetails.lastMessage):'',
+      lastChatTime: chatDetails?getTimeStamp(chatDetails.timestamp):'',
       unseenMsgs:'2'
     };
     if(chatType === 'single'){
        var {username,userid,chatid}=chatDetails
     }
     else{
-       var {_id,name:username,membersArray}=chatDetails
+       var {groupid,groupname:username,groupmembersarray}=chatDetails
     }
 
     // var isActive =(activeUserId === ((chatDetails !== undefined)?chatDetails.userid:''));
@@ -37,7 +55,7 @@ export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}
       }
     }
     else{
-      if(activeUserId === ((chatDetails !== undefined)?chatDetails._id:'')){
+      if(activeUserId === ((chatDetails !== undefined)?chatDetails.groupid:'')){
         isActive = true;
       }
     }
@@ -53,10 +71,9 @@ export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}
         else {
           dispatch(setView('group'));
           dispatch(setReceiverGroupDetails(chatDetails));
-          debugger;
-          dispatch(loadCurrentGroupChat(chatDetails._id));
-       
-          setActiveUserid(chatDetails._id);
+          dispatch(loadCurrentGroupChat(chatDetails.groupid));
+          setActiveUserid(chatDetails.groupid);
+          socket.current.emit('join-group',chatDetails.groupid);
         }
     }
 
@@ -74,12 +91,15 @@ export  function ContactCard({chatDetails,chatType,activeUserId,setActiveUserid}
   
         <div className="chat-profile-details">
           <h3>{username}</h3>
-          <span>{mockProps.lastChatMessage}</span>
+          <span>
+            {chatDetails.sent &&
+            <div className='tick-icon-contact'><img src={doubletick} alt=''></img></div>}
+             {mockProps.lastChatMessage}</span>
         </div>
   
         <div className="time">
           <span>{mockProps.lastChatTime}</span>
-          <span className="unseen">{mockProps.unseenMsgs}</span>
+          {/* <span className="unseen">{mockProps.unseenMsgs}</span> */}
         </div>
       </div>
     );

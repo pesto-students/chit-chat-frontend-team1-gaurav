@@ -54,9 +54,9 @@ function ContactList({socket}) {
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
      
-
+     
         {currentGroups.length!==0 && currentGroups.map(contact =>{
-           return  <ContactCard   
+           return  <ContactCard  socket={socket}
            chatType='group' activeUserId={activeUserId} setActiveUserid={setActiveUserid}  chatDetails = {contact} 
            />
         })}

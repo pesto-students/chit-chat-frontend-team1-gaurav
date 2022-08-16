@@ -13,48 +13,57 @@ import axios from "axios";
 toast.configure();
 
 
-function SentMessages({ messagetype, payload,chatid }) {
+function SentMessages({ messagetype, payload,shouldBeRound }) {
 
-  if (messagetype === "normal-message") {
+  const getDesiredTimeStamp = (timestamp) => {
+    return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
+  }
+
+  const getDecryptedMessage = (message) => {
+    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+  }
+
+
+  if (messagetype === "message" && shouldBeRound) {
 
     return (
         <div className='group-message self-sent'>
         <div className='group-message-image'></div>
         <div className='group-message-content self'>
-              <div className='group-message-message self group-flex'>hiking tomorrow? <div className='group-tick-icon'><img src={singletick} alt=''></img></div></div>
+              <div className='group-message-message self group-flex'>{getDecryptedMessage(payload.message)} <div className='group-tick-icon'><img src={singletick} alt=''></img></div></div>
         </div>
     </div>
     );
 
 
-  } else if (messagetype === "message") {
+  } else if (messagetype === "message" && !shouldBeRound) {
 
 
     return (
         <div className='group-message self-sent'>
-        <div className='group-time-stamp'>22:21</div>
+        <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className='group-message-content self last-sent-message'>
-              <div className='group-message-message self group-flex'>hiking tomorrow? <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
+              <div className='group-message-message self group-flex'>{getDecryptedMessage(payload.message)} <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
         </div>
     </div>
     );
 
 
-  } else if (messagetype === "normal-image") {
+  } else if (messagetype === "normal-image" && shouldBeRound) {
 
 
     return (
         <div className='group-message self-sent'>
-        <div className='group-time-stamp'>22:21</div>
+        <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
              <div className='group-image-content self last-sent-message'>
                  <div className='group-image-display'><img src={displayImage} alt=''></img></div>
-                 <div className='group-image-desc self group-flex'>Done Mate <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>    
+                 <div className='group-image-desc self group-flex'>{getDecryptedMessage(payload.message)}<div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>    
              </div>
      </div> 
     );
 
 
-  } else if (messagetype === "image") {
+  } else if (messagetype === "image" && !shouldBeRound) {
 
 
     return (
@@ -76,7 +85,7 @@ function SentMessages({ messagetype, payload,chatid }) {
     return (
     
         <div className='group-message self-sent'>
-        <div className='group-time-stamp'>22:21</div>
+        <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
              <div className='group-image-content self last-sent-message'>
                 <div className='group-document-header align-end'>
                   <div className='three-dot-icon'><img src={darkThreeDot} alt=''></img></div>

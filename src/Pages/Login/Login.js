@@ -44,6 +44,10 @@ function Login() {
             localStorage.setItem('order',JSON.stringify(['',0]));
           }
 
+          if(localStorage.getItem('grouporder') === undefined || localStorage.getItem('grouporder') === '' || localStorage.getItem('grouporder') === null){
+            localStorage.setItem('grouporder',JSON.stringify(['',0]));
+          }
+
           toast.success("Logged in Successfully!!", { autoClose: 1000 });
           navigate("/chat");
         }

@@ -1,10 +1,11 @@
+import { useSelector, useDispatch } from "react-redux";
+import CryptoJS from "crypto-js";
 import React from "react";
 import smi1 from "../../../../Assets/single-media-i-1.png";
 import spm1 from "../../../../Assets/single-pdf-media.png";
 import starReveived from "../../../../Assets/star-received.svg";
 import starSent from "../../../../Assets/star-sent.svg";
 import "./SingleMediaSection.css";
-import { useSelector, useDispatch } from "react-redux";
 
 function SingleMediaSection() {
   const state = useSelector((state) => state.SingleChatReducer);
@@ -40,6 +41,10 @@ function SingleMediaSection() {
         break;
     }
   };
+
+  const getDecryptedMessage = (message) => {
+    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+  }
 
   return (
     <>
@@ -162,7 +167,7 @@ function SingleMediaSection() {
                   <>
                     <div className="single-message width-90">
                       <div className="single-message-content last-reveived-message star-flex">
-                        {message.message}
+                        {getDecryptedMessage(message.message)}
                         <div className="single-star-received-icon">
                           <img src={starReveived} alt=""></img>
                         </div>{" "}
@@ -184,7 +189,7 @@ function SingleMediaSection() {
                         <div className="single-star-sent-icon">
                           <img src={starSent} alt=""></img>
                         </div>
-                        {message.message}
+                        {getDecryptedMessage(message.message)}
                       </div>
                     </div>
                     <div className="single-time-stamp self-sent-timestamp end">

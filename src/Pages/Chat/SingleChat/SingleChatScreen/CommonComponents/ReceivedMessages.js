@@ -11,7 +11,7 @@ import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Action
 
 
 
-function ReceivedMessages({ messagetype, payload ,chatid}) {
+function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
 
   const dispatch=useDispatch();
 
@@ -46,30 +46,41 @@ function ReceivedMessages({ messagetype, payload ,chatid}) {
     })
 }
 
-  if (messagetype === "normal-message") {
-
-
-    return (
-      <div className="single-message">
-        <div className="single-message-content">{getDecryptedMessage(payload.message)}</div>
-      </div>
-    );
-
-
-  } else if (messagetype === "message") {
-
+  if (messagetype === "message" && shouldBeRound) {
 
     return (
-      <div className="single-message">
-        <div className="single-message-content last-reveived-message">{getDecryptedMessage(payload.message)}
-        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
+      <div className="single-message ">
+        <div className="single-message-content  single-flex">
+          {getDecryptedMessage(payload.message)}
+        <div className="hover-star-white" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
         </div>
-        <div className="single-time-stamp">{getDesiredTimeStamp(payload.timestamp)} </div>
       </div>
     );
 
 
-  } else if (messagetype === "normal-image") {
+  } else if (messagetype === "message" && !shouldBeRound) {
+
+
+    return (
+      <div className="single-message">
+        <div className="single-message-content last-reveived-message single-flex">{getDecryptedMessage(payload.message)}
+        <div className="hover-star-white" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
+        </div>
+        <div className="single-time-stamp">
+        <div className="hover-star" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
+          {getDesiredTimeStamp(payload.timestamp)}
+
+           </div>
+      </div>
+
+
+    );
+
+
+
+
+
+  } else if (messagetype === "image" && shouldBeRound) {
 
     
     return (
@@ -84,7 +95,7 @@ function ReceivedMessages({ messagetype, payload ,chatid}) {
     );
 
 
-  } else if (messagetype === "image") {
+  } else if (messagetype === "image" && !shouldBeRound) {
 
 
     return (

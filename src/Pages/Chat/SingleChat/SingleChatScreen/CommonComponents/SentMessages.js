@@ -10,12 +10,14 @@ import doubletickread from "Assets/double-tick-read.png";
 import darkDocument from "Assets/dark-download.png";
 import darkThreeDot from "Assets/dark-three-dot.png";
 import starBlack from "Assets/star-black.svg";
+import starWhite from "Assets/star-white.svg";
+
 import axios from "axios";
 
 toast.configure();
 
 
-function SentMessages({ messagetype, payload,chatid }) {
+function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
 
   const dispatch=useDispatch();
 
@@ -52,36 +54,38 @@ function SentMessages({ messagetype, payload,chatid }) {
       })
   }
 
-  if (messagetype === "normal-message") {
+  if (messagetype === "message" && shouldBeRound) {
 
     return (
       <div className="single-message self-sent">
-        <div className="single-message-content self single-flex">{getDecryptedMessage(payload.message)}
+        <div className="single-message-content self single-flex">
+        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
+          {getDecryptedMessage(payload.message)}
           <div className="group-tick-icon">
             <img src={doubletick} alt=""></img>
           </div>
         </div>
-        <div className="hover-star"><img src={starBlack} alt='star'></img></div>
       </div>
     );
 
 
-  } else if (messagetype === "message") {
+  } else if (messagetype === "message" && !shouldBeRound) {
 
 
     return (
       <div className="single-message self-sent">
         <div className="single-time-stamp">{getDesiredTimeStamp(payload.timestamp)}</div>
-        <div className="single-message-content self last-sent-message single-flex">{getDecryptedMessage(payload.message)}
-          <div className="group-tick-icon" ><img src={doubletick} alt=""></img></div>
+        <div className="single-message-content self last-sent-message single-flex">
         <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
+          {getDecryptedMessage(payload.message)}
+          <div className="group-tick-icon" ><img src={doubletick} alt=""></img></div>
         </div>
 
       </div>
     );
 
 
-  } else if (messagetype === "normal-image") {
+  } else if (messagetype === "image" && shouldBeRound) {
 
 
     return (
@@ -98,7 +102,7 @@ function SentMessages({ messagetype, payload,chatid }) {
     );
 
 
-  } else if (messagetype === "image") {
+  } else if (messagetype === "image" && !shouldBeRound) {
 
 
     return (
@@ -114,7 +118,7 @@ function SentMessages({ messagetype, payload,chatid }) {
     );
 
 
-  } else if (messagetype === "normal-document") {
+  } else if (messagetype === "document" && shouldBeRound) {
 
 
     return (
@@ -135,7 +139,7 @@ function SentMessages({ messagetype, payload,chatid }) {
     );
 
 
-  } else if (messagetype === "document") {
+  } else if (messagetype === "document" && !shouldBeRound) {
 
 
     return (

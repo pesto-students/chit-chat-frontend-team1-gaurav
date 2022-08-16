@@ -14,6 +14,7 @@ import {
 // }
 
 export const loadCurrentContacts = () => {
+  
   return (dispatch) => {
     axios
       .post("http://localhost:5000/chat/currentcontacts", {
