@@ -119,17 +119,115 @@
     justify-content: space-between;
     align-items: center;
     padding: calc(1vh + 1vw);
-    /* background-image: linear-gradient(to right,#d3d3d3, #48dbfb); */
-    background-color: #F7E6A6;
+    /* background-image: linear-gradient(to right, #aef1df,#b8e3d7); */
+    background-image: linear-gradient(to right, #448e41,#6ce167);
+    /* background-color: #b8e3d7; */
     border-bottom: 1px solid rgba(128, 128, 128, 0.4);
     height: 9vh;
 }
 
 .someone-calling{
-    color: #000000;
-    font-size: calc(2vh + 1vw);
+    color: #eeeaea;
+    font-size: calc(2vh + .7vw);
+    font-weight: 550;
+    text-transform: capitalize;
 }
 
+.action-buttons{
+    display: flex;
+}
+
+.action-button{
+    display: flex;  
+    align-items: center;
+    padding:  calc(.2vh + .1vw) calc(.5vh + .3vw);
+    color:#ffffff;
+    border: none;
+    outline: none;
+    border-radius: 7px;
+    font-size: calc(1vh + .5vw);
+    cursor: pointer;
+}
+
+.accept-button{
+    background-color: #0f9b0f;
+    animation: pulse 1.3s infinite;
+    animation-delay: 0.3s
+}
+
+.reject-button{
+    background-color: #F41D1D;
+    margin-left: 1vw;
+}
+
+.reject{
+    height: calc(3vh + .7vw);
+    width: calc(3vh + .7vw);
+    margin-top: 1vh;
+}
+
+.reject img{
+    height: 100%;
+    width: 100%;
+}
+
+.call-images{
+    height:calc(1.5vh + .5vw);
+    width:calc(1.5vh + .5vw);
+    margin-right: .3vw;
+}
+
+.call-images img{
+    height:100%;
+    width:100%;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-2px);
+
+    }
+
+    100% {
+        transform: translateY(0px);
+
+    }
+}
+
+
+.self-calling-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(1vh + 1vw);
+    background-image: linear-gradient(to right, #aef1df,#b8e3d7);
+    height: 9vh;
+}
+
+.calling{
+    color: #3c3939;
+    font-size: calc(2vh + 1vw);
+    font-weight: 550;
+    text-transform: capitalize;
+}
+
+.pulse{
+    animation: pulse 1.3s infinite;
+    animation-delay: 0.3s 
+}
+
+.call-rejected{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(1vh + 1vw);
+    background-image: linear-gradient(to right, #ce1111,#e93737);
+    height: 9vh;
+}
 
 .single-main-section {
     display: flex;

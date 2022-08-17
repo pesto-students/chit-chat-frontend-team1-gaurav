@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { toast } from "react-toastify";
+import { Peer } from "peerjs";
 import { useSelector, useDispatch } from "react-redux";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
+import VideoScreen from "Common/VideoScreen/VideoScreen"
 import { useDebouncedCallback } from "use-debounce";
 import CryptoJS from "crypto-js";
 import axios from "axios";
@@ -13,6 +15,8 @@ import singleHeaderImg from "Assets/single-header-img.png";
 import search from "Assets/search.png";
 import audioCall from "Assets/audio-call.png";
 import videoCall from "Assets/videocallchat.png";
+import callreject from "Assets/call-reject.png";
+import callAccept from "Assets/call-accept-white.png";
 import attachment from "Assets/attachment.png";
 import send from "Assets/send.png";
 import emoji from "Assets/emoji.png";
@@ -33,19 +37,38 @@ function SingleChatScreen({ socket }) {
 
   const dispatch = useDispatch();  
 
+
+  const peerInstance=useRef(null);
+  const currentUserVideoRef=useRef(null);
+  const remoteVideoRef=useRef(null) 
+
+
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [showMediaScreen, setMediaToggle] = useState(false);
   const [isuseronline, setuseronline] = useState(true);
   const [isreceivertyping, setreceivertyping] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
+  const [calling, setCalling] = useState(false);
+  const [incomingCall, setIncomingCall] = useState(false);
+  const [callRejected, setCallRejected] = useState(false);
+  const [showVideoScreen,setVideoScreen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [imgMessage, setimgMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState("");
+  const [peerId,setPeerId]=useState('');
 
   const state = useSelector((state) => state.SingleChatReducer);
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } = state;
 
   // Checks if Receiver is online when we start conversation
   useEffect(() => {
+    const peer=new Peer();
+
+    peer.on('open',id=>{
+      setPeerId(id);
+    })
+  peerInstance.current=peer;
+
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);
@@ -53,8 +76,35 @@ function SingleChatScreen({ socket }) {
       } else {
         setuseronline(false);
       }
-    }
+    };
+
   }, []);
+
+  useEffect(() => {
+debugger;
+    if(peerInstance.current !== null){
+
+    peerInstance.current.on('call',call=>{
+    
+      
+
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
+  
+      getUserMedia({video:true,audio:true},mediaStream =>{
+      currentUserVideoRef.current.srcObject=mediaStream;
+      currentUserVideoRef.current.play();
+  
+      call.answer(mediaStream);
+      call.on('stream',(remoteStream)=>{
+        remoteVideoRef.current.srcObject=remoteStream;
+        remoteVideoRef.current.play();
+      })  
+    })
+    
+    })
+  }
+  },[peerInstance])
+
 
   // to load received chat real time and set typing status real time
   useEffect(() => {
@@ -72,6 +122,46 @@ function SingleChatScreen({ socket }) {
       socket.current.on("receiver-stops-typing", (data) => {
         setreceivertyping(false);
       });
+
+      socket.current.on("incoming-call", (data) => {
+        setShowHeader(false);
+        setIncomingCall(true);
+      });
+
+      socket.current.on("call-cancled", (data) => {
+        setIncomingCall(false);
+        setShowHeader(true);
+      });
+
+      socket.current.on("call-rejected", (data) => {
+         setTimeout(() => {
+          setCallRejected(false);
+          setShowHeader(true);
+        }, 1500);
+
+        setCalling(false);
+        setCallRejected(true);
+
+      });
+
+      socket.current.on("call-Accepted", (data) => {
+   
+        setVideoScreen(true);
+
+        var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
+   
+        getUserMedia({video:true,audio:true},mediaStream =>{
+          currentUserVideoRef.current.srcObject=mediaStream;
+          currentUserVideoRef.current.play();
+          
+          const call = peerInstance.current.call(data.peerid, mediaStream)
+          call.on('stream',(remoteStream)=>{
+            remoteVideoRef.current.srcObject=remoteStream;
+            remoteVideoRef.current.play();
+          })
+        })
+
+     });
 
     }
   }, [socket]);
@@ -136,6 +226,35 @@ function SingleChatScreen({ socket }) {
     setimgMessage("");
     setSelectedFile("");
     setMediaToggle(false);
+  }
+
+  const callUser = () => {
+
+
+
+    setShowHeader(false);
+    setCalling(true);
+  
+    socket.current.emit('call-user',{userid:receiverDetails.userid});
+
+  }
+
+  const cancleCalling = () => {
+    socket.current.emit('cancle-call',{userid:receiverDetails.userid});
+    setShowHeader(true);
+    setCalling(false);
+  }
+
+  const rejectIncomingCall = () => {
+    socket.current.emit('reject-incoming-call',{userid:receiverDetails.userid});
+    setIncomingCall(false);
+    setShowHeader(true);
+  }
+
+
+  const AnswerCall = () => {
+    socket.current.emit('accept-incoming-call',{userid:receiverDetails.userid,peerid:peerId})
+    setVideoScreen(true);
   }
 
 
@@ -225,7 +344,7 @@ function SingleChatScreen({ socket }) {
 
 
   const filterChatDateWise = (chatArray) => {
-debugger
+
     if(chatArray.length > 0){
     let firstDate = chatArray[0].timestamp;
     let lastDate = chatArray[chatArray.length - 1].timestamp;
@@ -238,7 +357,9 @@ debugger
 
   return (
     <div className="single-main-container">
-      <header className="single-chat-header">
+
+
+      {showHeader && <header className="single-chat-header">
         <div className="single-header-leftbar">
           <div className="single-header-logo">
             <img src={singleHeaderImg} alt="chat-logo"></img>
@@ -269,7 +390,7 @@ debugger
         </div>
 
         <div className="single-header-icons">
-          <div className="right-icons video-call-single">
+          <div className="right-icons video-call-single" onClick={callUser}>
             <img src={videoCall} alt="video-call"></img>
           </div>
           <div className="right-icons">
@@ -279,15 +400,37 @@ debugger
             <img src={search} alt="search"></img>
           </div>
         </div>
-      </header>
+      </header>}
 
-      {/* <header className="single-calling-header">
-          <div className="someone-calling">Hardik is Calling...</div>
+      {incomingCall && <header className="single-calling-header">
+          <div className="someone-calling">{receiverDetails.username} is Calling...</div>
           <div className="action-buttons">
-            <button className="accept-button">Accept</button>
-            <button className="reject-button">Reject</button>
+            <button className="action-button accept-button" onClick={AnswerCall}><div className="call-images"><img src={callAccept} alt=""></img></div>Accept</button>
+            <button className="action-button reject-button" onClick={rejectIncomingCall}><div className="reject"><img src={callreject} alt=""></img></div>Reject</button>
           </div>
-      </header> */}
+      </header>}
+
+
+      {calling && <header className="self-calling-header">
+          <div className="calling">Calling {receiverDetails.username}...</div>
+          <div className="action-buttons">
+            <button className="action-button reject-button pulse" onClick={cancleCalling}><div className="reject"><img src={callreject} alt=""></img></div>Cancel</button>
+          </div>
+         
+      </header>}
+
+      {callRejected && <header className="call-rejected">
+          <div className="someone-calling">Call Rejected...</div>
+       
+      </header>}
+
+    {showVideoScreen &&  <div className='Video-Container'>
+         <div className='Receiver-Screen'>  <video ref={currentUserVideoRef}/>
+            <div className='sender-screen'> <video ref={remoteVideoRef}/> </div>
+        </div>
+    </div>}
+    {/* <VideoScreen /> */}
+        
 
       {/* Main - section  */}
 
@@ -388,6 +531,8 @@ debugger
         <div className="single-right-footer"></div>
       </footer>
     </div>
+
+
   );
 }
 
