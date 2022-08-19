@@ -20,3 +20,8 @@ ul {
   justify-content: space-between;
   margin-top: 3vh;
 }
+
+.error-msg{
+  color: white;
+  padding-left: 10px;
+}
