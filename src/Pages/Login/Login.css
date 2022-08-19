@@ -137,6 +137,11 @@
     font-size: 1.1rem;
     font-weight: 600;
   }
+
+  .btnLogin button:disabled{
+    background-color:#89cff0;
+    color: white;
+  }
   
   .btnLogin button:hover {
     cursor: pointer;
@@ -196,3 +201,5 @@
     
   }
 
+
+ 

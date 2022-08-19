@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 import Logo from "../../Assets/Logo.png";
+import VideoScreen from "../../Common/VideoScreen/VideoScreen";
 
 
 toast.configure();
@@ -16,15 +17,30 @@ function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
+  const [error,setError]=useState({phoneNumber:'',password:''});
+
   let navigate = useNavigate();
 
   const phoneNumberHandler = (e) => {
+    phoneNumberValidator(e.target.value)
     setPhoneNumber(e.target.value);
   };
 
   const passwordHandler = (e) => {
     setPassword(e.target.value);
   };
+
+  const phoneNumberValidator=(value)=>{
+  let phonereg=/^[0-9]*$/
+  let result=value.match(phonereg);
+  console.log('here',result,value)
+  if(!result){
+    setError((prev)=>{return {...prev,phoneNumber:'Enter a valid phone number'}})
+  }
+  else{
+    setError((prev)=>{return {...prev,phoneNumber:''}})
+  }
+  }
 
   const loginHandler = () => {
     
@@ -84,12 +100,13 @@ function Login() {
             <h1 className="h1">Welcome Back</h1>
 
             <span className="span">Please enter your details</span>
-
+            <>
             <div class="row login-phone">
               <input className="input-login" value={phoneNumber} onChange={phoneNumberHandler} placeholder="Phone Number"/>
               <div className="phone-icon-login"></div>
             </div>
-
+           {error.phoneNumber && <span className="error-msg">{error.phoneNumber}</span>}
+            </>
 
             <div class="row login-pass">
               <input className="input-login" value={password} onChange={passwordHandler}  type="password" placeholder="Enter Password"/>
@@ -103,7 +120,7 @@ function Login() {
 
 
             <div className="btnLogin">
-              <button onClick={loginHandler}>Log In</button>
+              <button disabled={error.phoneNumber} onClick={loginHandler}>Log In</button>
             </div>
 
 
