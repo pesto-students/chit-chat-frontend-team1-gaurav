@@ -117,8 +117,8 @@ function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
         <div className="single-image-content document-flex">
           <div className="download-document-icon"><img src={downloadDocument} alt=""></img></div>
           <div className="group-document-details">
-            <div className="single-document-name">tourist Location.pdf</div>
-            <div className="single-document-detail">12MB <span>pdf</span></div>
+            <div className="single-document-name">{payload.message.documentName}</div>
+            <div className="single-document-detail">{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
           </div>
           <div className="three-dot-icon"><img src={threeDot} alt=""></img></div>
         </div>
@@ -135,8 +135,8 @@ function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
         <div className="single-image-content last-reveived-message document-flex">
           <div className="download-document-icon"><img src={downloadDocument} alt=""></img></div>
           <div className="group-document-details">
-            <div className="single-document-name">tourist Location.pdf</div>
-            <div className="single-document-detail">12MB <span>pdf</span></div>
+            <div className="single-document-name">{payload.message.documentName}</div>
+            <div className="single-document-detail">{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
           </div>
           <div className="three-dot-icon"><img src={threeDot} alt=""></img></div>
         </div>

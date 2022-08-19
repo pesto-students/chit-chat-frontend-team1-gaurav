@@ -61,10 +61,12 @@ export const getStaredMessages = (chatid) => {
 
   return (dispatch) => {
     axios
-      .post("http://localhost:5000/chat/loadchat", {
+      .post("http://localhost:5000/chat/loadstarmessages", {
+        userid:localStorage.getItem('userid'),
         chatid: chatid,
       })
       .then((res) => {
+        debugger;
         dispatch({
           type: GET_STARED_MESSAGES,
           payload: res.data,

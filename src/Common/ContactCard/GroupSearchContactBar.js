@@ -18,6 +18,7 @@ function GroupSearchContactBar({chatDetails,selectedContacts,setSelectedContacts
 
   let navigate = useNavigate();
   const dispatch=useDispatch();
+  
      console.log('chatDetails',chatDetails);
     let mockProps = {
         profileImg: Sample,

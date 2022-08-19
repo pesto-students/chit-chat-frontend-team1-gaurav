@@ -107,8 +107,6 @@ function GroupMediaSection() {
           >
             <div className="online-members">Online-{onlineMembers.length}</div>
             <div className="online-list">
-              {console.clear()}
-              {console.log(onlineMembers)}
               {onlineMembers.map((member) => {
                 return (
                   <>

@@ -24,3 +24,10 @@ code {
   background-color: rgba(128, 128, 128, 0.5);
   outline: none;
 }
+
+video{
+  height: 100%;
+  width: 100%;
+  object-fit: fill;
+  border-radius: 10px;
+}

@@ -32,8 +32,11 @@ function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
   const starMessage =() =>{
       axios
       .post('http://localhost:5000/chat/starmarkmessage',{
+        userid:localStorage.getItem('userid'),
         chatid:chatid,
-        messageid:payload.messageid
+        message:payload.message,
+        timestamp:payload.timestamp,
+        type:'sent'
       })
       .then(res=>{
         if(res.data.statusCode === 200){
@@ -127,9 +130,9 @@ function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
         <div className="single-image-content self  document-flex">
           <div className="download-document-icon"><img src={darkDocument} alt=""></img></div>
           <div className="group-document-details">
-            <div className="single-document-name self">tourist Location.pdf</div>
+            <div className="single-document-name self">{payload.message.documentName}</div>
             <div className="single-document-detail single-flex">
-              <div>12MB <span>pdf</span></div>
+              <div>{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
               <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
             </div>
           </div>
@@ -148,9 +151,9 @@ function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
         <div className="single-image-content self last-sent-message document-flex">
           <div className="download-document-icon"><img src={darkDocument} alt=""></img></div>
           <div className="group-document-details">
-            <div className="single-document-name self">tourist Location.pdf</div>
+            <div className="single-document-name self">{payload.message.documentName}</div>
             <div className="single-document-detail single-flex">
-              <div>12MB <span>pdf</span></div>
+              <div>{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
               <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
             </div>
           </div>

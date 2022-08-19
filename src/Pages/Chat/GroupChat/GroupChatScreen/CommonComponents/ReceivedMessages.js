@@ -58,29 +58,30 @@ function ReceivedMessages({ messagetype, payload ,shouldBeRound}) {
 
 
     return (
-        <div className='group-message'>
-        <div className='group-message-image'><div><img src={gmi1} alt=''></img></div></div>
-        <div className='group-message-content last-reveived-message'>
-              <div className='group-message-name'>{getUserName(payload.senderid)}</div>
-              <div className='group-message-message'>{getDecryptedMessage(payload.message)}</div>
-        </div>
-        <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
-    </div>
+      <div className='group-message'>
+      <div className='group-message-image'></div>
+      <div className='group-message-content last-reveived-message'>
+            <div className='group-message-name'>{getUserName(payload.senderid)}</div>
+            <div className='group-message-message'>{getDecryptedMessage(payload.message)}</div>
+      </div>
+      <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
+  </div>
     );
 
 
-  } else if (messagetype === "image" && !shouldBeRound) {
+  } else if (messagetype === "image" && shouldBeRound) {
 
-    
+      
     return (
-        <div className='group-message'>
-        <div className='group-message-image'><img src={gmi2} alt=''></img></div>
-        <div className='group-message-content last-reveived-message'>
-              <div className='group-message-name'>{getUserName(payload.senderid)}</div>
-              <div className='group-message-message'>{getDecryptedMessage(payload.message)}</div>
-        </div>
-        <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
-    </div>
+      <div className='group-message'>
+      <div className='group-message-image'></div>
+           <div className='group-image-content'>
+               {/* <div className='group-message-name'>{getUserName(payload.senderid)}</div> */}
+               <div className='group-image-display'><img src={displayImage} alt=''></img></div>
+               <div className='group-image-desc'>{getDecryptedMessage(payload.message)}</div>    
+           </div>
+      <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
+   </div>
     );
 
 

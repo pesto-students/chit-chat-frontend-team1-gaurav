@@ -2,10 +2,9 @@
 import React, { useState, useEffect,useRef } from "react";
 import { toast } from "react-toastify";
 import { Peer } from "peerjs";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, ReactReduxContext } from "react-redux";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
-import VideoScreen from "Common/VideoScreen/VideoScreen"
 import { useDebouncedCallback } from "use-debounce";
 import CryptoJS from "crypto-js";
 import axios from "axios";
@@ -24,6 +23,8 @@ import imageAttachment from "Assets/image-attachment.png";
 import documentAttachment from "Assets/document-attachment.png";
 import sendMedia from "Assets/send-media.png";
 import crossWhite from "Assets/cross-white.png";
+import hang from "Assets/hang.png";
+import previewImage from 'Assets/preview.png';
 import "./SingleChatScreen.css";
 import {
   updateChatInfo,
@@ -37,14 +38,16 @@ function SingleChatScreen({ socket }) {
 
   const dispatch = useDispatch();  
 
-
+  const inputRef = useRef(null);
+  const inputDocumentRef = useRef(null);
   const peerInstance=useRef(null);
   const currentUserVideoRef=useRef(null);
-  const remoteVideoRef=useRef(null) 
+  const remoteVideoRef=useRef(null); 
 
 
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [showMediaScreen, setMediaToggle] = useState(false);
+  const [showDocumentScreen, setDocumentToggle] = useState(false);
   const [isuseronline, setuseronline] = useState(true);
   const [isreceivertyping, setreceivertyping] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
@@ -54,11 +57,13 @@ function SingleChatScreen({ socket }) {
   const [showVideoScreen,setVideoScreen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [imgMessage, setimgMessage] = useState("");
-  const [selectedFile, setSelectedFile] = useState("");
+  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedDocument, setSelectedDocument] = useState({});
   const [peerId,setPeerId]=useState('');
 
   const state = useSelector((state) => state.SingleChatReducer);
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } = state;
+  var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
 
   // Checks if Receiver is online when we start conversation
   useEffect(() => {
@@ -67,6 +72,7 @@ function SingleChatScreen({ socket }) {
     peer.on('open',id=>{
       setPeerId(id);
     })
+
   peerInstance.current=peer;
 
     for (const user of onlineUsers) {
@@ -81,11 +87,13 @@ function SingleChatScreen({ socket }) {
   }, []);
 
   useEffect(() => {
-debugger;
     if(peerInstance.current !== null){
 
     peerInstance.current.on('call',call=>{
     
+      setVideoScreen(true);
+      setShowHeader(true);
+      setIncomingCall(false);
       
 
       var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
@@ -147,8 +155,9 @@ debugger;
       socket.current.on("call-Accepted", (data) => {
    
         setVideoScreen(true);
+        setCalling(false);
+        setShowHeader(true);
 
-        var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
    
         getUserMedia({video:true,audio:true},mediaStream =>{
           currentUserVideoRef.current.srcObject=mediaStream;
@@ -162,6 +171,11 @@ debugger;
         })
 
      });
+
+     socket.current.on('call-Hanged',(data) => {
+      setVideoScreen(false);
+
+     })
 
     }
   }, [socket]);
@@ -209,28 +223,85 @@ debugger;
 
   const sendMessage = () =>{
     if(newMessage !== '')
-    UpdateChat('message');
+    UpdateChat('message',{});
     setNewMessage(""); 
   }
 
 
+  const setImage = (e) => {
+    const fileObj = e.target.files && e.target.files[0];
+    if (!fileObj)
+      return;
+
+    e.target.value = null;
+
+    setSelectedImage(URL.createObjectURL(fileObj));
+    setAttachmentToggle(false);
+    setMediaToggle(true);
+
+  }
+
+  const setDocument = (e) => {
+    const fileObj = e.target.files && e.target.files[0];
+    if (!fileObj)
+      return;
+
+    e.target.value = null;
+
+
+    let documentDetails = {
+
+      documentName:fileObj.name,
+      documentSize:getSize(fileObj.size),
+      documentExtention:fileObj.name.split('.').pop()
+
+    }
+
+      setSelectedDocument(documentDetails);
+      setDocumentToggle(true);
+      setAttachmentToggle(false);
+
+  }
+
+  const getSize = (bytes) => {
+    if(bytes < 1000){
+      return `${bytes} B`;
+    }
+    else if(bytes > 1000 && bytes < (1000*1024))
+    {
+      return `${Math.floor(bytes/1024)} KB`;
+    }
+    else if(bytes > (1000*1024)){
+      return `${Math.floor(bytes/(1000*1024))} MB`;
+    }
+    else{
+      return '';
+    }
+  }
+
   const sendImage = () => {
     setimgMessage("");
-    setSelectedFile("");
+    setSelectedImage("");
     setMediaToggle(false);
-    UpdateChat("image");
+    UpdateChat("image",{});
+  };
+
+  const sendDocument = () => {
+    UpdateChat("document",selectedDocument);
+    setSelectedDocument({});
+    setDocumentToggle(false);
   };
 
 
   const closeHandler = () =>{
     setimgMessage("");
-    setSelectedFile("");
+    setSelectedImage("");
+    setSelectedDocument({});
     setMediaToggle(false);
+    setDocumentToggle(false);
   }
 
   const callUser = () => {
-
-
 
     setShowHeader(false);
     setCalling(true);
@@ -254,11 +325,15 @@ debugger;
 
   const AnswerCall = () => {
     socket.current.emit('accept-incoming-call',{userid:receiverDetails.userid,peerid:peerId})
-    setVideoScreen(true);
   }
 
+  const HangCall = () => {
+    socket.current.emit('hang-call',{userid:receiverDetails.userid,peerid:peerId});
+    setVideoScreen(false);
 
-  const UpdateChat = async (messageType) => {
+  }
+
+  const UpdateChat = async (messageType,selectedDocument) => {
 
     //For set chats order based on last sent message
     var updateOrder = false;
@@ -282,20 +357,30 @@ debugger;
 
     // send message to backend
     let messagePayload = {
+      messageid: Math.random().toString(16).slice(2),  
       type: messageType,
-      messageid: Math.random().toString(16).slice(2),
-      message: messageType === "message"
-               ? CryptoJS.AES.encrypt(newMessage,'dhruvin').toString()
-               : CryptoJS.AES.encrypt(imgMessage,'dhruvin').toString(),
-     
       senderid: localStorage.getItem("userid"),
       receiverid: receiverDetails.userid,
       chatid: receiverDetails.chatid,
       updateOrder: updateOrder,
       order: order,
       starmarked: false,
-      url: messageType === "image" ? "Assets/send-media.png" : "",
     };
+
+    if(messageType === 'message'){
+      messagePayload.message = CryptoJS.AES.encrypt(newMessage,'dhruvin').toString();
+      messagePayload.url = '';
+    }
+    else if(messageType === 'image'){
+      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,'dhruvin').toString();
+      messagePayload.url = "Assets/send-media.png";
+    }
+    else if(messageType === 'document'){
+      messagePayload.message = selectedDocument;
+      messagePayload.url = "Assets/send-media.png";
+    }
+
+
 
 
     new Promise((resolve,reject) => {
@@ -343,16 +428,16 @@ debugger;
   };
 
 
-  const filterChatDateWise = (chatArray) => {
+  // const filterChatDateWise = (chatArray) => {
 
-    if(chatArray.length > 0){
-    let firstDate = chatArray[0].timestamp;
-    let lastDate = chatArray[chatArray.length - 1].timestamp;
+  //   if(chatArray.length > 0){
+  //   let firstDate = chatArray[0].timestamp;
+  //   let lastDate = chatArray[chatArray.length - 1].timestamp;
 
-    let hello;
-    }
+  //   let hello;
+  //   }
 
-  }
+  // }
 
 
   return (
@@ -428,6 +513,7 @@ debugger;
          <div className='Receiver-Screen'>  <video ref={currentUserVideoRef}/>
             <div className='sender-screen'> <video ref={remoteVideoRef}/> </div>
         </div>
+        <div><button className="hang" onClick={HangCall}><img src={hang} alt="hang"></img>hang</button></div>
     </div>}
     {/* <VideoScreen /> */}
         
@@ -437,7 +523,7 @@ debugger;
       <section className="single-main-section">
         <fieldset className="day-container">
           <legend> Yesterday </legend>
-          {filterChatDateWise(SingleChatMessageArray)}
+          {/* {filterChatDateWise(SingleChatMessageArray)} */}
           {SingleChatMessageArray.map((message,i) => {
               if (message.senderid === receiverDetails.userid) {
                 return (
@@ -472,17 +558,19 @@ debugger;
 
         {/* add attachment popup */}
         <div className={"single-attachment " + (!showAttachment ? "hide" : "")}>
-          <div className="single-image-attachment">
+          <div className="single-image-attachment" onClick={() => {inputRef.current.click();}}>
             <div className="single-attachment-icon">
               <img src={imageAttachment} alt="img-attachment"></img>
             </div>
             <div className="single-attachment-text">Photo or Video</div>
+            <input style={{display: 'none'}} ref={inputRef} type="file" alt="select-image" onChange={setImage} />
           </div>
-          <div className="single-image-attachment">
+          <div className="single-image-attachment" onClick={() => {inputDocumentRef.current.click();}}>
             <div className="single-attachment-icon">
               <img src={documentAttachment} alt="img-attachment"></img>
             </div>
             <div className="single-attachment-text">Documents</div>
+            <input style={{display: 'none'}} ref={inputDocumentRef} type="file" alt="select-image" onChange={setDocument} />
           </div>
         </div>
 
@@ -493,7 +581,7 @@ debugger;
             <img src={crossWhite} alt="" ></img>
           </div>
           <div className="display-image-single-send">
-            <img src={selectedFile} alt=""></img>
+            <img src={selectedImage} alt=""></img>
           </div>
           <div className="image-message">
             <input type="text" placeholder="Type a Message...." value={imgMessage} onChange={(e) => {setimgMessage(e.target.value); }} ></input>
@@ -502,6 +590,25 @@ debugger;
             </div>
           </div>
         </div>
+
+            {/* Send Document Popuo */}
+        <div className={"send-media-screen " + (!showDocumentScreen ? "hide" : "")}>
+          <div className="document-header">
+            <div className="no-preview">{selectedDocument.documentName}</div>
+            <div className="image-close" onClick={closeHandler} ><img src={crossWhite} alt="" ></img></div>
+          </div>
+          <div className="display-image-single-send">
+            <div ><img src={previewImage} alt="preview"></img></div>
+            <div className="no-preview">No Preview Available</div>
+            <div className="preview-info">{selectedDocument.documentSize}-{selectedDocument.documentExtention}</div>
+          </div>
+          <div className="image-message additional">
+            <div className="img-send" onClick={sendDocument}>
+              <img src={sendMedia} alt=""></img>
+            </div>
+          </div>
+        </div>
+
 
             {/* Actual footer */}
         <div className="single-attach-icon" onClick={() => { setAttachmentToggle(!showAttachment); }}>

@@ -16,7 +16,10 @@ import send from "Assets/send.png";
 import emoji from "Assets/emoji.png";
 import imageAttachment from "Assets/image-attachment.png";
 import documentAttachment from "Assets/document-attachment.png";
+import crossWhite from "Assets/cross-white.png";
 import { useSelector, useDispatch } from "react-redux";
+import previewImage from 'Assets/preview.png';
+import sendMedia from "Assets/send-media.png";
 import { updateMessageArray,loadCurrentGroups } from "Redux/Actions/GroupChatActions";
 import "./GroupChatScreen.css";
 
@@ -25,17 +28,22 @@ toast.configure();
 function GroupChatScreen({ socket }) {
   const dispatch = useDispatch();
 
-  const bottomRef = useRef(null);
+  const inputRef = useRef(null);
+  const inputDocumentRef = useRef(null);
 
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails, GroupChatMessageArray } = groupDetails;
 
   const [showAttachment, setAttachmentToggle] = useState(false);
+  const [issomeonetyping, setsomeonetyping] = useState(false); 
+  const [showMediaScreen, setMediaToggle] = useState(false);
+  const [showDocumentScreen, setDocumentToggle] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [imgMessage, setimgMessage] = useState("");
   const [membersarray, setmembersarray] = useState("");
-  const [issomeonetyping, setsomeonetyping] = useState(false);
   const [typinguser, setTypingUser] = useState("");
+  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedDocument, setSelectedDocument] = useState({});
 
   useEffect(() => {
     var membersarray = receiverGroupDetails.groupmembersarray.map((item) => {
@@ -86,7 +94,104 @@ function GroupChatScreen({ socket }) {
 
   }
 
-  const UpdateChat = async (messageType) => {
+  const sendMessage = () => {
+    if(newMessage !== '')
+    UpdateChat("message",{});
+    setNewMessage(""); 
+  };
+
+
+  const setImage = (e) => {
+    const fileObj = e.target.files && e.target.files[0];
+    if (!fileObj)
+      return;
+
+    e.target.value = null;
+
+    setSelectedImage(URL.createObjectURL(fileObj));
+    setAttachmentToggle(false);
+    setMediaToggle(true);
+
+  }
+
+  const setDocument = (e) => {
+    const fileObj = e.target.files && e.target.files[0];
+    if (!fileObj)
+      return;
+
+    e.target.value = null;
+
+
+    let documentDetails = {
+
+      documentName:fileObj.name,
+      documentSize:getSize(fileObj.size),
+      documentExtention:fileObj.name.split('.').pop()
+
+    }
+
+      setSelectedDocument(documentDetails);
+      setDocumentToggle(true);
+      setAttachmentToggle(false);
+
+  }
+
+  const getSize = (bytes) => {
+    if(bytes < 1000){
+      return `${bytes} B`;
+    }
+    else if(bytes > 1000 && bytes < (1000*1024))
+    {
+      return `${Math.floor(bytes/1024)} KB`;
+    }
+    else if(bytes > (1000*1024)){
+      return `${Math.floor(bytes/(1000*1024))} MB`;
+    }
+    else{
+      return '';
+    }
+  }
+
+  const sendImage = () => {
+    setimgMessage("");
+    setSelectedImage("");
+    setMediaToggle(false);
+    UpdateChat("image",{});
+  };
+
+  const sendDocument = () => {
+    UpdateChat("document",selectedDocument);
+    setSelectedDocument({});
+    setDocumentToggle(false);
+  };
+
+
+  const closeHandler = () =>{
+    setimgMessage("");
+    setSelectedImage("");
+    setSelectedDocument({});
+    setMediaToggle(false);
+    setDocumentToggle(false);
+  }
+
+  const typingHandler = (e) => {
+    
+    setNewMessage(e.target.value);
+    socket.current.emit("user-typing-in-group", {userid:localStorage.getItem("userid"),groupid:receiverGroupDetails.groupid});
+  };
+
+
+
+  const keyUpHandler = () => {
+    socket.current.emit(
+      "user-stops-typing-in-group",
+      receiverGroupDetails.groupid
+    );
+  };
+
+
+
+  const UpdateChat = async (messageType,selectedDocument) => {
     
 
     var updateOrder = false;
@@ -111,20 +216,28 @@ function GroupChatScreen({ socket }) {
     }
 
     let messagePayload = {
+      messageid: Math.random().toString(16).slice(2),  
       type: messageType,
-      messageid: Math.random().toString(16).slice(2),
-      message:
-        messageType === "message"
-          ? CryptoJS.AES.encrypt(newMessage, "dhruvin").toString()
-          : CryptoJS.AES.encrypt(imgMessage, "dhruvin").toString(),
-
       senderid: localStorage.getItem("userid"),
       groupid: receiverGroupDetails.groupid,
       updateOrder: updateOrder,
       order: order,
       starmarked: false,
-      url: messageType === "image" ? "Assets/send-media.png" : "",
     };
+
+    if(messageType === 'message'){
+      messagePayload.message = CryptoJS.AES.encrypt(newMessage,'dhruvin').toString();
+      messagePayload.url = '';
+    }
+    else if(messageType === 'image'){
+      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,'dhruvin').toString();
+      messagePayload.url = "Assets/send-media.png";
+    }
+    else if(messageType === 'document'){
+      messagePayload.message = selectedDocument;
+      messagePayload.url = "Assets/send-media.png";
+    }
+
 
     axios
       .post(
@@ -148,24 +261,7 @@ function GroupChatScreen({ socket }) {
       });
   };
 
-  const typingHandler = (e) => {
-    
-    setNewMessage(e.target.value);
-    socket.current.emit("user-typing-in-group", {userid:localStorage.getItem("userid"),groupid:receiverGroupDetails.groupid});
-  };
-
-  const sendMessage = () => {
-    if(newMessage !== '')
-    UpdateChat("message");
-  };
-
-  const keyUpHandler = () => {
-    socket.current.emit(
-      "user-stops-typing-in-group",
-      receiverGroupDetails.groupid
-    );
-  };
-
+ 
   return (
     <div className="group-main-container">
       {/* Header */}
@@ -241,19 +337,59 @@ function GroupChatScreen({ socket }) {
 
       <footer className="group-chat-footer">
         <div className={"group-attachment " + (!showAttachment ? "hide" : "")}>
-          <div className="group-image-attachment">
+          <div className="group-image-attachment" onClick={() => {inputRef.current.click();}}>
             <div className="group-attachment-icon">
               <img src={imageAttachment} alt="img-attachment"></img>
             </div>
             <div className="group-attachment-text">Photo or Video</div>
+            <input style={{display: 'none'}} ref={inputRef} type="file" alt="select-image" onChange={setImage} />
           </div>
-          <div className="group-image-attachment">
+          <div className="group-image-attachment" onClick={() => {inputDocumentRef.current.click();}}>
             <div className="group-attachment-icon">
               <img src={documentAttachment} alt="img-attachment"></img>
             </div>
             <div className="group-attachment-text">Documents</div>
+            <input style={{display: 'none'}} ref={inputDocumentRef} type="file" alt="select-image" onChange={setDocument} />
           </div>
         </div>
+
+
+
+               {/* Send Media Popup    */}
+        <div className={"send-media-screen " + (!showMediaScreen ? "hide" : "")}>
+          <div className="image-close" onClick={closeHandler} >
+            <img src={crossWhite} alt="" ></img>
+          </div>
+          <div className="display-image-single-send">
+            <img src={selectedImage} alt=""></img>
+          </div>
+          <div className="image-message">
+            <input type="text" placeholder="Type a Message...." value={imgMessage} onChange={(e) => {setimgMessage(e.target.value); }} ></input>
+            <div className="img-send" onClick={sendImage}>
+              <img src={sendMedia} alt=""></img>
+            </div>
+          </div>
+        </div>
+
+            {/* Send Document Popuo */}
+        <div className={"send-media-screen " + (!showDocumentScreen ? "hide" : "")}>
+          <div className="document-header">
+            <div className="no-preview">{selectedDocument.documentName}</div>
+            <div className="image-close" onClick={closeHandler} ><img src={crossWhite} alt="" ></img></div>
+          </div>
+          <div className="display-image-single-send">
+            <div ><img src={previewImage} alt="preview"></img></div>
+            <div className="no-preview">No Preview Available</div>
+            <div className="preview-info">{selectedDocument.documentSize}-{selectedDocument.documentExtention}</div>
+          </div>
+          <div className="image-message additional">
+            <div className="img-send" onClick={sendDocument}>
+              <img src={sendMedia} alt=""></img>
+            </div>
+          </div>
+        </div>
+
+
 
         <div
           className="group-attach-icon"

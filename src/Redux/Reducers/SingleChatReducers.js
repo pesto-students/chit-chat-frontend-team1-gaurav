@@ -52,7 +52,7 @@ export function SingleChatReducer(currentState = SingleChatState, action) {
       case GET_STARED_MESSAGES:
         return {
           ...currentState,
-          StaredMessages: action.payload.messageArray,
+          StaredMessages: action.payload,
         };
     default:
       return currentState;

@@ -19,6 +19,7 @@ function SearchBar({changescreen,changeContact}) {
         
             axios
             .post("http://localhost:5000/chat/searchcontacts", {
+                userid:localStorage.getItem('userid'),
                 text:e.target.value
             })
             .then((res) => {

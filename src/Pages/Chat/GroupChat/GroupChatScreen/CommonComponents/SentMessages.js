@@ -14,7 +14,7 @@ toast.configure();
 
 
 function SentMessages({ messagetype, payload,shouldBeRound }) {
-
+debugger;
   const getDesiredTimeStamp = (timestamp) => {
     return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
   }
@@ -30,7 +30,7 @@ function SentMessages({ messagetype, payload,shouldBeRound }) {
         <div className='group-message self-sent'>
         <div className='group-message-image'></div>
         <div className='group-message-content self'>
-              <div className='group-message-message self group-flex'>{getDecryptedMessage(payload.message)} <div className='group-tick-icon'><img src={singletick} alt=''></img></div></div>
+              <div className='group-message-message self group-flex'>{getDecryptedMessage(payload.message)} <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
         </div>
     </div>
     );
@@ -49,7 +49,7 @@ function SentMessages({ messagetype, payload,shouldBeRound }) {
     );
 
 
-  } else if (messagetype === "normal-image" && shouldBeRound) {
+  } else if (messagetype === "image" && shouldBeRound) {
 
 
     return (
@@ -71,7 +71,7 @@ function SentMessages({ messagetype, payload,shouldBeRound }) {
         <div className="single-img-timestamp">{new Date(payload.timestamp).getHours() + ':' + new Date(payload.timestamp).getMinutes()}</div>
         <div className="single-image-content self last-sent-message">
           <div className="single-image-display"><img src={payload.url} alt=""></img></div>
-          <div className="single-image-desc self-image single-flex">{payload.message}
+          <div className="single-image-desc self-image single-flex">{getDecryptedMessage(payload.message)}
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
           </div>
         </div>
@@ -93,8 +93,8 @@ function SentMessages({ messagetype, payload,shouldBeRound }) {
                 <div className='group-document-content '>
                   <div className='download-document-icon'><img src={darkDocument} alt=''></img></div>
                   <div className='group-document-details'>
-                     <div className='group-document-name self'>tourist Location.pdf</div>
-                     <div className='group-document-detail single-tick-document-sent group-flex'><div>12MB <span>pdf</span></div> <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
+                     <div className='group-document-name self'>{payload.message.documentName}</div>
+                     <div className='group-document-detail single-tick-document-sent group-flex'><div>{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div> <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
                   </div>
                 </div>  
              </div>

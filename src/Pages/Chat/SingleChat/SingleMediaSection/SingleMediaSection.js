@@ -158,11 +158,11 @@ function SingleMediaSection() {
             <div className="single-media-see">See All</div>
           </div>
 
-    
-          {StaredMessages.slice(0)
-            .reverse()
+           {/* {console.clear()} */}
+           {console.log(StaredMessages)}     
+          {StaredMessages
             .map((message) => {
-              if (message.receiverid !== receiverDetails.userid) {
+              if (message.type === 'received') {
                 return (
                   <>
                     <div className="single-message width-90">
