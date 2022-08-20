@@ -418,3 +418,8 @@
 .group-footer-right-icon:hover {
   transform: translateY(-2px);
 }
+
+.group-flex{
+  flex-direction: row !important;
+  align-items: center;
+}

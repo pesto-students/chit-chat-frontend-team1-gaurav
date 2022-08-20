@@ -28,7 +28,7 @@ export  function ContactCard({socket,chatDetails,chatType,activeUserId,setActive
   }
 
   const getDecryptedMessage = (message) => {
-    return message === undefined?'': CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8);
+    return message === undefined?'': CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
   }
 
  
@@ -64,14 +64,12 @@ export  function ContactCard({socket,chatDetails,chatType,activeUserId,setActive
         if(chatType === 'single'){
           dispatch(setView('single'));
           dispatch(setReceiverDetails(chatDetails))
-          dispatch(loadCurrentChat(chatDetails.chatid));
           dispatch(getStaredMessages(chatDetails.chatid));
           setActiveUserid(chatDetails.userid);
         }
         else {
           dispatch(setView('group'));
           dispatch(setReceiverGroupDetails(chatDetails));
-          dispatch(loadCurrentGroupChat(chatDetails.groupid));
           setActiveUserid(chatDetails.groupid);
           socket.current.emit('join-group',chatDetails.groupid);
         }

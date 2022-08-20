@@ -37,6 +37,8 @@ function Signup() {
 
   let navigate = useNavigate();
 
+  console.log('testing',process.env.REACT_APP_MESSAGE_SECRET_KEY);
+
   const onChangeHandler = (e) => {
     
     switch(e.target.name){

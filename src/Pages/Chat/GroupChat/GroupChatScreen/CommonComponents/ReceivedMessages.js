@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import CryptoJS from "crypto-js";
+import { toast } from "react-toastify";
 import downloadDocument from "Assets/download-document.png";
 import threeDot from "Assets/three-dot.png";
 import displayImage from "Assets/display-image.png";
@@ -11,6 +12,7 @@ import gmi1  from "Assets/group-message-image-1.png";
 import gmi2  from "Assets/group-message-image-2.png";
 import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 
+toast.configure();
 
 
 function ReceivedMessages({ messagetype, payload ,shouldBeRound}) {
@@ -34,10 +36,36 @@ function ReceivedMessages({ messagetype, payload ,shouldBeRound}) {
   }
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
 
+  const starMessage =() =>{
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
+      userid:localStorage.getItem('userid'),
+      // chatid:chatid,
+      message:payload.message,
+      timestamp:payload.timestamp,
+      type:'Received'
+    })
+    .then(res=>{
+      if(res.data.statusCode === 200){
 
+        toast.success("Message Marked Successfully!", { autoClose: 1000 });
+
+        // dispatch(getStaredMessages(chatid));
+
+      }
+      else{
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+      }
+    })
+    .catch(err=>{
+      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+    })
+}
 
   if (messagetype === "message" && shouldBeRound) {
 
@@ -45,9 +73,11 @@ function ReceivedMessages({ messagetype, payload ,shouldBeRound}) {
     return (
         <div className='group-message'>
         <div className='group-message-image'></div>
-        <div className='group-message-content'>
+        <div className='group-message-content group-flex'>
               {/* <div className='group-message-name'>Krishna</div> */}
               <div className='group-message-message'>{getDecryptedMessage(payload.message)}</div>
+              <div className="hover-star-white" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
+
         </div>
         {/* <div className='group-time-stamp'>22:21</div> */}
     </div>
@@ -60,10 +90,11 @@ function ReceivedMessages({ messagetype, payload ,shouldBeRound}) {
     return (
       <div className='group-message'>
       <div className='group-message-image'></div>
-      <div className='group-message-content last-reveived-message'>
+      <div className='group-message-content last-reveived-message group-flex'>
             <div className='group-message-name'>{getUserName(payload.senderid)}</div>
             <div className='group-message-message'>{getDecryptedMessage(payload.message)}</div>
       </div>
+      <div className="hover-star-white" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
       <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
   </div>
     );

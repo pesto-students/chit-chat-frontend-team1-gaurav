@@ -1,12 +1,12 @@
 import axios from "axios";
 import {
-    LOAD_CURRENT_GROUPS,LOAD_CURRENT_GROUPCHAT,SET_RECEIVER_GROUPDETAILS,UPDATE_MESSAGE_ARRAY
+    LOAD_CURRENT_GROUPS,LOAD_CURRENT_GROUPCHAT,SET_RECEIVER_GROUPDETAILS,UPDATE_MESSAGE_ARRAY,RESET_MESSAGE_ARRAY
   } from "../Types/GroupChatTypes";
  
   export const loadCurrentGroups = () => {
     return (dispatch) => {
       axios
-        .post("http://localhost:5000/group/currentgroups", {
+        .post(`${process.env.REACT_APP_SERVER}/group/currentgroups`, {
           userid: localStorage.getItem("userid"),
         })
         .then((res) => {
@@ -25,12 +25,13 @@ import {
     };
   };  
 
-  export const loadCurrentGroupChat = (chatid) => {
-    console.log('inside loadcurrentgroupchat');
+  export const loadCurrentGroupChat = (chatid,start,end) => {
     return (dispatch) => {
       axios
-        .post("http://localhost:5000/group/loadgroupchat", {
+        .post(`${process.env.REACT_APP_SERVER}/group/loadgroupchat`, {
           chatid: chatid,
+          start:start,
+          end:end
         })
         .then((res) => {
           console.log('res-chat',res);
@@ -63,6 +64,15 @@ import {
       dispatch({
         type: UPDATE_MESSAGE_ARRAY,
         payload: data,
+      });
+    };
+  };
+
+  export const ResetMessageArray = (data) => {
+    return (dispatch) => {
+      dispatch({
+        type: RESET_MESSAGE_ARRAY,
+        payload: [],
       });
     };
   };

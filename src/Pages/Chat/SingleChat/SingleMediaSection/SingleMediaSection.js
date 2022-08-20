@@ -43,7 +43,7 @@ function SingleMediaSection() {
   };
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
 
   return (

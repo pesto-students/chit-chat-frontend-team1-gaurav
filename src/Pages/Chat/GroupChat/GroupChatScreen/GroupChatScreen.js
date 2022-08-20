@@ -20,7 +20,7 @@ import crossWhite from "Assets/cross-white.png";
 import { useSelector, useDispatch } from "react-redux";
 import previewImage from 'Assets/preview.png';
 import sendMedia from "Assets/send-media.png";
-import { updateMessageArray,loadCurrentGroups } from "Redux/Actions/GroupChatActions";
+import { updateMessageArray,loadCurrentGroups,loadCurrentGroupChat,ResetMessageArray } from "Redux/Actions/GroupChatActions";
 import "./GroupChatScreen.css";
 
 toast.configure();
@@ -44,8 +44,14 @@ function GroupChatScreen({ socket }) {
   const [typinguser, setTypingUser] = useState("");
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedDocument, setSelectedDocument] = useState({});
+  const [lastChatNum,setLastChatNum] = useState(25);
+
 
   useEffect(() => {
+    dispatch(ResetMessageArray());
+    dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,0,25));
+
+
     var membersarray = receiverGroupDetails.groupmembersarray.map((item) => {
       return item.userid;
     });
@@ -77,6 +83,15 @@ function GroupChatScreen({ socket }) {
     });
   }, [socket]);
 
+
+  const handleScroll  = (e) => {
+    if((Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))){
+       dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,lastChatNum,25));
+
+       setLastChatNum(lastChatNum + 25);
+    }
+ 
+   }
 
   const getTimeDifference = (index) => {
 
@@ -226,11 +241,11 @@ function GroupChatScreen({ socket }) {
     };
 
     if(messageType === 'message'){
-      messagePayload.message = CryptoJS.AES.encrypt(newMessage,'dhruvin').toString();
+      messagePayload.message = CryptoJS.AES.encrypt(newMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
       messagePayload.url = '';
     }
     else if(messageType === 'image'){
-      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,'dhruvin').toString();
+      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
       messagePayload.url = "Assets/send-media.png";
     }
     else if(messageType === 'document'){
@@ -303,10 +318,12 @@ function GroupChatScreen({ socket }) {
 
       {/* Main - section  */}
 
-      <section className="group-main-section">
+      <section className="group-main-section" onScroll={handleScroll}>
 
 
         <fieldset className="day-container">
+          {console.clear()}
+          {console.log(GroupChatMessageArray)}
           {GroupChatMessageArray
             .map((message,i) => {
               if (membersarray.includes(message.senderid)) {

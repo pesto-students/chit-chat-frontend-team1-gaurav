@@ -2,7 +2,7 @@ import React from "react";
 import displayImage from "Assets/display-image.png";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
+import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 import CryptoJS from "crypto-js";
 import singletick from "Assets/single-tick.png";
 import doubletick from "Assets/double-tick.png";
@@ -26,12 +26,12 @@ function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
   }
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
 
   const starMessage =() =>{
       axios
-      .post('http://localhost:5000/chat/starmarkmessage',{
+      .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
         userid:localStorage.getItem('userid'),
         chatid:chatid,
         message:payload.message,

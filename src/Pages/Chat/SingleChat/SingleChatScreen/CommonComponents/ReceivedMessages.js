@@ -1,14 +1,16 @@
 import React from "react";
 import axios from "axios";
 import CryptoJS from "crypto-js";
+import { toast } from "react-toastify";
 import downloadDocument from "Assets/download-document.png";
 import threeDot from "Assets/three-dot.png";
 import displayImage from "Assets/display-image.png";
 import starWhite from "Assets/star-white.svg";
 import starBlack from "Assets/star-black.svg";
 import { useDispatch } from "react-redux";
-import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
+import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 
+toast.configure();
 
 
 function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
@@ -21,28 +23,34 @@ function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
   }
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
 
   const starMessage =() =>{
-
     axios
-    .post('http://localhost:5000/chat/starmarkmessage',{
+    .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
+      userid:localStorage.getItem('userid'),
       chatid:chatid,
-      messageid:payload.messageid
+      message:payload.message,
+      timestamp:payload.timestamp,
+      type:'received'
     })
     .then(res=>{
       if(res.data.statusCode === 200){
-        // working
+
+        toast.success("Message Marked Successfully!", { autoClose: 1000 });
+
         dispatch(getStaredMessages(chatid));
 
       }
       else{
-        // Something went wrong
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
       }
     })
     .catch(err=>{
-      // something went wrong
+      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
     })
 }
 

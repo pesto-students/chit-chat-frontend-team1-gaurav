@@ -5,7 +5,8 @@ import {
   UPDATE_CHAT_INFO,
   SET_RECEIVER_DETAILS,
   UPDATE_CURRENT_CHAT,
-  GET_STARED_MESSAGES
+  GET_STARED_MESSAGES,
+  RESET_MESSAGE_ARRAY
 } from "../Types/SingleChatTypes";
 
 var SingleChatState = {
@@ -25,7 +26,7 @@ export function SingleChatReducer(currentState = SingleChatState, action) {
     case LOAD_CURRENT_CHAT:
       return {
         ...currentState,
-        SingleChatMessageArray: action.payload.messageArray,
+        SingleChatMessageArray: [...currentState.SingleChatMessageArray,...action.payload.messageArray],
         SingleChatInfo: action.payload.chatInfo,
       };
     case SET_ONLINE_USERS:
@@ -54,6 +55,11 @@ export function SingleChatReducer(currentState = SingleChatState, action) {
           ...currentState,
           StaredMessages: action.payload,
         };
+        case RESET_MESSAGE_ARRAY:
+          return {
+            ...currentState,
+            SingleChatMessageArray: [],
+          };
     default:
       return currentState;
   }

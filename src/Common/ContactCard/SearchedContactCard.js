@@ -33,12 +33,12 @@ function SearchedContactCard({chatDetails}) {
                     }
     
         axios
-        .post('http://localhost:5000/chat/addchat',payload)
+        .post(`${process.env.REACT_APP_SERVER}/chat/addchat`,payload)
         .then(res =>{
             if(res.data.statusCode === 200){
                 toast.success(`User ${chatDetails.username} Added in Your Contact List`, { autoClose: 1000 });
                 dispatch(setReceiverDetails(chatDetails));
-                dispatch(loadCurrentChat(res.data.chatid));
+                dispatch(loadCurrentChat(res.data.chatid,0,15));
 
                 navigate('/chat');
 

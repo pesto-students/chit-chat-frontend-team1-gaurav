@@ -14,22 +14,50 @@ toast.configure();
 
 
 function SentMessages({ messagetype, payload,shouldBeRound }) {
-debugger;
+
   const getDesiredTimeStamp = (timestamp) => {
     return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
   }
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,'dhruvin').toString(CryptoJS.enc.Utf8)
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
 
+  const starMessage =() =>{
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
+      userid:localStorage.getItem('userid'),
+      // chatid:chatid,
+      message:payload.message,
+      timestamp:payload.timestamp,
+      type:'sent'
+    })
+    .then(res=>{
+      if(res.data.statusCode === 200){
+
+        toast.success("Message Marked Successfully!", { autoClose: 1000 });
+
+        // dispatch(getStaredMessages(chatid));
+
+      }
+      else{
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+      }
+    })
+    .catch(err=>{
+      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+    })
+}
 
   if (messagetype === "message" && shouldBeRound) {
 
     return (
         <div className='group-message self-sent'>
         <div className='group-message-image'></div>
-        <div className='group-message-content self'>
+        <div className='group-message-content self group-flex'>
+        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
               <div className='group-message-message self group-flex'>{getDecryptedMessage(payload.message)} <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
         </div>
     </div>
@@ -42,7 +70,8 @@ debugger;
     return (
         <div className='group-message self-sent'>
         <div className='group-time-stamp'>{getDesiredTimeStamp(payload.timestamp)}</div>
-        <div className='group-message-content self last-sent-message'>
+        <div className='group-message-content self last-sent-message group-flex'>
+        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
               <div className='group-message-message self group-flex'>{getDecryptedMessage(payload.message)} <div className='group-tick-icon'><img src={doubletick} alt=''></img></div></div>
         </div>
     </div>

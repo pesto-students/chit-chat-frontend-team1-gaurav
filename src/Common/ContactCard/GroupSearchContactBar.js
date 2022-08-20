@@ -1,12 +1,8 @@
 import React from 'react'
 import { toast } from "react-toastify";
 import Sample from "Assets/SampleUserImg1.png";
-import axios from 'axios';
 import {useDispatch } from "react-redux";
-import {setReceiverDetails,loadCurrentChat} from "Redux/Actions/SingleChatActions"
 import { useNavigate } from "react-router-dom";
-import { useState } from 'react';
-import { useEffect } from 'react';
 
 
 
@@ -16,8 +12,7 @@ toast.configure();
 
 function GroupSearchContactBar({chatDetails,selectedContacts,setSelectedContacts}) {
 
-  let navigate = useNavigate();
-  const dispatch=useDispatch();
+
   
      console.log('chatDetails',chatDetails);
     let mockProps = {

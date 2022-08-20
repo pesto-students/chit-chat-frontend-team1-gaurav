@@ -2,7 +2,8 @@
 import React, { useState, useEffect,useRef } from "react";
 import { toast } from "react-toastify";
 import { Peer } from "peerjs";
-import { useSelector, useDispatch, ReactReduxContext } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { uploadFile } from 'react-s3';
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
@@ -30,11 +31,20 @@ import {
   updateChatInfo,
   loadCurrentContacts,
   updateCurrentChat,
+  loadCurrentChat,resetMessageArray
 } from "Redux/Actions/SingleChatActions";
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 toast.configure();
 
 function SingleChatScreen({ socket }) {
+
+  const config = {
+    bucketName: 'chitchatcommunication',
+    region: 'Asia Pacific (Mumbai) ap-south-1',
+    accessKeyId: 'AKIAZVTSLHVBCOLPXRUK',
+    secretAccessKey: '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',
+}
 
   const dispatch = useDispatch();  
 
@@ -60,6 +70,7 @@ function SingleChatScreen({ socket }) {
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedDocument, setSelectedDocument] = useState({});
   const [peerId,setPeerId]=useState('');
+  const [lastChatNum,setLastChatNum] = useState(25);
 
   const state = useSelector((state) => state.SingleChatReducer);
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } = state;
@@ -67,6 +78,7 @@ function SingleChatScreen({ socket }) {
 
   // Checks if Receiver is online when we start conversation
   useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
     const peer=new Peer();
 
     peer.on('open',id=>{
@@ -74,6 +86,11 @@ function SingleChatScreen({ socket }) {
     })
 
   peerInstance.current=peer;
+
+
+    dispatch(resetMessageArray());
+    dispatch(loadCurrentChat(receiverDetails.chatid,0,25));
+
 
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
@@ -83,6 +100,7 @@ function SingleChatScreen({ socket }) {
         setuseronline(false);
       }
     };
+
 
   }, []);
 
@@ -193,6 +211,14 @@ function SingleChatScreen({ socket }) {
   }, [onlineUsers]);
 
 
+  const handleScroll  = (e) => {
+   if((Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))){
+      dispatch(loadCurrentChat(receiverDetails.chatid,lastChatNum,25));
+      setLastChatNum(lastChatNum + 25);
+   }
+
+  }
+
   const getTimeDifference = (index) => {
     
 
@@ -235,7 +261,8 @@ function SingleChatScreen({ socket }) {
 
     e.target.value = null;
 
-    setSelectedImage(URL.createObjectURL(fileObj));
+    // setSelectedImage(URL.createObjectURL(fileObj));
+    setSelectedImage(fileObj);
     setAttachmentToggle(false);
     setMediaToggle(true);
 
@@ -280,6 +307,16 @@ function SingleChatScreen({ socket }) {
   }
 
   const sendImage = () => {
+    
+    uploadFile(selectedImage, config)
+    .then(data =>{
+      
+       console.log(data)
+    })
+    .catch(err => {
+      
+      console.error(err)})
+
     setimgMessage("");
     setSelectedImage("");
     setMediaToggle(false);
@@ -368,11 +405,11 @@ function SingleChatScreen({ socket }) {
     };
 
     if(messageType === 'message'){
-      messagePayload.message = CryptoJS.AES.encrypt(newMessage,'dhruvin').toString();
+      messagePayload.message = CryptoJS.AES.encrypt(newMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
       messagePayload.url = '';
     }
     else if(messageType === 'image'){
-      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,'dhruvin').toString();
+      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
       messagePayload.url = "Assets/send-media.png";
     }
     else if(messageType === 'document'){
@@ -520,9 +557,9 @@ function SingleChatScreen({ socket }) {
 
       {/* Main - section  */}
 
-      <section className="single-main-section">
-        <fieldset className="day-container">
-          <legend> Yesterday </legend>
+      <section className="single-main-section" onScroll={handleScroll}>
+        <fieldset className="day-container" >
+          <legend > Yesterday </legend>
           {/* {filterChatDateWise(SingleChatMessageArray)} */}
           {SingleChatMessageArray.map((message,i) => {
               if (message.senderid === receiverDetails.userid) {
@@ -628,6 +665,7 @@ function SingleChatScreen({ socket }) {
             {/* <Picker pickerStyle={{}} /> */}
 
           <div className="single-footer-right-icon">
+            {/* <InputEmoji style={{display:'none'}}/> */}
             <img src={emoji} alt="emoji"></img>
           </div>
           <div className="single-footer-right-icon" onClick={sendMessage}>

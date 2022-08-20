@@ -6,7 +6,8 @@ import {
   UPDATE_CHAT_INFO,
   SET_RECEIVER_DETAILS,
   UPDATE_CURRENT_CHAT,
-  GET_STARED_MESSAGES
+  GET_STARED_MESSAGES,
+  RESET_MESSAGE_ARRAY
 } from "../Types/SingleChatTypes";
 
 // export function loadCurrentContacts(){
@@ -17,7 +18,7 @@ export const loadCurrentContacts = () => {
   
   return (dispatch) => {
     axios
-      .post("http://localhost:5000/chat/currentcontacts", {
+      .post(`${process.env.REACT_APP_SERVER}/chat/currentcontacts`, {
         userid: localStorage.getItem("userid"),
       })
       .then((res) => {
@@ -35,11 +36,14 @@ export const loadCurrentContacts = () => {
   };
 };
 
-export const loadCurrentChat = (chatid) => {
+export const loadCurrentChat = (chatid,start,end) => {
+  
   return (dispatch) => {
     axios
-      .post("http://localhost:5000/chat/loadchat", {
+      .post(`${process.env.REACT_APP_SERVER}/chat/loadchat`, {
         chatid: chatid,
+        start:start,
+        end:end
       })
       .then((res) => {
         dispatch({
@@ -61,12 +65,12 @@ export const getStaredMessages = (chatid) => {
 
   return (dispatch) => {
     axios
-      .post("http://localhost:5000/chat/loadstarmessages", {
+      .post(`${process.env.REACT_APP_SERVER}/chat/loadstarmessages`, {
         userid:localStorage.getItem('userid'),
         chatid: chatid,
       })
       .then((res) => {
-        debugger;
+        
         dispatch({
           type: GET_STARED_MESSAGES,
           payload: res.data,
@@ -114,6 +118,16 @@ export const updateCurrentChat = (data) => {
     dispatch({
       type: UPDATE_CURRENT_CHAT,
       payload: data,
+    });
+  };
+};
+
+
+export const resetMessageArray = (data) => {
+  return (dispatch) => {
+    dispatch({
+      type: RESET_MESSAGE_ARRAY,
+      payload: [],
     });
   };
 };
