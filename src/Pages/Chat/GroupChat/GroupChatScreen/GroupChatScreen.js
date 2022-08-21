@@ -281,24 +281,7 @@ function GroupChatScreen({ socket }) {
       });
   };
 
-  const typingHandler = (e) => {
-    
-    setNewMessage(e.target.value);
-    socket.current.emit("user-typing-in-group", {userid:localStorage.getItem("userid"),groupid:receiverGroupDetails.groupid});
-  };
-
-  const sendMessage = () => {
-    if(newMessage !== '')
-    UpdateChat("message");
-  };
-
-  const keyUpHandler = () => {
-    socket.current.emit(
-      "user-stops-typing-in-group",
-      receiverGroupDetails.groupid
-    );
-  };
-
+;
   const addParticipantHandler=()=>{
        setShowPopup(true)
   }
