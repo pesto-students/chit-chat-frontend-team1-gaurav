@@ -1,17 +1,20 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useInsertionEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import expired from '../../Common/Common'
+import { useNavigate } from "react-router-dom";
+import { useSelector,useDispatch } from "react-redux";
 import SideBar from "../../Common/SideBar/SideBar";
+import SearchBar from "Common/SearchBar/SearchBar";
 import ContactList from "../../Common/ContactList/ContactList";
 import DefaultPage from "./DefaultPage/DefaultPage";
 import SingleChatScreen from "../Chat/SingleChat/SingleChatScreen/SingleChatScreen";
 import GroupChatScreen from "../Chat/GroupChat/GroupChatScreen/GroupChatScreen";
 import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMediaSection";
 import GroupMediaSection from "./GroupChat/GroupMediaSection/GroupMediaSection";
-import { useNavigate } from "react-router-dom";
 import Profile from "../Profile/Profile"
 import { io } from "socket.io-client";
+import {setCurrentOnlinUsers,loadCurrentContacts} from "Redux/Actions/SingleChatActions"
+
 import "./Chat.css";
 
 toast.configure();
@@ -19,16 +22,21 @@ toast.configure();
 
 function Chat() {
 
+  const state = useSelector((state) => state.SingleChatReducer);  
+  const groupstate = useSelector((state) => state.GroupChatReducer);
+  const userstate = useSelector((state) => state.UserReducer);  
+  var {receiverDetails} = state;
+  var {receiverGroupDetails}=groupstate
+  let {view}=userstate;
+  console.log('receiver details', receiverDetails, receiverGroupDetails);
+  const dispatch=useDispatch();
+
   let navigate = useNavigate();
 
 
-  const [showdefault, setDefault] = useState(true);
-  const [showgroup, setGroup] = useState(false);
-  const [userdetails,setuserdetails] = useState({userid:'',username:'',chatid:''});
   const [groupid,setgroupid] = useState('');
-  const [onlineusers,setonlineusers] = useState([]);
 
-  var socket = useRef();
+  var socket = useRef()
 
   useEffect(() => {
       var JWTtoken = localStorage.getItem('token');
@@ -41,7 +49,7 @@ function Chat() {
   
         if(!tokenExpired){
   
-          socket.current = io("http://localhost:5000");
+          socket.current = io(process.env.REACT_APP_SERVER);
           socket.current.emit("add-user", localStorage.getItem("userid"));
 
         }
@@ -62,6 +70,7 @@ function Chat() {
   }, []);
 
   useEffect(() => {
+    
     var JWTtoken = localStorage.getItem('token');
 
     if(JWTtoken)
@@ -73,7 +82,11 @@ function Chat() {
       if(!tokenExpired){
 
         socket.current.on("online-users", (data) => {
-          setonlineusers(data);
+          dispatch(setCurrentOnlinUsers(data));
+        });
+
+        socket.current.on("reload-contacts", (data) => {
+          dispatch(loadCurrentContacts());
         });
       }
       else{
@@ -87,17 +100,12 @@ function Chat() {
   }, [socket]);
 
 
-  const changescreen =(setdefault,settype,chatDetails) =>{
-    setDefault(setdefault);
-    if(settype === 'single') {
-      setGroup(false);
-      setuserdetails(chatDetails); 
-    } 
-    else{
-      setGroup(true);
-      setgroupid(chatDetails.userid);
-    }
-  }
+  
+
+
+  // const changeContact = (showContact) =>{
+  //   setContacts(showContact);
+  // }
 
   return (
     <div className="main-container">
@@ -105,21 +113,20 @@ function Chat() {
         <SideBar />
       </section>
       <section className="contact-list">
-        <ContactList changescreen={changescreen} />
+         <ContactList socket={socket} /> 
       </section>
 
-      {showdefault ? (
+      {view=='default' ? (
         <seciton className="default-page">
           <DefaultPage />
-          {/* <Profile /> */}
         </seciton>
       ) : (
         <>
           <section className="main-chat-screen">
-            {showgroup ? <GroupChatScreen /> : <SingleChatScreen userdetails={userdetails} socket={socket} receivedonlineusers={onlineusers}/>}
+            {view=='group' ? <GroupChatScreen socket={socket} /> : <SingleChatScreen  socket={socket}/>}
           </section>
           <section className="media-section">
-            {showgroup ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket} receivedonlineusers={onlineusers}/>}
+            {view=='group' ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket}/>}
           </section>
         </>
       )}

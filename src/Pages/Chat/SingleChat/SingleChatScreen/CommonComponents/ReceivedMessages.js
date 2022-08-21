@@ -1,54 +1,118 @@
 import React from "react";
+import axios from "axios";
+import CryptoJS from "crypto-js";
+import { toast } from "react-toastify";
 import downloadDocument from "Assets/download-document.png";
 import threeDot from "Assets/three-dot.png";
 import displayImage from "Assets/display-image.png";
+import starWhite from "Assets/star-white.svg";
+import starBlack from "Assets/star-black.svg";
+import { useDispatch } from "react-redux";
+import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 
-function ReceivedMessages({ messagetype, payload }) {
-  if (messagetype === "normal-message") {
+toast.configure();
 
+
+function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound}) {
+
+  const dispatch=useDispatch();
+
+
+  const getDesiredTimeStamp = (timestamp) => {
+    return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
+  }
+
+  const getDecryptedMessage = (message) => {
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
+  }
+
+  const starMessage =() =>{
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
+      userid:localStorage.getItem('userid'),
+      contactid:contactid,
+      message:payload.message,
+      timestamp:payload.timestamp,
+      type:'received'
+    })
+    .then(res=>{
+      if(res.data.statusCode === 200){
+
+        toast.success(res.data.message, { autoClose: 1000 });
+
+        dispatch(getStaredMessages(chatid));
+
+      }
+      else{
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+      }
+    })
+    .catch(err=>{
+      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+
+    })
+}
+
+  if (messagetype === "message" && shouldBeRound) {
 
     return (
-      <div className="single-message">
-        <div className="single-message-content">{payload}</div>
+      <div className="single-message ">
+        <div className="single-message-content  single-flex">
+          {getDecryptedMessage(payload.message)}
+        <div className="hover-star-white" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
+        </div>
       </div>
     );
 
 
-  } else if (messagetype === "last-received-message") {
+  } else if (messagetype === "message" && !shouldBeRound) {
 
 
     return (
       <div className="single-message">
-        <div className="single-message-content last-reveived-message">{payload}</div>
-        <div className="single-time-stamp">22:21 </div>
+        <div className="single-message-content last-reveived-message single-flex">{getDecryptedMessage(payload.message)}
+        <div className="hover-star-white" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
+        </div>
+        <div className="single-time-stamp">
+        <div className="hover-star" onClick={starMessage}><img src={starWhite} alt='star'></img></div>
+          {getDesiredTimeStamp(payload.timestamp)}
+
+           </div>
       </div>
+
+
     );
 
 
-  } else if (messagetype === "normal-image") {
+
+
+
+  } else if (messagetype === "image" && shouldBeRound) {
 
     
     return (
       <div className="single-image">
         <div className="single-image-content">
+        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
           <div className="single-image-display"><img src={displayImage} alt=""></img></div>
-          <div className="single-image-desc">Done Mate</div>
+          <div className="single-image-desc">{getDecryptedMessage(payload.message)}</div>
         </div>
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
       </div>
     );
 
 
-  } else if (messagetype === "last-received-image") {
+  } else if (messagetype === "image" && !shouldBeRound) {
 
 
     return (
       <div className="single-image">
         <div className="single-image-content last-reveived-message">
           <div className="single-image-display"><img src={displayImage} alt=""></img></div>
-          <div className="single-image-desc">Done Mate</div>
+          <div className="single-image-desc">{getDecryptedMessage(payload.message)}</div>
         </div>
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
       </div>
     );
 
@@ -61,17 +125,17 @@ function ReceivedMessages({ messagetype, payload }) {
         <div className="single-image-content document-flex">
           <div className="download-document-icon"><img src={downloadDocument} alt=""></img></div>
           <div className="group-document-details">
-            <div className="single-document-name">tourist Location.pdf</div>
-            <div className="single-document-detail">12MB <span>pdf</span></div>
+            <div className="single-document-name">{payload.message.documentName}</div>
+            <div className="single-document-detail">{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
           </div>
           <div className="three-dot-icon"><img src={threeDot} alt=""></img></div>
         </div>
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
       </div>
     );
 
 
-  } else if (messagetype === "last-received-document") {
+  } else if (messagetype === "document") {
 
 
     return (
@@ -79,12 +143,12 @@ function ReceivedMessages({ messagetype, payload }) {
         <div className="single-image-content last-reveived-message document-flex">
           <div className="download-document-icon"><img src={downloadDocument} alt=""></img></div>
           <div className="group-document-details">
-            <div className="single-document-name">tourist Location.pdf</div>
-            <div className="single-document-detail">12MB <span>pdf</span></div>
+            <div className="single-document-name">{payload.message.documentName}</div>
+            <div className="single-document-detail">{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
           </div>
           <div className="three-dot-icon"><img src={threeDot} alt=""></img></div>
         </div>
-        <div className="single-img-timestamp">22:21</div>
+        <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
       </div>
     );
   }

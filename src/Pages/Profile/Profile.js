@@ -46,7 +46,6 @@ function Profile() {
     setProfileDetails((prevState) => {
       return { ...prevState, profileImg: e.target.files[0] };
     });
-    console.log(e.target.files[0]);
   };
 
   const editClickHandler = (e) => {
@@ -62,7 +61,7 @@ function Profile() {
 
   const updateClickHandler = (e) => {
     axios
-      .post("http://localhost:5000/authentication/editprofile", {
+      .post(`${process.env.REACT_APP_SERVER}/authentication/editprofile`, {
         userid: localStorage.getItem("userid"),
         firstName: profileDetails.fullName,
         userName: profileDetails.userName,
@@ -94,7 +93,7 @@ function Profile() {
       if(!tokenExpired){
 
         axios
-        .post("http://localhost:5000/authentication/getprofile", {
+        .post(`${process.env.REACT_APP_SERVER}/authentication/getprofile`, {
           userid: localStorage.getItem("userid"),
         })
         .then((res) => {

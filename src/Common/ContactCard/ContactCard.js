@@ -1,38 +1,86 @@
 import React,{useState} from "react";
+import { useDispatch } from "react-redux";
+import CryptoJS from "crypto-js";
 import Sample from "../../Assets/SampleUserImg1.png";
+import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
+import { setReceiverGroupDetails, loadCurrentGroupChat } from "../../Redux/Actions/GroupChatActions";
+import { setView } from "../../Redux/Actions/UserActions";
+import doubletick from "Assets/double-tick.png";
+
 import "./ContactCard.css";
 
-export default function ContactCard({changescreen,chatType,chatDetails}) {
+
+
+
+export  function ContactCard({socket,chatDetails,chatType,activeUserId,setActiveUserid}) {
+
+  const dispatch=useDispatch();
+
+  const getTimeStamp = (timestamp) => {
+    
+     if(timestamp === "" || timestamp === undefined || timestamp === null) {
+      return '';
+     }
+     else{
+
+      return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
+     }
+  }
+
+  const getDecryptedMessage = (message) => {
+    return message === undefined?'': CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+  }
+
+ 
     let mockProps = {
       profileImg: Sample,
       name: chatDetails?chatDetails.username:'',
-      lastChatMessage: "See ya!!",
-      lastChatTime: "12:12",
+      lastChatMessage: chatDetails?getDecryptedMessage(chatDetails.lastMessage):'',
+      lastChatTime: chatDetails?getTimeStamp(chatDetails.timestamp):'',
       unseenMsgs:'2'
     };
-  
-    let [active, setActive] = useState(false);
+    if(chatType === 'single'){
+       var {username,userid,chatid}=chatDetails
+    }
+    else{
+       var {groupid,groupname:username,groupmembersarray}=chatDetails
+    }
 
-    let activeStateProp = {
-      active: true
-    };
-  
+    // var isActive =(activeUserId === ((chatDetails !== undefined)?chatDetails.userid:''));
+    var isActive;
+
+    if(chatType === 'single'){
+      if(activeUserId === ((chatDetails !== undefined)?chatDetails.userid:'')){
+        isActive = true;
+      }
+    }
+    else{
+      if(activeUserId === ((chatDetails !== undefined)?chatDetails.groupid:'')){
+        isActive = true;
+      }
+    }
+    
+    const onClickHandler=()=>{
+        if(chatType === 'single'){
+          dispatch(setView('single'));
+          dispatch(setReceiverDetails(chatDetails))
+          dispatch(getStaredMessages(chatDetails.chatid));
+          setActiveUserid(chatDetails.userid);
+        }
+        else {
+          dispatch(setView('group'));
+          dispatch(setReceiverGroupDetails(chatDetails));
+          setActiveUserid(chatDetails.groupid);
+          socket.current.emit('join-group',chatDetails.groupid);
+        }
+    }
+
     return (
       <div
-        onClick={() => {
-          setActive(!active);
-          if(chatType === 'single')
-          {
-            changescreen(false,chatType,chatDetails);
-          }
-          else{
-            changescreen(false,chatType,chatDetails);
-          }
-          
-        }}
-        className={"chatcard-container " +  (active && 'border-bottom-none')}
+        onClick={onClickHandler}
+        className={"chatcard-container " +  (isActive && 'border-bottom-none')}
       >
-        {active && <div className="overlay"></div>}
+        {isActive && <div className="overlay"></div>}
         <img
           alt="profile-img"
           className="profile-img"
@@ -40,14 +88,19 @@ export default function ContactCard({changescreen,chatType,chatDetails}) {
         />
   
         <div className="chat-profile-details">
-          <h3>{mockProps.name}</h3>
-          <span>{mockProps.lastChatMessage}</span>
+          <h3>{username}</h3>
+          <span>
+            {chatDetails.sent &&
+            <div className='tick-icon-contact'><img src={doubletick} alt=''></img></div>}
+             {mockProps.lastChatMessage}</span>
         </div>
   
         <div className="time">
           <span>{mockProps.lastChatTime}</span>
-          <span className="unseen">{mockProps.unseenMsgs}</span>
+          {/* <span className="unseen">{mockProps.unseenMsgs}</span> */}
         </div>
       </div>
     );
   }
+
+

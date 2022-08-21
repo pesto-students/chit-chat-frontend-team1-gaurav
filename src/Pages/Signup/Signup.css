@@ -194,6 +194,11 @@
   font-weight: 600;
 }
 
+.btnSignup button:disabled{
+  background-color:#89cff0;
+color: white;
+} 
+
 .btnSignup button:hover {
   cursor: pointer;
   transform: translateY(-2px);

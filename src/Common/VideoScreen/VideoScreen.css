@@ -1,0 +1,59 @@
+.Video-Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: #202124;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+
+}
+
+.Receiver-Screen{
+    height: 85vh;
+    width: 75vw;
+    position: relative;
+    /* background-color: red; */
+    z-index: 3;
+    border-radius: 10px;
+}
+
+.sender-screen{
+    position: absolute;
+    height: calc(5vh + 10vw);
+    /* width: calc(10vh + 10vw); */
+    top: 5vh;
+    right: 3vw;
+    /* background-color: white; */
+    z-index:4;
+    border-radius: 10px;
+}
+
+.hang{
+    padding: calc(.8vh + .5vw);
+    background-color: red;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: calc(.8vh + .5vw);
+    font-weight: 500;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.hang img{
+    height: calc(.5vh + .5vw);
+    width: calc(1vh + 1vw);
+    margin-right: .4vw;
+}
+
+.hang:hover{
+    transform: translateY(-2px);
+}

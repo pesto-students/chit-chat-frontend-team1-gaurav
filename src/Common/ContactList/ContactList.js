@@ -1,28 +1,36 @@
 import React,{useEffect, useState} from 'react';
 import axios from 'axios';
-import ChartCard from "../ContactCard/ContactCard"
+import {ContactCard} from "../ContactCard/ContactCard"
 import UserPic from "../../Assets/ProfilePic.png"
+import { useSelector,useDispatch } from "react-redux";
 import "./ContactList.css"
-function ContactList({changescreen}) {
+import {loadCurrentContacts,changeflag} from "Redux/Actions/SingleChatActions"
+import {loadCurrentGroups} from "Redux/Actions/GroupChatActions"
 
-  const[contactlist,setcontactlist] = useState([]);
-  const[groupcontactlist,setgroupcontactlist] = useState([]);
+function ContactList({socket}) {
+
+  let [activeUserId, setActiveUserid] = useState('');
+
+  const state = useSelector((state) => state.SingleChatReducer);  
+  const Groupstate = useSelector((state) => state.GroupChatReducer); 
+  var {currentContacts} = state;
+  var {currentGroups}=Groupstate;
  
-  useEffect(() =>{
+  
+  console.clear();
+  console.log(state);
 
-    axios
-    .post("http://localhost:5000/chat/currentcontacts", {
-      userid: localStorage.getItem("userid"),
-    })
-    .then((res) => {
-        setcontactlist(res.data);
-    })
-    .catch((err) => {
-      // toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-    });
+  const dispatch=useDispatch();
+
+
+  useEffect(() =>{
+   
+    dispatch(loadCurrentContacts())
+    dispatch(loadCurrentGroups());
 
   },[])
 
+ 
 
   return (
     <div className="chat-list">
@@ -35,8 +43,10 @@ function ContactList({changescreen}) {
         <div className="recent-chat">
 
 
-        {contactlist.map(contact =>{
-           return  <ChartCard changescreen = {changescreen} chatType='single' chatDetails = {contact}/>
+        {currentContacts.length!==0 && currentContacts.map(contact =>{
+           return  <ContactCard   
+           chatType='single' chatDetails = {contact} 
+           activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
         })}
 
 
@@ -46,11 +56,14 @@ function ContactList({changescreen}) {
         <div className='group-chat-container'>
         <h2 className="recent-heading">Group Chat</h2>
         <div className="recent-group">
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
-          <ChartCard changescreen = {changescreen} chatType='group'/>
+     
+     
+        {currentGroups.length!==0 && currentGroups.map(contact =>{
+           return  <ContactCard  socket={socket}
+           chatType='group' activeUserId={activeUserId} setActiveUserid={setActiveUserid}  chatDetails = {contact} 
+           />
+        })}
+
         </div>
         </div>
       </div>
