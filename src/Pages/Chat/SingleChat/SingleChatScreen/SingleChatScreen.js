@@ -393,20 +393,17 @@ function SingleChatScreen({ socket }) {
 
 
     // send message to backend
-    let messagePayload = {
-      messageid: Math.random().toString(16).slice(2),  
+    let messagePayload = {  
       type: messageType,
       senderid: localStorage.getItem("userid"),
       receiverid: receiverDetails.userid,
       chatid: receiverDetails.chatid,
       updateOrder: updateOrder,
       order: order,
-      starmarked: false,
     };
 
     if(messageType === 'message'){
       messagePayload.message = CryptoJS.AES.encrypt(newMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
-      messagePayload.url = '';
     }
     else if(messageType === 'image'){
       messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
@@ -423,7 +420,7 @@ function SingleChatScreen({ socket }) {
     new Promise((resolve,reject) => {
 
       axios
-      .post("http://localhost:5000/chat/updatemessagearray", messagePayload)
+      .post(`${process.env.REACT_APP_SERVER}/chat/updatemessagearray`, messagePayload)
       .then((res) => {
         if (res.data.message) {
 
@@ -443,7 +440,7 @@ function SingleChatScreen({ socket }) {
     .then(() => {
      
         axios
-          .post("http://localhost:5000/chat/addSenderToReceiver", {
+          .post(`${process.env.REACT_APP_SERVER}/chat/addSenderToReceiver`, {
             senderid: localStorage.getItem("userid"),
             receiverid: receiverDetails.userid,
             chatid: receiverDetails.chatid,
@@ -568,6 +565,7 @@ function SingleChatScreen({ socket }) {
                     messagetype={message.type}
                     payload={message}
                     chatid={receiverDetails.chatid}
+                    contactid={receiverDetails.userid}
                     shouldBeRound={getTimeDifference(i)}
                   />
                 );
@@ -578,6 +576,7 @@ function SingleChatScreen({ socket }) {
                     messagetype={message.type}
                     payload={message}
                     chatid={receiverDetails.chatid}
+                    contactid={receiverDetails.userid}
                     shouldBeRound={getTimeDifference(i)}
                   />
                 );

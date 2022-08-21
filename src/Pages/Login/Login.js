@@ -45,7 +45,7 @@ function Login() {
   const loginHandler = () => {
     
     axios
-      .post("http://localhost:5000/authentication/login", {
+      .post(`${process.env.REACT_APP_SERVER}/authentication/login`, {
         phoneNumber: phoneNumber,
         password: password,
       })

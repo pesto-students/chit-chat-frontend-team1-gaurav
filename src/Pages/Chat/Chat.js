@@ -49,7 +49,7 @@ function Chat() {
   
         if(!tokenExpired){
   
-          socket.current = io("http://localhost:5000");
+          socket.current = io(process.env.REACT_APP_SERVER);
           socket.current.emit("add-user", localStorage.getItem("userid"));
 
         }

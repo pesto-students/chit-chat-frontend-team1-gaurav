@@ -13,7 +13,7 @@ import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 toast.configure();
 
 
-function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
+function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound}) {
 
   const dispatch=useDispatch();
 
@@ -30,7 +30,7 @@ function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
     axios
     .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
       userid:localStorage.getItem('userid'),
-      chatid:chatid,
+      contactid:contactid,
       message:payload.message,
       timestamp:payload.timestamp,
       type:'received'
@@ -38,7 +38,7 @@ function ReceivedMessages({ messagetype, payload ,chatid,shouldBeRound}) {
     .then(res=>{
       if(res.data.statusCode === 200){
 
-        toast.success("Message Marked Successfully!", { autoClose: 1000 });
+        toast.success(res.data.message, { autoClose: 1000 });
 
         dispatch(getStaredMessages(chatid));
 

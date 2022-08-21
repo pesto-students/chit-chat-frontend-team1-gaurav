@@ -44,7 +44,7 @@ function ForgotPassword() {
       let userid = localStorage.getItem('userid');
 
       axios
-      .post("http://localhost:5000/authentication/forgotpassword", {
+      .post(`${process.env.REACT_APP_SERVER}/authentication/forgotpassword`, {
         userid:userid,
         password: password,
       })
@@ -72,7 +72,7 @@ function ForgotPassword() {
 
   const sendOTP = () => {
     axios
-      .post("http://localhost:5000/authentication/sendOTP", {
+      .post(`${process.env.REACT_APP_SERVER}/authentication/sendOTP`, {
         phonenumber: phoneNumber,
       })
       .then((res) => {

@@ -64,7 +64,7 @@ function Signup() {
   const sendOTP = () => {
     
     axios
-      .post("http://localhost:5000/authentication/sendOTP", {
+      .post(`${process.env.REACT_APP_SERVER}/authentication/sendOTP`, {
         phonenumber: formData.phoneNumber,
       })
       .then((res) => {
@@ -91,7 +91,7 @@ function Signup() {
     if (decryptedotp === formData.OTP) {
 
       axios
-        .post("http://localhost:5000/authentication/signup", formData)
+        .post(`${process.env.REACT_APP_SERVER}/authentication/signup`, formData)
         .then((res) => {
           
           if(res.data.responseCode === 200){

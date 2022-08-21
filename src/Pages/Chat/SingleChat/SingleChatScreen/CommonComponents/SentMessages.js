@@ -17,10 +17,9 @@ import axios from "axios";
 toast.configure();
 
 
-function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
-
+function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
   const dispatch=useDispatch();
-
+  
   const getDesiredTimeStamp = (timestamp) => {
     return new Date(timestamp).getHours() + ':' + new Date(timestamp).getMinutes()
   }
@@ -28,12 +27,12 @@ function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
   const getDecryptedMessage = (message) => {
     return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
-
+  
   const starMessage =() =>{
       axios
       .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
         userid:localStorage.getItem('userid'),
-        chatid:chatid,
+        contactid:contactid,
         message:payload.message,
         timestamp:payload.timestamp,
         type:'sent'
@@ -41,7 +40,7 @@ function SentMessages({ messagetype, payload,chatid,shouldBeRound }) {
       .then(res=>{
         if(res.data.statusCode === 200){
 
-          toast.success("Message Marked Successfully!", { autoClose: 1000 });
+          toast.success(res.data.message, { autoClose: 1000 });
 
           dispatch(getStaredMessages(chatid));
 
