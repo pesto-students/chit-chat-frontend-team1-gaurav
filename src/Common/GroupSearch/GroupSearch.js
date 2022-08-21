@@ -25,7 +25,7 @@ function GroupSearch({changescreen,changeContact}) {
         }else{
         
             axios
-            .post("http://localhost:5000/chat/searchcontacts", {
+            .post(`${process.env.REACT_APP_SERVER}/chat/searchcontacts`, {
                 userid:localStorage.getItem('userid'),
                 text:e.target.value
             })
@@ -51,7 +51,7 @@ function GroupSearch({changescreen,changeContact}) {
         let username=localStorage.getItem('username')
         if(validationStatus){
             axios
-            .post("http://localhost:5000/group/creategroup", {
+            .post(`${process.env.REACT_APP_SERVER}/group/creategroup`, {
                 user:{userid,username},
                 groupmembers:selectedContacts,
                 groupname:groupName

@@ -280,11 +280,11 @@ function GroupMediaSection() {
             </div>
           </button>
 
-          <div
-            className={
-              "files-collipsible-content " + (!activeflags.star ? "" : "show")
-            }
-          >
+
+          {/* StarSection   */}
+
+          <div className={"files-collipsible-content " + (!activeflags.star ? "" : "show")}>
+
             <div className="single-message width-90">
               <div className="single-message-content last-reveived-message star-flex">
                 Can i get result today or tommorow?

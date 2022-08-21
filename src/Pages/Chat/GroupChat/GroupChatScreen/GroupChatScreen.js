@@ -236,18 +236,15 @@ function GroupChatScreen({ socket }) {
     }
 
     let messagePayload = {
-      messageid: Math.random().toString(16).slice(2),  
       type: messageType,
       senderid: localStorage.getItem("userid"),
       groupid: receiverGroupDetails.groupid,
       updateOrder: updateOrder,
       order: order,
-      starmarked: false,
     };
 
     if(messageType === 'message'){
       messagePayload.message = CryptoJS.AES.encrypt(newMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
-      messagePayload.url = '';
     }
     else if(messageType === 'image'){
       messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
@@ -261,7 +258,7 @@ function GroupChatScreen({ socket }) {
 
     axios
       .post(
-        "http://localhost:5000/group/updategroupmessagearray",
+        `${process.env.REACT_APP_SERVER}/group/updategroupmessagearray`,
         messagePayload
       )
       .then((res) => {
