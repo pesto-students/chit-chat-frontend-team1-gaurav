@@ -17,6 +17,7 @@ import emoji from "Assets/emoji.png";
 import imageAttachment from "Assets/image-attachment.png";
 import documentAttachment from "Assets/document-attachment.png";
 import crossWhite from "Assets/cross-white.png";
+import AddParticipant from "../../AddParticipant/AddParticipant";
 import { useSelector, useDispatch } from "react-redux";
 import previewImage from 'Assets/preview.png';
 import sendMedia from "Assets/send-media.png";
@@ -34,6 +35,8 @@ function GroupChatScreen({ socket }) {
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails, GroupChatMessageArray } = groupDetails;
 
+  console.log('check',receiverGroupDetails);
+
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [issomeonetyping, setsomeonetyping] = useState(false); 
   const [showMediaScreen, setMediaToggle] = useState(false);
@@ -46,6 +49,8 @@ function GroupChatScreen({ socket }) {
   const [selectedDocument, setSelectedDocument] = useState({});
   const [lastChatNum,setLastChatNum] = useState(25);
 
+
+  const [showPopup,setShowPopup]=useState(false);
 
   useEffect(() => {
     dispatch(ResetMessageArray());
@@ -276,9 +281,30 @@ function GroupChatScreen({ socket }) {
       });
   };
 
- 
+  const typingHandler = (e) => {
+    
+    setNewMessage(e.target.value);
+    socket.current.emit("user-typing-in-group", {userid:localStorage.getItem("userid"),groupid:receiverGroupDetails.groupid});
+  };
+
+  const sendMessage = () => {
+    if(newMessage !== '')
+    UpdateChat("message");
+  };
+
+  const keyUpHandler = () => {
+    socket.current.emit(
+      "user-stops-typing-in-group",
+      receiverGroupDetails.groupid
+    );
+  };
+
+  const addParticipantHandler=()=>{
+       setShowPopup(true)
+  }
+
   return (
-    <div className="group-main-container">
+    <div style={{position:'relative'}} className="group-main-container">
       {/* Header */}
 
       <header className="group-chat-header">
@@ -302,7 +328,7 @@ function GroupChatScreen({ socket }) {
 
         <div className="group-header-icons">
           <div className="right-icons">
-            <img src={inviteMember} alt="invite-member"></img>
+            <img onClick={addParticipantHandler} src={inviteMember} alt="invite-member"></img>
           </div>
           <div className="right-icons video-call-group">
             <img src={videoCall} alt="video-call"></img>
@@ -439,6 +465,7 @@ function GroupChatScreen({ socket }) {
 
         <div className="group-right-footer"></div>
       </footer>
+      {showPopup && <AddParticipant groupid={receiverGroupDetails.groupid} setShowPopup={setShowPopup}/>}
     </div>
   );
 }
