@@ -16,6 +16,7 @@ import send from "Assets/send.png";
 import emoji from "Assets/emoji.png";
 import imageAttachment from "Assets/image-attachment.png";
 import documentAttachment from "Assets/document-attachment.png";
+import AddParticipant from "../../AddParticipant/AddParticipant";
 import { useSelector, useDispatch } from "react-redux";
 import { updateMessageArray,loadCurrentGroups } from "Redux/Actions/GroupChatActions";
 import "./GroupChatScreen.css";
@@ -30,12 +31,16 @@ function GroupChatScreen({ socket }) {
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails, GroupChatMessageArray } = groupDetails;
 
+  console.log('check',receiverGroupDetails);
+
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [imgMessage, setimgMessage] = useState("");
   const [membersarray, setmembersarray] = useState("");
   const [issomeonetyping, setsomeonetyping] = useState(false);
   const [typinguser, setTypingUser] = useState("");
+
+  const [showPopup,setShowPopup]=useState(false);
 
   useEffect(() => {
     var membersarray = receiverGroupDetails.groupmembersarray.map((item) => {
@@ -166,8 +171,12 @@ function GroupChatScreen({ socket }) {
     );
   };
 
+  const addParticipantHandler=()=>{
+       setShowPopup(true)
+  }
+
   return (
-    <div className="group-main-container">
+    <div style={{position:'relative'}} className="group-main-container">
       {/* Header */}
 
       <header className="group-chat-header">
@@ -191,7 +200,7 @@ function GroupChatScreen({ socket }) {
 
         <div className="group-header-icons">
           <div className="right-icons">
-            <img src={inviteMember} alt="invite-member"></img>
+            <img onClick={addParticipantHandler} src={inviteMember} alt="invite-member"></img>
           </div>
           <div className="right-icons video-call-group">
             <img src={videoCall} alt="video-call"></img>
@@ -286,6 +295,7 @@ function GroupChatScreen({ socket }) {
 
         <div className="group-right-footer"></div>
       </footer>
+      {showPopup && <AddParticipant groupid={receiverGroupDetails.groupid} setShowPopup={setShowPopup}/>}
     </div>
   );
 }
