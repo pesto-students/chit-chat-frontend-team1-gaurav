@@ -331,8 +331,6 @@ function GroupChatScreen({ socket }) {
 
 
         <fieldset className="day-container">
-          {console.clear()}
-          {console.log(GroupChatMessageArray)}
           {GroupChatMessageArray
             .map((message,i) => {
               if (membersarray.includes(message.senderid)) {
@@ -448,7 +446,7 @@ function GroupChatScreen({ socket }) {
 
         <div className="group-right-footer"></div>
       </footer>
-      {showPopup && <AddParticipant groupid={receiverGroupDetails.groupid} setShowPopup={setShowPopup}/>}
+      {showPopup && <AddParticipant groupid={receiverGroupDetails.groupid} setShowPopup={setShowPopup} groupMembers={receiverGroupDetails.groupmembersarray} />}
     </div>
   );
 }

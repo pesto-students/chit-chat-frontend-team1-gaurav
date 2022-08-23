@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import Search from "Assets/NavSearch.png";
+import Close from "Assets/close-icon.png"
 import AddParticipantContactCard from "Common/ContactCard/AddParticpantContactCard";
 import axios from 'axios';
 import { useDebouncedCallback } from 'use-debounce';
@@ -7,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
 
-function AddParticipant({setShowPopup,groupid}) {
+function AddParticipant({setShowPopup,groupid,groupMembers}) {
 
     const [contact,setContact] = useState([]);
     const [selectedContacts,setSelectedContacts]=useState([]);
@@ -27,8 +28,10 @@ function AddParticipant({setShowPopup,groupid}) {
                 text:e.target.value
             })
             .then((res) => {
-                
-                setContact(res.data);
+                console.log('contacts',res.data)
+                let groupMembersArray=groupMembers.map(member=>member.userid)
+                let filteredContacts=res.data.filter((contact)=>{return !groupMembersArray.includes(contact._id)})
+                setContact(filteredContacts);
             })
             .catch((err) => {
                 setContact([]);
@@ -68,7 +71,7 @@ function AddParticipant({setShowPopup,groupid}) {
         <div style={styles.container}  className="chat-list">
             <div className="search-header">
             <input className='search-input' type='text' placeholder='Search for participants...' onChange={useDebouncedCallback(searchContacts,500)}></input>
-            <div className='search-search'><img src={Search} alt=''></img></div>
+            <div style={{display:'flex',justifyContent:'space-between',width:'60px'}} className='search-search'><img style={{marginRight:'20px'}} src={Search} alt=''></img> <img onClick={()=>{setShowPopup(false)}} style={{backgroundColor:'white'}} src={Close} alt=''></img></div>
             </div>
 
             

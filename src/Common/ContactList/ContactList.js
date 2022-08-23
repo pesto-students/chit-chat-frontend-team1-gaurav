@@ -17,8 +17,6 @@ function ContactList({socket}) {
   var {currentGroups}=Groupstate;
  
   
-  console.clear();
-  console.log(state);
 
   const dispatch=useDispatch();
 
