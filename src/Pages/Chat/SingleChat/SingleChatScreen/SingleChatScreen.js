@@ -42,8 +42,8 @@ function SingleChatScreen({ socket }) {
   const config = {
     bucketName: 'chitchatcommunication',
     region: 'Asia Pacific (Mumbai) ap-south-1',
-    accessKeyId: 'AKIAZVTSLHVBCOLPXRUK',
-    secretAccessKey: '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',
+    accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
+    secretAccessKey: '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',
 }
 
   const dispatch = useDispatch();  
@@ -255,6 +255,7 @@ function SingleChatScreen({ socket }) {
 
 
   const setImage = (e) => {
+    debugger;
     const fileObj = e.target.files && e.target.files[0];
     if (!fileObj)
       return;
@@ -320,7 +321,7 @@ function SingleChatScreen({ socket }) {
     setimgMessage("");
     setSelectedImage("");
     setMediaToggle(false);
-    UpdateChat("image",{});
+    // UpdateChat("image",{});
   };
 
   const sendDocument = () => {
