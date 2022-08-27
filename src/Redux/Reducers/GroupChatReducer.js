@@ -4,6 +4,7 @@ import {
   SET_RECEIVER_GROUPDETAILS,
   UPDATE_MESSAGE_ARRAY,
   RESET_MESSAGE_ARRAY,
+  GET_STARED_MESSAGES,
 } from "../Types/GroupChatTypes";
 
 var GroupChatState = {
@@ -12,6 +13,7 @@ var GroupChatState = {
   currentGroups: [],
   GroupChatMessageArray: [],
   GroupChatInfo: [],
+  StaredMessages: [],
 };
 
 export function GroupChatReducer(currentState = GroupChatState, action) {
@@ -38,6 +40,11 @@ export function GroupChatReducer(currentState = GroupChatState, action) {
           action.payload,
           ...currentState.GroupChatMessageArray,
         ],
+      };
+    case GET_STARED_MESSAGES:
+      return {
+        ...currentState,
+        StaredMessages: action.payload,
       };
     case RESET_MESSAGE_ARRAY:
       return {

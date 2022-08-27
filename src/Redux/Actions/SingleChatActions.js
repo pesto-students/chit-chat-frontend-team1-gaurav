@@ -37,7 +37,7 @@ export const loadCurrentContacts = () => {
 };
 
 export const loadCurrentChat = (chatid,start,end) => {
-  
+  debugger
   return (dispatch) => {
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/loadchat`, {
@@ -46,6 +46,7 @@ export const loadCurrentChat = (chatid,start,end) => {
         end:end
       })
       .then((res) => {
+        debugger;
         dispatch({
           type: LOAD_CURRENT_CHAT,
           payload: res.data,

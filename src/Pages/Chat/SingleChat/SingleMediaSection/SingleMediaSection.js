@@ -1,15 +1,16 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import CryptoJS from "crypto-js";
 import React from "react";
-import smi1 from "../../../../Assets/single-media-i-1.png";
-import spm1 from "../../../../Assets/single-pdf-media.png";
-import starReveived from "../../../../Assets/star-received.svg";
-import starSent from "../../../../Assets/star-sent.svg";
+import smi1 from "Assets/single-media-i-1.png";
+import spm1 from "Assets/single-pdf-media.png";
+import starReveived from "Assets/star-received.svg";
+import starSent from "Assets/star-sent.svg";
 import "./SingleMediaSection.css";
 
 function SingleMediaSection() {
+
   const state = useSelector((state) => state.SingleChatReducer);
-  var { StaredMessages, receiverDetails } = state;
+  var { StaredMessages } = state;
 
   const getmonth = (month) => {
     switch (month) {
@@ -158,8 +159,7 @@ function SingleMediaSection() {
             <div className="single-media-see">See All</div>
           </div>
 
-           {/* {console.clear()} */}
-           {console.log(StaredMessages)}     
+  
           {StaredMessages
             .map((message) => {
               if (message.type === 'received') {

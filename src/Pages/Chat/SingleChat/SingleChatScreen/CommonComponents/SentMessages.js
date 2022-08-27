@@ -4,13 +4,10 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import {getStaredMessages} from "Redux/Actions/SingleChatActions"
 import CryptoJS from "crypto-js";
-import singletick from "Assets/single-tick.png";
 import doubletick from "Assets/double-tick.png";
-import doubletickread from "Assets/double-tick-read.png";
 import darkDocument from "Assets/dark-download.png";
 import darkThreeDot from "Assets/dark-three-dot.png";
 import starBlack from "Assets/star-black.svg";
-import starWhite from "Assets/star-white.svg";
 
 import axios from "axios";
 
@@ -41,7 +38,6 @@ function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
         if(res.data.statusCode === 200){
 
           toast.success(res.data.message, { autoClose: 1000 });
-
           dispatch(getStaredMessages(chatid));
 
         }
@@ -94,7 +90,7 @@ function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
       <div className="single-image self-sent">
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self ">
-          <div className="single-image-display"><img src={payload.url} alt=""></img>
+          <div className="single-image-display"><img src={displayImage} alt=""></img>
           </div>
           <div className="single-image-desc self-image single-flex">{getDecryptedMessage(payload.message)}
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
@@ -111,7 +107,7 @@ function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
       <div className="single-image self-sent">
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self last-sent-message">
-          <div className="single-image-display"><img src={payload.url} alt=""></img></div>
+          <div className="single-image-display"><img src={displayImage} alt=""></img></div>
           <div className="single-image-desc self-image single-flex">{getDecryptedMessage(payload.message)}
             <div className="group-tick-icon"><img src={doubletick} alt=""></img></div>
           </div>

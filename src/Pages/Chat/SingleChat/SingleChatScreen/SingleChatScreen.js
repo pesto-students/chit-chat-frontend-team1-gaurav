@@ -88,10 +88,6 @@ function SingleChatScreen({ socket }) {
   peerInstance.current=peer;
 
 
-    dispatch(resetMessageArray());
-    dispatch(loadCurrentChat(receiverDetails.chatid,0,25));
-
-
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);
@@ -220,9 +216,11 @@ function SingleChatScreen({ socket }) {
   }
 
   const getTimeDifference = (index) => {
-    
 
     if(index === 0){
+      return false;
+    }
+    else if(SingleChatMessageArray[index].senderid !== SingleChatMessageArray[index-1].senderid){
       return false;
     }
     else{
@@ -558,6 +556,8 @@ function SingleChatScreen({ socket }) {
       <section className="single-main-section" onScroll={handleScroll}>
         <fieldset className="day-container" >
           <legend > Yesterday </legend>
+          {console.clear()}
+          {console.log(SingleChatMessageArray)}
           {/* {filterChatDateWise(SingleChatMessageArray)} */}
           {SingleChatMessageArray.map((message,i) => {
               if (message.senderid === receiverDetails.userid) {

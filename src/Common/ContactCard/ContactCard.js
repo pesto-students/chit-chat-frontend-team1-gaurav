@@ -2,8 +2,8 @@ import React,{useState} from "react";
 import { useDispatch } from "react-redux";
 import CryptoJS from "crypto-js";
 import Sample from "../../Assets/SampleUserImg1.png";
-import {setReceiverDetails,loadCurrentChat,getStaredMessages} from "Redux/Actions/SingleChatActions"
-import { setReceiverGroupDetails, loadCurrentGroupChat } from "../../Redux/Actions/GroupChatActions";
+import {setReceiverDetails,getStaredMessages,resetMessageArray,loadCurrentChat} from "Redux/Actions/SingleChatActions"
+import { setReceiverGroupDetails,getGroupStaredMessages,ResetMessageArray,loadCurrentGroupChat } from "../../Redux/Actions/GroupChatActions";
 import { setView } from "../../Redux/Actions/UserActions";
 import doubletick from "Assets/double-tick.png";
 
@@ -62,8 +62,11 @@ export  function ContactCard({socket,chatDetails,chatType,activeUserId,setActive
     
     const onClickHandler=()=>{
         if(chatType === 'single'){
+          debugger;
           dispatch(setView('single'));
-          dispatch(setReceiverDetails(chatDetails))
+          dispatch(setReceiverDetails(chatDetails));
+          dispatch(resetMessageArray());
+          dispatch(loadCurrentChat(chatDetails.chatid,0,25));
           dispatch(getStaredMessages(chatDetails.chatid));
           setActiveUserid(chatDetails.userid);
         }
@@ -71,6 +74,9 @@ export  function ContactCard({socket,chatDetails,chatType,activeUserId,setActive
           dispatch(setView('group'));
           dispatch(setReceiverGroupDetails(chatDetails));
           setActiveUserid(chatDetails.groupid);
+          dispatch(ResetMessageArray());
+          dispatch(loadCurrentGroupChat(chatDetails.groupid,0,25));
+          dispatch(getGroupStaredMessages(chatDetails.groupid));
           socket.current.emit('join-group',chatDetails.groupid);
         }
     }

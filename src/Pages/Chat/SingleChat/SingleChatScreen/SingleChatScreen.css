@@ -314,13 +314,7 @@
     max-width: 2vw;
 }
 
-.group-message-content:hover >.hover-star{
 
-    height: 2vh;
-    width: 2vw;
-    max-height: 2vh;
-    max-width: 2vw;
-}
 
 .single-message-content:hover >.hover-star-white{
 
@@ -330,13 +324,7 @@
     max-width: 2vw;
 }
 
-.group-message-content:hover >.hover-star-white{
 
-    height: 2vh;
-    width: 2vw;
-    max-height: 2vh;
-    max-width: 2vw;
-}
 
 .hover-star img{
     height: 100%;

@@ -132,3 +132,18 @@
     color:#808080;
 }
 
+.group-message-content:hover >.hover-star{
+
+    height: 2vh;
+    width: 2vw;
+    max-height: 2vh;
+    max-width: 1vw !important;
+}
+
+.group-message-content:hover >.hover-star-white{
+
+    height: 2vh;
+    width: 2vw;
+    max-height: 2vh;
+    max-width: 1vw !important;
+}
