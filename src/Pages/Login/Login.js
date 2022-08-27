@@ -102,7 +102,7 @@ function Login() {
             <span className="span">Please enter your details</span>
             <>
             <div class="row login-phone">
-              <input className="input-login" value={phoneNumber} onChange={phoneNumberHandler} placeholder="Phone Number"/>
+              <input className="input-login" name='phone-number' value={phoneNumber} onChange={phoneNumberHandler} placeholder="Phone Number"/>
               <div className="phone-icon-login"></div>
             </div>
            {error.phoneNumber && <span className="error-msg">{error.phoneNumber}</span>}
