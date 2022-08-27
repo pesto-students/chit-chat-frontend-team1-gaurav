@@ -3,7 +3,7 @@ import React, { useState, useEffect,useRef } from "react";
 import { toast } from "react-toastify";
 import { Peer } from "peerjs";
 import { useSelector, useDispatch } from "react-redux";
-import { uploadFile } from 'react-s3';
+import AWS from 'aws-sdk'
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
@@ -39,12 +39,18 @@ toast.configure();
 
 function SingleChatScreen({ socket }) {
 
-  const config = {
-    bucketName: 'chitchatcommunication',
-    region: 'Asia Pacific (Mumbai) ap-south-1',
-    accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
-    secretAccessKey: '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',
-}
+  
+
+AWS.config.update({
+  accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
+  secretAccessKey: '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'
+});
+
+const myBucket = new AWS.S3({
+  params: { Bucket: 'chitchatcommunication'},
+  region: 'ap-south-1',
+})
+
 
   const dispatch = useDispatch();  
 
@@ -306,15 +312,26 @@ function SingleChatScreen({ socket }) {
   }
 
   const sendImage = () => {
+    debugger;
     
-    uploadFile(selectedImage, config)
-    .then(data =>{
-      
-       console.log(data)
-    })
-    .catch(err => {
-      
-      console.error(err)})
+
+    const params = {
+      ACL: 'public-read',
+      Body: selectedImage,
+      Bucket: 'chitchatcommunication',
+      Key: selectedImage.name
+  };
+
+  myBucket.putObject(params)
+      .on('httpUploadProgress', (evt) => {
+          // setProgress(Math.round((evt.loaded / evt.total) * 100))
+      })
+      .send((err,data) => {
+          if (err) console.log(err)
+      })
+
+
+    
 
     setimgMessage("");
     setSelectedImage("");
