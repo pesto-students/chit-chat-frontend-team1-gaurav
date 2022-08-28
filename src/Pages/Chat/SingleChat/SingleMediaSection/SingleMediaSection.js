@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import CryptoJS from "crypto-js";
-import React from "react";
+import AWS from "aws-sdk";
+import React, { useEffect, useState } from "react";
 import smi1 from "Assets/single-media-i-1.png";
 import spm1 from "Assets/single-pdf-media.png";
 import starReveived from "Assets/star-received.svg";
@@ -8,9 +9,22 @@ import starSent from "Assets/star-sent.svg";
 import "./SingleMediaSection.css";
 
 function SingleMediaSection() {
+  AWS.config.update({
+    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
+    secretAccessKey: "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",
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: "chitchatcommunication" },
+    region: "ap-south-1",
+  });
 
   const state = useSelector((state) => state.SingleChatReducer);
-  var { StaredMessages } = state;
+  var { StaredMessages, imagesArray, documentsArray } = state;
+
+  const [images, setImages] = useState({});
+
+  useEffect(() => {}, []);
 
   const getmonth = (month) => {
     switch (month) {
@@ -43,9 +57,30 @@ function SingleMediaSection() {
     }
   };
 
+  const getImageFromKey = async (key, index) => {
+    await myBucket.getObject(
+      {
+        Bucket: "chitchatcommunication",
+        Key: key,
+      },
+
+      (err, data) => {
+        if (err) setImages({ ...images, index: `` });
+
+        setImages({
+          ...images,
+          index: `data:image/png;base64,${data.Body.toString("base64")}`,
+        });
+      }
+    );
+  };
+
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
-  }
+    return CryptoJS.AES.decrypt(
+      message,
+      process.env.REACT_APP_MESSAGE_SECRET_KEY
+    ).toString(CryptoJS.enc.Utf8);
+  };
 
   return (
     <>
@@ -53,104 +88,79 @@ function SingleMediaSection() {
         <div className="single-media-section">
           <div className="single-media-header">
             <div className="single-media-heading">
-              <h2>Media</h2> <span>20</span>
+              <h2>Media</h2> <span>{imagesArray.length}</span>
             </div>
-            <div className="single-media-see">See All</div>
+            <div className="single-media-see">
+              {imagesArray.length > 3 ? "See All" : ""}
+            </div>
           </div>
           <div className="single-media-content">
             <div className="single-media-file">
               <div className="single-media-file-container">
-                <img src={smi1} alt=""></img>
+                <img src={images["0"]} alt=""></img>
               </div>
             </div>
             <div className="single-media-file">
               <div className="single-media-file-container">
-                <img src={smi1} alt=""></img>
+                <img src={images["1"]} alt=""></img>
               </div>
             </div>
 
-            <div className="single-media-file">
-              <div className="single-media-file-container single-media-info">
-                18+
-              </div>
-            </div>
+            {imagesArray.length > 3 ? (
+              <>
+                <div className="single-media-file">
+                  <div className="single-media-file-container single-media-info">
+                    18+
+                  </div>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
+
+
+
+
         <div className="single-files-section">
           <div className="single-media-header fixed">
             <div className="single-media-heading">
-              <h2>Files</h2> <span>20</span>
+              <h2>Files</h2> <span>{documentsArray.length}</span>
             </div>
             <div className="single-media-see">See All</div>
           </div>
 
-          <div className="single-files-container">
-            <div className="single-file-icon">
-              <img src={spm1} alt=""></img>
-            </div>
-            <div className="single-file-details">
-              <div className="single-file-name">Cirriculum Vitae.pdf</div>
-              <div className="single-file-detail">
-                3.7Mb <span>22Jan 2022</span>
-              </div>
-            </div>
-          </div>
 
-          <div className="single-files-container">
-            <div className="single-file-icon">
-              <img src={spm1} alt=""></img>
-            </div>
-            <div className="single-file-details">
-              <div className="single-file-name">Cirriculum Vitae.pdf</div>
-              <div className="single-file-detail">
-                3.7Mb <span>22Jan 2022</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="single-files-container">
-            <div className="single-file-icon">
-              <img src={spm1} alt=""></img>
-            </div>
-            <div className="single-file-details">
-              <div className="single-file-name">Cirriculum Vitae.pdf</div>
-              <div className="single-file-detail">
-                3.7Mb <span>22Jan 2022</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="single-files-container">
-            <div className="single-file-icon">
-              <img src={spm1} alt=""></img>
-            </div>
-            <div className="single-file-details">
-              <div className="single-file-name">Cirriculum Vitae.pdf</div>
-              <div className="single-file-detail">
-                3.7Mb <span>22Jan 2022</span>
-              </div>
-            </div>
-          </div>
-          <div className="single-files-container">
-            <div className="single-file-icon">
-              <img src={spm1} alt=""></img>
-            </div>
-            <div className="single-file-details">
-              <div className="single-file-name">Cirriculum Vitae.pdf</div>
-              <div className="single-file-detail">
-                3.7Mb <span>22Jan 2022</span>
-              </div>
-            </div>
-          </div>
-
-          {/* <div className='single-files-container'>
-                    <div className='single-file-icon'><img src={spm1} alt=''></img></div>
-                    <div className='single-file-details'>
-                        <div className='single-file-name'>Cirriculum Vitae.pdf</div>
-                        <div className='single-file-detail'>3.7Mb <span>22Jan 2022</span></div>
+          {documentsArray.map((document) => {
+            return (
+              <>
+                <div className="single-files-container">
+                  <div className="single-file-icon">
+                    <img src={spm1} alt=""></img>
+                  </div>
+                  <div className="single-file-details">
+                    <div className="single-file-name">{document.name}</div>
+                    <div className="single-file-detail">
+                      {document.size}
+                      <span>
+                        {new Date(document.timestamp).getDate()}
+                        {getmonth(new Date(document.timestamp).getMonth())}{" "}
+                        {new Date(document.timestamp).getFullYear()}
+                      </span>
                     </div>
-                </div> */}
+                  </div>
+                </div>
+              </>
+            );
+          })}
+
+
         </div>
+
+
+
+
         <div className="single-star-section">
           <div className="single-media-header">
             <div className="single-media-heading">
@@ -159,49 +169,53 @@ function SingleMediaSection() {
             <div className="single-media-see">See All</div>
           </div>
 
-  
-          {StaredMessages
-            .map((message) => {
-              if (message.type === 'received') {
-                return (
-                  <>
-                    <div className="single-message width-90">
-                      <div className="single-message-content last-reveived-message star-flex">
-                        {getDecryptedMessage(message.message)}
-                        <div className="single-star-received-icon">
-                          <img src={starReveived} alt=""></img>
-                        </div>{" "}
-                      </div>
+          {StaredMessages.map((message) => {
+            if (message.type === "received") {
+              return (
+                <>
+                  <div className="single-message width-90">
+                    <div className="single-message-content last-reveived-message star-flex">
+                      {getDecryptedMessage(message.message)}
+                      <div className="single-star-received-icon">
+                        <img src={starReveived} alt=""></img>
+                      </div>{" "}
                     </div>
-                    <div className="single-time-stamp single-media-star">
-                      {new Date(message.timestamp).getDate()}
-                      {getmonth(new Date(message.timestamp).getMonth())}{" "}
-                      {new Date(message.timestamp).getFullYear()}{" "}
-                      <span>{new Date(message.timestamp).getHours()}:{new Date(message.timestamp).getMinutes()}</span>
-                    </div>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    <div className="single-message self-sent-star width-90">
-                      <div className="single-message-content self last-sent-message star-flex">
-                        <div className="single-star-sent-icon">
-                          <img src={starSent} alt=""></img>
-                        </div>
-                        {getDecryptedMessage(message.message)}
-                      </div>
-                    </div>
-                    <div className="single-time-stamp self-sent-timestamp end">
+                  </div>
+                  <div className="single-time-stamp single-media-star">
                     {new Date(message.timestamp).getDate()}
-                      {getmonth(new Date(message.timestamp).getMonth())}{" "}
-                      {new Date(message.timestamp).getFullYear()}{" "}
-                      <span>{new Date(message.timestamp).getHours()}:{new Date(message.timestamp).getMinutes()}</span>
+                    {getmonth(new Date(message.timestamp).getMonth())}{" "}
+                    {new Date(message.timestamp).getFullYear()}{" "}
+                    <span>
+                      {new Date(message.timestamp).getHours()}:
+                      {new Date(message.timestamp).getMinutes()}
+                    </span>
+                  </div>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <div className="single-message self-sent-star width-90">
+                    <div className="single-message-content self last-sent-message star-flex">
+                      <div className="single-star-sent-icon">
+                        <img src={starSent} alt=""></img>
+                      </div>
+                      {getDecryptedMessage(message.message)}
                     </div>
-                  </>
-                );
-              }
-            })}
+                  </div>
+                  <div className="single-time-stamp self-sent-timestamp end">
+                    {new Date(message.timestamp).getDate()}
+                    {getmonth(new Date(message.timestamp).getMonth())}{" "}
+                    {new Date(message.timestamp).getFullYear()}{" "}
+                    <span>
+                      {new Date(message.timestamp).getHours()}:
+                      {new Date(message.timestamp).getMinutes()}
+                    </span>
+                  </div>
+                </>
+              );
+            }
+          })}
         </div>
       </div>
     </>

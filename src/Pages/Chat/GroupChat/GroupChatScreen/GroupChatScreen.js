@@ -3,6 +3,7 @@ import React, { useEffect, useState,useRef } from "react";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AWS from "aws-sdk";
 import { useDebouncedCallback } from "use-debounce";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
@@ -21,12 +22,22 @@ import AddParticipant from "./CommonComponents/AddParticipant";
 import { useSelector, useDispatch } from "react-redux";
 import previewImage from 'Assets/preview.png';
 import sendMedia from "Assets/send-media.png";
-import { updateMessageArray,loadCurrentGroups,loadCurrentGroupChat,ResetMessageArray } from "Redux/Actions/GroupChatActions";
+import { updateMessageArray,loadCurrentGroups,loadCurrentGroupChat,getGroupImagesArray,getGroupDocumentsArray } from "Redux/Actions/GroupChatActions";
 import "./GroupChatScreen.css";
 
 toast.configure();
 
 function GroupChatScreen({ socket }) {
+
+  AWS.config.update({
+    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
+    secretAccessKey: "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",
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: "chitchatcommunication" },
+    region: "ap-south-1",
+  });
 
   const dispatch = useDispatch();
 
@@ -46,7 +57,9 @@ function GroupChatScreen({ socket }) {
   const [membersarray, setmembersarray] = useState("");
   const [typinguser, setTypingUser] = useState("");
   const [selectedImage, setSelectedImage] = useState('');
+  const [displaySelectedImage, setDisplaySelectedImage] = useState("");
   const [selectedDocument, setSelectedDocument] = useState({});
+  const [documentBody, setDocumentBody] = useState({});
   const [lastChatNum,setLastChatNum] = useState(25);
   const [showPopup,setShowPopup]=useState(false);
 
@@ -132,7 +145,8 @@ function GroupChatScreen({ socket }) {
 
     e.target.value = null;
 
-    setSelectedImage(URL.createObjectURL(fileObj));
+    setDisplaySelectedImage(URL.createObjectURL(fileObj));
+    setSelectedImage(fileObj);
     setAttachmentToggle(false);
     setMediaToggle(true);
 
@@ -156,6 +170,7 @@ function GroupChatScreen({ socket }) {
 
     }
 
+      setDocumentBody(fileObj);
       setSelectedDocument(documentDetails);
       setDocumentToggle(true);
       setAttachmentToggle(false);
@@ -182,23 +197,86 @@ function GroupChatScreen({ socket }) {
 
 
   const sendImage = () => {
+
+    let nameArray = selectedImage.name.split(".");
+
+    let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+
+    const params = {
+      ACL: "public-read",
+      Body: selectedImage,
+      Bucket: "chitchatcommunication",
+      Key: key,
+    };
+
+    myBucket.putObject(params).send((err, data) => {
+      if (err) console.log(err);
+    });
+
+
     setimgMessage("");
     setSelectedImage("");
+    setDisplaySelectedImage("");
     setMediaToggle(false);
-    UpdateChat("image",{});
+    UpdateChat("image",{},key);
+
+    
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/group/updateimagesarray`, {
+      groupid: receiverGroupDetails.groupid,
+      key:key
+    })
+    .then((res) => { 
+      if(res.data.statusCode === 200){
+        dispatch(getGroupImagesArray(receiverGroupDetails.groupid));
+      }
+    })
   };
 
 
   const sendDocument = () => {
-    UpdateChat("document",selectedDocument);
+    let nameArray = selectedDocument.documentName.split(".");
+
+    let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+
+    const params = {
+      ACL: "public-read",
+      Body: documentBody,
+      Bucket: "chitchatcommunication",
+      Key: key,
+    };
+
+    myBucket.putObject(params).send((err, data) => {
+      if (err) console.log(err);
+    });
+
+    UpdateChat("document",selectedDocument,key);
     setSelectedDocument({});
+    setDocumentBody('');
     setDocumentToggle(false);
+
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/group/updatedocumentsarray`, {
+      groupid: receiverGroupDetails.groupid,
+      key:key,
+      name:selectedDocument.documentName,
+      size:selectedDocument.documentSize
+    })
+    .then((res) => { 
+      if(res.data.statusCode === 200){
+        dispatch(getGroupDocumentsArray(receiverGroupDetails.groupid));
+      }
+    })
+
+    setSelectedDocument({});
   };
 
 
   const closeHandler = () =>{
     setimgMessage("");
     setSelectedImage("");
+    setDisplaySelectedImage("");
+    setDocumentBody('');
     setSelectedDocument({});
     setMediaToggle(false);
     setDocumentToggle(false);
@@ -218,7 +296,7 @@ function GroupChatScreen({ socket }) {
 
 
 
-  const UpdateChat = async (messageType,selectedDocument) => {
+  const UpdateChat = async (messageType,selectedDocument,key) => {
 
 
     var updateOrder = false;
@@ -254,11 +332,11 @@ function GroupChatScreen({ socket }) {
     }
     else if(messageType === 'image'){
       messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
-      messagePayload.url = "Assets/send-media.png";
+      messagePayload.key = key;
     }
     else if(messageType === 'document'){
       messagePayload.message = selectedDocument;
-      messagePayload.url = "Assets/send-media.png";
+      messagePayload.key = key;
     }
 
 
@@ -382,7 +460,7 @@ function GroupChatScreen({ socket }) {
             <img src={crossWhite} alt="" ></img>
           </div>
           <div className="display-image-single-send">
-            <img src={selectedImage} alt=""></img>
+            <img src={displaySelectedImage} alt=""></img>
           </div>
           <div className="image-message">
             <input type="text" placeholder="Type a Message...." value={imgMessage} onChange={(e) => {setimgMessage(e.target.value); }} ></input>

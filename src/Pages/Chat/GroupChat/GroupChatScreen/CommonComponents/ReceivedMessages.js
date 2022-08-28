@@ -1,5 +1,6 @@
-import React from "react";
+import React,{useState} from "react";
 import axios from "axios";
+import AWS from 'aws-sdk'
 import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
 import downloadDocument from "Assets/download-document.png";
@@ -13,7 +14,21 @@ import { getGroupStaredMessages } from "Redux/Actions/GroupChatActions";
 toast.configure();
 
 function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
+
+  AWS.config.update({
+    accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
+    secretAccessKey: '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'
+  });
+  
+  const myBucket = new AWS.S3({
+    params: { Bucket: 'chitchatcommunication'},
+    region: 'ap-south-1',
+  })
+
   const dispatch = useDispatch();
+
+  const [image,setImage] = useState('');
+
 
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails } = groupDetails;
@@ -39,6 +54,21 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
       process.env.REACT_APP_MESSAGE_SECRET_KEY
     ).toString(CryptoJS.enc.Utf8);
   };
+
+  const getImageFromKey = (key) => {
+    myBucket.getObject({ 
+      Bucket: 'chitchatcommunication',
+     Key: key},
+
+     (err,data) => {
+
+      if(err)
+      setImage(null);
+
+      setImage(`data:image/png;base64,${data.Body.toString('base64')}`);
+
+   })
+  }
 
   const starMessage = () => {
     axios
@@ -118,7 +148,8 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         <div className="group-image-content">
           {/* <div className='group-message-name'>{getUserName(payload.senderid)}</div> */}
           <div className="group-image-display">
-            <img src={displayImage} alt=""></img>
+          {getImageFromKey(payload.key)}
+            <img src={image} alt=""></img>
           </div>
           <div className="group-image-desc">
             {getDecryptedMessage(payload.message)}
@@ -140,7 +171,8 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
             {getUserName(payload.senderid)}
           </div>
           <div className="group-image-display">
-            <img src={displayImage} alt=""></img>
+          {getImageFromKey(payload.key)}
+            <img src={image} alt=""></img>
           </div>
           <div className="group-image-desc">
             {getDecryptedMessage(payload.message)}
@@ -171,9 +203,9 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
               <img src={downloadDocument} alt=""></img>
             </div>
             <div className="group-document-details">
-              <div className="group-document-name">tourist Location.pdf</div>
+              <div className="group-document-name">{payload.message.documentName}</div>
               <div className="group-document-detail">
-                12MB <span>pdf</span>
+              {payload.message.documentSize} <span>{payload.message.documentExtention}</span>
               </div>
             </div>
           </div>

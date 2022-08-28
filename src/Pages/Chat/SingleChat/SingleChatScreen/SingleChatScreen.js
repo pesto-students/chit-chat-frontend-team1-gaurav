@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { Peer } from "peerjs";
 import { useSelector, useDispatch } from "react-redux";
-import AWS from 'aws-sdk'
+import AWS from "aws-sdk";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
 import CryptoJS from "crypto-js";
 import axios from "axios";
-import InputEmoji from 'react-input-emoji';
-import Picker from 'emoji-picker-react';
+import InputEmoji from "react-input-emoji";
+import Picker from "emoji-picker-react";
 import singleHeaderImg from "Assets/single-header-img.png";
 import search from "Assets/search.png";
 import audioCall from "Assets/audio-call.png";
@@ -25,41 +25,38 @@ import documentAttachment from "Assets/document-attachment.png";
 import sendMedia from "Assets/send-media.png";
 import crossWhite from "Assets/cross-white.png";
 import hang from "Assets/hang.png";
-import previewImage from 'Assets/preview.png';
+import previewImage from "Assets/preview.png";
 import "./SingleChatScreen.css";
 import {
   updateChatInfo,
   loadCurrentContacts,
   updateCurrentChat,
-  loadCurrentChat,resetMessageArray
+  loadCurrentChat,
+  getImagesArray,
+  getDocumentsArray
 } from "Redux/Actions/SingleChatActions";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 toast.configure();
 
 function SingleChatScreen({ socket }) {
+  AWS.config.update({
+    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
+    secretAccessKey: "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",
+  });
 
-  
+  const myBucket = new AWS.S3({
+    params: { Bucket: "chitchatcommunication" },
+    region: "ap-south-1",
+  });
 
-AWS.config.update({
-  accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
-  secretAccessKey: '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'
-});
-
-const myBucket = new AWS.S3({
-  params: { Bucket: 'chitchatcommunication'},
-  region: 'ap-south-1',
-})
-
-
-  const dispatch = useDispatch();  
+  const dispatch = useDispatch();
 
   const inputRef = useRef(null);
   const inputDocumentRef = useRef(null);
-  const peerInstance=useRef(null);
-  const currentUserVideoRef=useRef(null);
-  const remoteVideoRef=useRef(null); 
-
+  const peerInstance = useRef(null);
+  const currentUserVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
 
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [showMediaScreen, setMediaToggle] = useState(false);
@@ -70,29 +67,34 @@ const myBucket = new AWS.S3({
   const [calling, setCalling] = useState(false);
   const [incomingCall, setIncomingCall] = useState(false);
   const [callRejected, setCallRejected] = useState(false);
-  const [showVideoScreen,setVideoScreen] = useState(false);
+  const [showVideoScreen, setVideoScreen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [imgMessage, setimgMessage] = useState("");
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState("");
+  const [displaySelectedImage, setDisplaySelectedImage] = useState("");
   const [selectedDocument, setSelectedDocument] = useState({});
-  const [peerId,setPeerId]=useState('');
-  const [lastChatNum,setLastChatNum] = useState(25);
+  const [documentBody, setDocumentBody] = useState({});
+  const [peerId, setPeerId] = useState("");
+  const [lastChatNum, setLastChatNum] = useState(25);
 
   const state = useSelector((state) => state.SingleChatReducer);
-  var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } = state;
-  var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
+  var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =
+    state;
+  var getUserMedia =
+    navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozkitGetUserMedia;
 
   // Checks if Receiver is online when we start conversation
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    const peer=new Peer();
+    window.addEventListener("scroll", handleScroll);
+    const peer = new Peer();
 
-    peer.on('open',id=>{
+    peer.on("open", (id) => {
       setPeerId(id);
-    })
+    });
 
-  peerInstance.current=peer;
-
+    peerInstance.current = peer;
 
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
@@ -101,44 +103,38 @@ const myBucket = new AWS.S3({
       } else {
         setuseronline(false);
       }
-    };
-
-
+    }
   }, []);
 
   useEffect(() => {
-    if(peerInstance.current !== null){
+    if (peerInstance.current !== null) {
+      peerInstance.current.on("call", (call) => {
+        setVideoScreen(true);
+        setShowHeader(true);
+        setIncomingCall(false);
 
-    peerInstance.current.on('call',call=>{
-    
-      setVideoScreen(true);
-      setShowHeader(true);
-      setIncomingCall(false);
-      
+        var getUserMedia =
+          navigator.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozkitGetUserMedia;
 
-      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
-  
-      getUserMedia({video:true,audio:true},mediaStream =>{
-      currentUserVideoRef.current.srcObject=mediaStream;
-      currentUserVideoRef.current.play();
-  
-      call.answer(mediaStream);
-      call.on('stream',(remoteStream)=>{
-        remoteVideoRef.current.srcObject=remoteStream;
-        remoteVideoRef.current.play();
-      })  
-    })
-    
-    })
-  }
-  },[peerInstance])
+        getUserMedia({ video: true, audio: true }, (mediaStream) => {
+          currentUserVideoRef.current.srcObject = mediaStream;
+          currentUserVideoRef.current.play();
 
+          call.answer(mediaStream);
+          call.on("stream", (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play();
+          });
+        });
+      });
+    }
+  }, [peerInstance]);
 
   // to load received chat real time and set typing status real time
   useEffect(() => {
-
     if (socket.current !== undefined) {
-
       socket.current.on("receive-message", (data) => {
         dispatch(updateCurrentChat(data));
       });
@@ -162,41 +158,35 @@ const myBucket = new AWS.S3({
       });
 
       socket.current.on("call-rejected", (data) => {
-         setTimeout(() => {
+        setTimeout(() => {
           setCallRejected(false);
           setShowHeader(true);
         }, 1500);
 
         setCalling(false);
         setCallRejected(true);
-
       });
 
       socket.current.on("call-Accepted", (data) => {
-   
         setVideoScreen(true);
         setCalling(false);
         setShowHeader(true);
 
-   
-        getUserMedia({video:true,audio:true},mediaStream =>{
-          currentUserVideoRef.current.srcObject=mediaStream;
+        getUserMedia({ video: true, audio: true }, (mediaStream) => {
+          currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
-          
-          const call = peerInstance.current.call(data.peerid, mediaStream)
-          call.on('stream',(remoteStream)=>{
-            remoteVideoRef.current.srcObject=remoteStream;
+
+          const call = peerInstance.current.call(data.peerid, mediaStream);
+          call.on("stream", (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream;
             remoteVideoRef.current.play();
-          })
-        })
+          });
+        });
+      });
 
-     });
-
-     socket.current.on('call-Hanged',(data) => {
-      setVideoScreen(false);
-
-     })
-
+      socket.current.on("call-Hanged", (data) => {
+        setVideoScreen(false);
+      });
     }
   }, [socket]);
 
@@ -212,204 +202,238 @@ const myBucket = new AWS.S3({
     }
   }, [onlineUsers]);
 
-
-  const handleScroll  = (e) => {
-   if((Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))){
-      dispatch(loadCurrentChat(receiverDetails.chatid,lastChatNum,25));
+  const handleScroll = (e) => {
+    if (
+      Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 ===
+      Math.floor(e.target.clientHeight)
+    ) {
+      dispatch(loadCurrentChat(receiverDetails.chatid, lastChatNum, 25));
       setLastChatNum(lastChatNum + 25);
-   }
-
-  }
+    }
+  };
 
   const getTimeDifference = (index) => {
-
-    if(index === 0){
+    if (index === 0) {
       return false;
-    }
-    else if(SingleChatMessageArray[index].senderid !== SingleChatMessageArray[index-1].senderid){
+    } else if (
+      SingleChatMessageArray[index].senderid !==
+      SingleChatMessageArray[index - 1].senderid
+    ) {
       return false;
-    }
-    else{
-      if(((Number(SingleChatMessageArray[index-1].timestamp) - Number(SingleChatMessageArray[index].timestamp))/60000) < 1){
+    } else {
+      if (
+        (Number(SingleChatMessageArray[index - 1].timestamp) -
+          Number(SingleChatMessageArray[index].timestamp)) /
+          60000 <
+        1
+      ) {
         return true;
-      }
-      else{
+      } else {
         return false;
       }
     }
-
-  }
+  };
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
     socket.current.emit("user-typing", receiverDetails.userid);
   };
 
-
   const keyUpHandler = () => {
     socket.current.emit("user-stops-typing", receiverDetails.userid);
   };
 
-
-  const sendMessage = () =>{
-    if(newMessage !== '')
-    UpdateChat('message',{});
-    setNewMessage(""); 
-  }
-
+  const sendMessage = () => {
+    if (newMessage !== "") UpdateChat("message", {}, "");
+    setNewMessage("");
+  };
 
   const setImage = (e) => {
-    debugger;
     const fileObj = e.target.files && e.target.files[0];
-    if (!fileObj)
-      return;
+    if (!fileObj) return;
 
     e.target.value = null;
 
-    // setSelectedImage(URL.createObjectURL(fileObj));
+    setDisplaySelectedImage(URL.createObjectURL(fileObj));
     setSelectedImage(fileObj);
     setAttachmentToggle(false);
     setMediaToggle(true);
-
-  }
+  };
 
   const setDocument = (e) => {
     const fileObj = e.target.files && e.target.files[0];
-    if (!fileObj)
-      return;
+    if (!fileObj) return;
 
     e.target.value = null;
 
-
     let documentDetails = {
+      documentName: fileObj.name,
+      documentSize: getSize(fileObj.size),
+      documentExtention: fileObj.name.split(".").pop(),
+    };
 
-      documentName:fileObj.name,
-      documentSize:getSize(fileObj.size),
-      documentExtention:fileObj.name.split('.').pop()
-
-    }
-
-      setSelectedDocument(documentDetails);
-      setDocumentToggle(true);
-      setAttachmentToggle(false);
-
-  }
-
-  const getSize = (bytes) => {
-    if(bytes < 1000){
-      return `${bytes} B`;
-    }
-    else if(bytes > 1000 && bytes < (1000*1024))
-    {
-      return `${Math.floor(bytes/1024)} KB`;
-    }
-    else if(bytes > (1000*1024)){
-      return `${Math.floor(bytes/(1000*1024))} MB`;
-    }
-    else{
-      return '';
-    }
-  }
-
-  const sendImage = () => {
-    debugger;
-    
-
-    const params = {
-      ACL: 'public-read',
-      Body: selectedImage,
-      Bucket: 'chitchatcommunication',
-      Key: selectedImage.name
+    setDocumentBody(fileObj);
+    setSelectedDocument(documentDetails);
+    setDocumentToggle(true);
+    setAttachmentToggle(false);
   };
 
-  myBucket.putObject(params)
-      .on('httpUploadProgress', (evt) => {
-          // setProgress(Math.round((evt.loaded / evt.total) * 100))
-      })
-      .send((err,data) => {
-          if (err) console.log(err)
-      })
+  const getSize = (bytes) => {
+    if (bytes < 1000) {
+      return `${bytes} B`;
+    } else if (bytes > 1000 && bytes < 1000 * 1024) {
+      return `${Math.floor(bytes / 1024)} KB`;
+    } else if (bytes > 1000 * 1024) {
+      return `${Math.floor(bytes / (1000 * 1024))} MB`;
+    } else {
+      return "";
+    }
+  };
 
+  const sendImage = () => {
 
-    
+    let nameArray = selectedImage.name.split(".");
+
+    let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+
+    const params = {
+      ACL: "public-read",
+      Body: selectedImage,
+      Bucket: "chitchatcommunication",
+      Key: key,
+    };
+
+    myBucket.putObject(params).send((err, data) => {
+      if (err) console.log(err);
+    });
 
     setimgMessage("");
     setSelectedImage("");
+    setDisplaySelectedImage("");
     setMediaToggle(false);
-    // UpdateChat("image",{});
+    UpdateChat("image", {}, key);
+
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/chat/updateimagesarray`, {
+      chatid: receiverDetails.chatid,
+      key:key
+    })
+    .then((res) => { 
+      if(res.data.statusCode === 200){
+        dispatch(getImagesArray(receiverDetails.chatid));
+      }
+    })
+
   };
 
   const sendDocument = () => {
-    UpdateChat("document",selectedDocument);
+
+    let nameArray = selectedDocument.documentName.split(".");
+
+    let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+
+    const params = {
+      ACL: "public-read",
+      Body: documentBody,
+      Bucket: "chitchatcommunication",
+      Key: key,
+    };
+
+    myBucket.putObject(params).send((err, data) => {
+      if (err) console.log(err);
+    });
+
+    UpdateChat("document", selectedDocument, key);
+    setDocumentBody('');
+    setDocumentToggle(false);
+    
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/chat/updatedocumentsarray`, {
+      chatid: receiverDetails.chatid,
+      key:key,
+      name:selectedDocument.documentName,
+      size:selectedDocument.documentSize
+    })
+    .then((res) => { 
+      if(res.data.statusCode === 200){
+        dispatch(getDocumentsArray(receiverDetails.chatid));
+      }
+    })
+
     setSelectedDocument({});
+
+  };
+
+  const closeHandler = () => {
+    setimgMessage("");
+    setSelectedImage("");
+    setDisplaySelectedImage("");
+    setSelectedDocument({});
+    setDocumentBody('');
+    setMediaToggle(false);
     setDocumentToggle(false);
   };
 
-
-  const closeHandler = () =>{
-    setimgMessage("");
-    setSelectedImage("");
-    setSelectedDocument({});
-    setMediaToggle(false);
-    setDocumentToggle(false);
-  }
-
   const callUser = () => {
-
     setShowHeader(false);
     setCalling(true);
-  
-    socket.current.emit('call-user',{userid:receiverDetails.userid});
 
-  }
+    socket.current.emit("call-user", { userid: receiverDetails.userid });
+  };
 
   const cancleCalling = () => {
-    socket.current.emit('cancle-call',{userid:receiverDetails.userid});
+    socket.current.emit("cancle-call", { userid: receiverDetails.userid });
     setShowHeader(true);
     setCalling(false);
-  }
+  };
 
   const rejectIncomingCall = () => {
-    socket.current.emit('reject-incoming-call',{userid:receiverDetails.userid});
+    socket.current.emit("reject-incoming-call", {
+      userid: receiverDetails.userid,
+    });
     setIncomingCall(false);
     setShowHeader(true);
-  }
-
+  };
 
   const AnswerCall = () => {
-    socket.current.emit('accept-incoming-call',{userid:receiverDetails.userid,peerid:peerId})
-  }
+    socket.current.emit("accept-incoming-call", {
+      userid: receiverDetails.userid,
+      peerid: peerId,
+    });
+  };
 
   const HangCall = () => {
-    socket.current.emit('hang-call',{userid:receiverDetails.userid,peerid:peerId});
+    socket.current.emit("hang-call", {
+      userid: receiverDetails.userid,
+      peerid: peerId,
+    });
     setVideoScreen(false);
+  };
 
-  }
-
-  const UpdateChat = async (messageType,selectedDocument) => {
-
+  const UpdateChat = async (messageType, selectedDocument, key) => {
     //For set chats order based on last sent message
     var updateOrder = false;
     var order = 0;
     let lastChatId = JSON.parse(localStorage.getItem("order"))[0];
-  
 
     if (lastChatId === "") {
-
-      localStorage.setItem("order",JSON.stringify([receiverDetails.userid, 1]));
+      localStorage.setItem(
+        "order",
+        JSON.stringify([receiverDetails.userid, 1])
+      );
       updateOrder = true;
       order = 1;
-
     } else if (lastChatId !== receiverDetails.userid) {
-
       updateOrder = true;
       order = JSON.parse(localStorage.getItem("order"))[1] + 1;
-      localStorage.setItem("order",JSON.stringify([receiverDetails.userid, order]));
+      localStorage.setItem(
+        "order",
+        JSON.stringify([receiverDetails.userid, order])
+      );
     }
 
-
     // send message to backend
-    let messagePayload = {  
+    let messagePayload = {
       type: messageType,
       senderid: localStorage.getItem("userid"),
       receiverid: receiverDetails.userid,
@@ -418,43 +442,40 @@ const myBucket = new AWS.S3({
       order: order,
     };
 
-    if(messageType === 'message'){
-      messagePayload.message = CryptoJS.AES.encrypt(newMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
-    }
-    else if(messageType === 'image'){
-      messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
-      messagePayload.url = "Assets/send-media.png";
-    }
-    else if(messageType === 'document'){
+    if (messageType === "message") {
+      messagePayload.message = CryptoJS.AES.encrypt(
+        newMessage,
+        process.env.REACT_APP_MESSAGE_SECRET_KEY
+      ).toString();
+    } else if (messageType === "image") {
+      messagePayload.message = CryptoJS.AES.encrypt(
+        imgMessage,
+        process.env.REACT_APP_MESSAGE_SECRET_KEY
+      ).toString();
+      messagePayload.key = key;
+    } else if (messageType === "document") {
       messagePayload.message = selectedDocument;
-      messagePayload.url = "Assets/send-media.png";
+      messagePayload.key = key;
     }
 
-
-
-
-    new Promise((resolve,reject) => {
-
+    new Promise((resolve, reject) => {
       axios
-      .post(`${process.env.REACT_APP_SERVER}/chat/updatemessagearray`, messagePayload)
-      .then((res) => {
-        if (res.data.message) {
+        .post(
+          `${process.env.REACT_APP_SERVER}/chat/updatemessagearray`,
+          messagePayload
+        )
+        .then((res) => {
+          if (res.data.message) {
+            socket.current.emit("send-message", res.data);
+            dispatch(updateCurrentChat(res.data));
+            dispatch(loadCurrentContacts());
 
-          socket.current.emit("send-message", res.data);
-          dispatch(updateCurrentChat(res.data));
-          dispatch(loadCurrentContacts());
-
-
-          // When Chat Creater Initiate First Chat
-          if(!SingleChatInfo.senderaddedtoreceiver) 
-           resolve(); 
-         
-        }
-      })
-
+            // When Chat Creater Initiate First Chat
+            if (!SingleChatInfo.senderaddedtoreceiver) resolve();
+          }
+        });
     })
-    .then(() => {
-     
+      .then(() => {
         axios
           .post(`${process.env.REACT_APP_SERVER}/chat/addSenderToReceiver`, {
             senderid: localStorage.getItem("userid"),
@@ -463,20 +484,22 @@ const myBucket = new AWS.S3({
           })
           .then((res) => {
             if (res.data.statusCode === 200) {
-
-              dispatch(updateChatInfo({ ...SingleChatInfo, senderaddedtoreceiver: true,}));
-              socket.current.emit("contact-added", {receiverid: receiverDetails.userid});
-
+              dispatch(
+                updateChatInfo({
+                  ...SingleChatInfo,
+                  senderaddedtoreceiver: true,
+                })
+              );
+              socket.current.emit("contact-added", {
+                receiverid: receiverDetails.userid,
+              });
             }
-          })  
-
-    })
-    .catch((err) => {
-      toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-    });
-  
+          });
+      })
+      .catch((err) => {
+        toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+      });
   };
-
 
   // const filterChatDateWise = (chatArray) => {
 
@@ -489,172 +512,242 @@ const myBucket = new AWS.S3({
 
   // }
 
-
   return (
     <div className="single-main-container">
-
-
-      {showHeader && <header className="single-chat-header">
-        <div className="single-header-leftbar">
-          <div className="single-header-logo">
-            <img src={singleHeaderImg} alt="chat-logo"></img>
-          </div>
-          <div className="single-header-info">
-            <h1 className="single-person-name">
-              {receiverDetails !== undefined ? receiverDetails.username : ""}
-            </h1>
-            <div className="single-status">
-              {isreceivertyping ? (
-                <div className="typing">
-                  {receiverDetails.username} is typing...
-                </div>
-              ) : (
-                <>
-                  <span
-                    class={
-                      "single-status-dot " + (isuseronline ? "" : "ofline")
-                    }
-                  ></span>
-                  <div className="single-status-name">
-                    {isuseronline ? "Online" : "Offline"}
+      {showHeader && (
+        <header className="single-chat-header">
+          <div className="single-header-leftbar">
+            <div className="single-header-logo">
+              <img src={singleHeaderImg} alt="chat-logo"></img>
+            </div>
+            <div className="single-header-info">
+              <h1 className="single-person-name">
+                {receiverDetails !== undefined ? receiverDetails.username : ""}
+              </h1>
+              <div className="single-status">
+                {isreceivertyping ? (
+                  <div className="typing">
+                    {receiverDetails.username} is typing...
                   </div>
-                </>
-              )}
+                ) : (
+                  <>
+                    <span
+                      class={
+                        "single-status-dot " + (isuseronline ? "" : "ofline")
+                      }
+                    ></span>
+                    <div className="single-status-name">
+                      {isuseronline ? "Online" : "Offline"}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="single-header-icons">
-          <div className="right-icons video-call-single" onClick={callUser}>
-            <img src={videoCall} alt="video-call"></img>
+          <div className="single-header-icons">
+            <div className="right-icons video-call-single" onClick={callUser}>
+              <img src={videoCall} alt="video-call"></img>
+            </div>
+            <div className="right-icons">
+              <img src={audioCall} alt="audio-call"></img>
+            </div>
+            <div className="right-icons ">
+              <img src={search} alt="search"></img>
+            </div>
           </div>
-          <div className="right-icons">
-            <img src={audioCall} alt="audio-call"></img>
-          </div>
-          <div className="right-icons ">
-            <img src={search} alt="search"></img>
-          </div>
-        </div>
-      </header>}
+        </header>
+      )}
 
-      {incomingCall && <header className="single-calling-header">
-          <div className="someone-calling">{receiverDetails.username} is Calling...</div>
+      {incomingCall && (
+        <header className="single-calling-header">
+          <div className="someone-calling">
+            {receiverDetails.username} is Calling...
+          </div>
           <div className="action-buttons">
-            <button className="action-button accept-button" onClick={AnswerCall}><div className="call-images"><img src={callAccept} alt=""></img></div>Accept</button>
-            <button className="action-button reject-button" onClick={rejectIncomingCall}><div className="reject"><img src={callreject} alt=""></img></div>Reject</button>
+            <button
+              className="action-button accept-button"
+              onClick={AnswerCall}
+            >
+              <div className="call-images">
+                <img src={callAccept} alt=""></img>
+              </div>
+              Accept
+            </button>
+            <button
+              className="action-button reject-button"
+              onClick={rejectIncomingCall}
+            >
+              <div className="reject">
+                <img src={callreject} alt=""></img>
+              </div>
+              Reject
+            </button>
           </div>
-      </header>}
+        </header>
+      )}
 
-
-      {calling && <header className="self-calling-header">
+      {calling && (
+        <header className="self-calling-header">
           <div className="calling">Calling {receiverDetails.username}...</div>
           <div className="action-buttons">
-            <button className="action-button reject-button pulse" onClick={cancleCalling}><div className="reject"><img src={callreject} alt=""></img></div>Cancel</button>
+            <button
+              className="action-button reject-button pulse"
+              onClick={cancleCalling}
+            >
+              <div className="reject">
+                <img src={callreject} alt=""></img>
+              </div>
+              Cancel
+            </button>
           </div>
-         
-      </header>}
+        </header>
+      )}
 
-      {callRejected && <header className="call-rejected">
+      {callRejected && (
+        <header className="call-rejected">
           <div className="someone-calling">Call Rejected...</div>
-       
-      </header>}
+        </header>
+      )}
 
-    {showVideoScreen &&  <div className='Video-Container'>
-         <div className='Receiver-Screen'>  <video ref={currentUserVideoRef}/>
-            <div className='sender-screen'> <video ref={remoteVideoRef}/> </div>
+      {showVideoScreen && (
+        <div className="Video-Container">
+          <div className="Receiver-Screen">
+            {" "}
+            <video ref={currentUserVideoRef} />
+            <div className="sender-screen">
+              {" "}
+              <video ref={remoteVideoRef} />{" "}
+            </div>
+          </div>
+          <div>
+            <button className="hang" onClick={HangCall}>
+              <img src={hang} alt="hang"></img>hang
+            </button>
+          </div>
         </div>
-        <div><button className="hang" onClick={HangCall}><img src={hang} alt="hang"></img>hang</button></div>
-    </div>}
-    {/* <VideoScreen /> */}
-        
+      )}
+      {/* <VideoScreen /> */}
 
       {/* Main - section  */}
 
       <section className="single-main-section" onScroll={handleScroll}>
-        <fieldset className="day-container" >
-          <legend > Yesterday </legend>
-          {console.clear()}
-          {console.log(SingleChatMessageArray)}
+        <fieldset className="day-container">
+          <legend> Yesterday </legend>
           {/* {filterChatDateWise(SingleChatMessageArray)} */}
-          {SingleChatMessageArray.map((message,i) => {
-              if (message.senderid === receiverDetails.userid) {
-                return (
-                  <ReceivedMessages
-                    messagetype={message.type}
-                    payload={message}
-                    chatid={receiverDetails.chatid}
-                    contactid={receiverDetails.userid}
-                    shouldBeRound={getTimeDifference(i)}
-                  />
-                );
-              } else {
-
-                return (
-                  <SentMessages
-                    messagetype={message.type}
-                    payload={message}
-                    chatid={receiverDetails.chatid}
-                    contactid={receiverDetails.userid}
-                    shouldBeRound={getTimeDifference(i)}
-                  />
-                );
-              }
-            })}
-
-
-
+          {SingleChatMessageArray.map((message, i) => {
+            if (message.senderid === receiverDetails.userid) {
+              return (
+                <ReceivedMessages
+                  messagetype={message.type}
+                  payload={message}
+                  chatid={receiverDetails.chatid}
+                  contactid={receiverDetails.userid}
+                  shouldBeRound={getTimeDifference(i)}
+                />
+              );
+            } else {
+              return (
+                <SentMessages
+                  messagetype={message.type}
+                  payload={message}
+                  chatid={receiverDetails.chatid}
+                  contactid={receiverDetails.userid}
+                  shouldBeRound={getTimeDifference(i)}
+                />
+              );
+            }
+          })}
         </fieldset>
       </section>
 
       {/* Footer */}
 
       <footer className="single-chat-footer">
-
         {/* add attachment popup */}
         <div className={"single-attachment " + (!showAttachment ? "hide" : "")}>
-          <div className="single-image-attachment" onClick={() => {inputRef.current.click();}}>
+          <div
+            className="single-image-attachment"
+            onClick={() => {
+              inputRef.current.click();
+            }}
+          >
             <div className="single-attachment-icon">
               <img src={imageAttachment} alt="img-attachment"></img>
             </div>
             <div className="single-attachment-text">Photo or Video</div>
-            <input style={{display: 'none'}} ref={inputRef} type="file" alt="select-image" onChange={setImage} />
+            <input
+              style={{ display: "none" }}
+              ref={inputRef}
+              type="file"
+              alt="select-image"
+              onChange={setImage}
+            />
           </div>
-          <div className="single-image-attachment" onClick={() => {inputDocumentRef.current.click();}}>
+          <div
+            className="single-image-attachment"
+            onClick={() => {
+              inputDocumentRef.current.click();
+            }}
+          >
             <div className="single-attachment-icon">
               <img src={documentAttachment} alt="img-attachment"></img>
             </div>
             <div className="single-attachment-text">Documents</div>
-            <input style={{display: 'none'}} ref={inputDocumentRef} type="file" alt="select-image" onChange={setDocument} />
+            <input
+              style={{ display: "none" }}
+              ref={inputDocumentRef}
+              type="file"
+              alt="select-image"
+              onChange={setDocument}
+            />
           </div>
         </div>
 
-
-         {/* Send Media Popup    */}
-        <div className={"send-media-screen " + (!showMediaScreen ? "hide" : "")}>
-          <div className="image-close" onClick={closeHandler} >
-            <img src={crossWhite} alt="" ></img>
+        {/* Send Media Popup    */}
+        <div
+          className={"send-media-screen " + (!showMediaScreen ? "hide" : "")}
+        >
+          <div className="image-close" onClick={closeHandler}>
+            <img src={crossWhite} alt=""></img>
           </div>
           <div className="display-image-single-send">
-            <img src={selectedImage} alt=""></img>
+            <img src={displaySelectedImage} alt=""></img>
           </div>
           <div className="image-message">
-            <input type="text" placeholder="Type a Message...." value={imgMessage} onChange={(e) => {setimgMessage(e.target.value); }} ></input>
+            <input
+              type="text"
+              placeholder="Type a Message...."
+              value={imgMessage}
+              onChange={(e) => {
+                setimgMessage(e.target.value);
+              }}
+            ></input>
             <div className="img-send" onClick={sendImage}>
               <img src={sendMedia} alt=""></img>
             </div>
           </div>
         </div>
 
-            {/* Send Document Popuo */}
-        <div className={"send-media-screen " + (!showDocumentScreen ? "hide" : "")}>
+        {/* Send Document Popuo */}
+        <div
+          className={"send-media-screen " + (!showDocumentScreen ? "hide" : "")}
+        >
           <div className="document-header">
             <div className="no-preview">{selectedDocument.documentName}</div>
-            <div className="image-close" onClick={closeHandler} ><img src={crossWhite} alt="" ></img></div>
+            <div className="image-close" onClick={closeHandler}>
+              <img src={crossWhite} alt=""></img>
+            </div>
           </div>
           <div className="display-image-single-send">
-            <div ><img src={previewImage} alt="preview"></img></div>
+            <div>
+              <img src={previewImage} alt="preview"></img>
+            </div>
             <div className="no-preview">No Preview Available</div>
-            <div className="preview-info">{selectedDocument.documentSize}-{selectedDocument.documentExtention}</div>
+            <div className="preview-info">
+              {selectedDocument.documentSize}-
+              {selectedDocument.documentExtention}
+            </div>
           </div>
           <div className="image-message additional">
             <div className="img-send" onClick={sendDocument}>
@@ -663,23 +756,33 @@ const myBucket = new AWS.S3({
           </div>
         </div>
 
-
-            {/* Actual footer */}
-        <div className="single-attach-icon" onClick={() => { setAttachmentToggle(!showAttachment); }}>
+        {/* Actual footer */}
+        <div
+          className="single-attach-icon"
+          onClick={() => {
+            setAttachmentToggle(!showAttachment);
+          }}
+        >
           <img src={attachment} alt="attach"></img>
         </div>
 
         <div className="single-footer-message">
-          <input type="text" value={newMessage} 
-            placeholder={'write a message for ' + (receiverDetails !== undefined ? receiverDetails.username : "") + '...'} 
+          <input
+            type="text"
+            value={newMessage}
+            placeholder={
+              "write a message for " +
+              (receiverDetails !== undefined ? receiverDetails.username : "") +
+              "..."
+            }
             onChange={typingHandler}
-            onKeyUp={useDebouncedCallback(keyUpHandler, 1500)}>
-          </input>
+            onKeyUp={useDebouncedCallback(keyUpHandler, 1500)}
+          ></input>
         </div>
 
         <div className="single-footer-right-icons">
-            {/* <InputEmoji /> */}
-            {/* <Picker pickerStyle={{}} /> */}
+          {/* <InputEmoji /> */}
+          {/* <Picker pickerStyle={{}} /> */}
 
           <div className="single-footer-right-icon">
             {/* <InputEmoji style={{display:'none'}}/> */}
@@ -693,8 +796,6 @@ const myBucket = new AWS.S3({
         <div className="single-right-footer"></div>
       </footer>
     </div>
-
-
   );
 }
 

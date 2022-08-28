@@ -96,6 +96,10 @@
         /* justify-content: center; */
     }
 
+    .single-files-container:first-child{
+        margin-top: 4vh;
+    }
+
     .single-files-container:last-child{
         border-bottom: none;
     }
@@ -104,6 +108,7 @@
     .single-file-icon{
         height: calc(.5vh +1.5vw) !important;
         width: calc(.5vh +1.5vw);
+        cursor: pointer;
     }
     
     .single-file-icon img{

@@ -1,7 +1,8 @@
-import React from "react";
+import React,{useState} from "react";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
+import AWS from 'aws-sdk'
 import downloadDocument from "Assets/download-document.png";
 import threeDot from "Assets/three-dot.png";
 import displayImage from "Assets/display-image.png";
@@ -15,7 +16,20 @@ toast.configure();
 
 function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound}) {
 
+  AWS.config.update({
+    accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
+    secretAccessKey: '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'
+  });
+  
+  const myBucket = new AWS.S3({
+    params: { Bucket: 'chitchatcommunication'},
+    region: 'ap-south-1',
+  })
+
+  
+
   const dispatch=useDispatch();
+  const [image,setImage] = useState('');
 
 
   const getDesiredTimeStamp = (timestamp) => {
@@ -25,6 +39,22 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
   const getDecryptedMessage = (message) => {
     return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8)
   }
+
+  const getImageFromKey = (key) => {
+    debugger;
+        myBucket.getObject({ 
+          Bucket: 'chitchatcommunication',
+         Key: key},
+    
+         (err,data) => {
+    
+          if(err)
+          setImage(null);
+    
+          setImage(`data:image/png;base64,${data.Body.toString('base64')}`);
+    
+       })
+      }
 
   const starMessage =() =>{
     axios
@@ -95,7 +125,8 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
       <div className="single-image">
         <div className="single-image-content">
         <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
-          <div className="single-image-display"><img src={displayImage} alt=""></img></div>
+        {getImageFromKey(payload.key)}
+          <div className="single-image-display"><img src={image} alt=""></img></div>
           <div className="single-image-desc">{getDecryptedMessage(payload.message)}</div>
         </div>
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
@@ -109,7 +140,8 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
     return (
       <div className="single-image">
         <div className="single-image-content last-reveived-message">
-          <div className="single-image-display"><img src={displayImage} alt=""></img></div>
+        {getImageFromKey(payload.key)}
+          <div className="single-image-display"><img src={image} alt=""></img></div>
           <div className="single-image-desc">{getDecryptedMessage(payload.message)}</div>
         </div>
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>

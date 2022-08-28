@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
+import AWS from "aws-sdk";
 import uparrow from "Assets/up-arrow.png";
 import downarrow from "Assets/down-arrow.png";
 import gmi1 from "Assets/group-message-image-1.png";
@@ -12,15 +13,23 @@ import starSent from "Assets/star-sent.svg";
 import { useSelector } from "react-redux";
 import "./GroupMediaSection.css";
 
-
 function GroupMediaSection() {
+  AWS.config.update({
+    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
+    secretAccessKey: "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",
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: "chitchatcommunication" },
+    region: "ap-south-1",
+  });
 
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const state = useSelector((state) => state.SingleChatReducer);
 
-  const { receiverGroupDetails, StaredMessages } = groupDetails;
+  const { receiverGroupDetails, StaredMessages, imagesArray, documentsArray } =
+    groupDetails;
   const { onlineUsers } = state;
-
 
   const [activeflags, setActiveFlags] = useState({
     members: true,
@@ -34,7 +43,6 @@ function GroupMediaSection() {
 
   //for setting online and offline members list initially
   useEffect(() => {
-
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
@@ -54,13 +62,10 @@ function GroupMediaSection() {
     );
 
     setoflineMembers(oflineMembers);
-
   }, []);
-
 
   // for setting online and offline members list when there is change in socket
   useEffect(() => {
-
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
@@ -80,9 +85,7 @@ function GroupMediaSection() {
     );
 
     setoflineMembers(oflineMembers);
-
   }, [onlineUsers]);
-
 
   const getmonth = (month) => {
     switch (month) {
@@ -116,59 +119,75 @@ function GroupMediaSection() {
   };
 
   const getUserName = (userid) => {
-
-      var username;
-      receiverGroupDetails.groupmembersarray.map((member) => {
-        if (member.userid === userid) username = member.username;
-      });
+    var username;
+    receiverGroupDetails.groupmembersarray.map((member) => {
+      if (member.userid === userid) username = member.username;
+    });
 
     return username;
-
   };
-
 
   const getDecryptedMessage = (message) => {
-
-      return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
-
+    return CryptoJS.AES.decrypt(
+      message,
+      process.env.REACT_APP_MESSAGE_SECRET_KEY
+    ).toString(CryptoJS.enc.Utf8);
   };
-
 
   return (
     <>
-
       <div className="group-media-container">
-
         <div className="group-online-section">
-          <button className="group-online-collipsible-button"
-                  onClick={() => {setActiveFlags({members: !activeflags.members,media: false,files: false,star: false,});}}>
-
-            <div>Members <span>14</span></div>
-            <div className="group-collipsible-icon"><img src={!activeflags.members ? uparrow : downarrow} alt=""></img></div>
-
+          <button
+            className="group-online-collipsible-button"
+            onClick={() => {
+              setActiveFlags({
+                members: !activeflags.members,
+                media: false,
+                files: false,
+                star: false,
+              });
+            }}
+          >
+            <div>
+              Members <span>14</span>
+            </div>
+            <div className="group-collipsible-icon">
+              <img
+                src={!activeflags.members ? uparrow : downarrow}
+                alt=""
+              ></img>
+            </div>
           </button>
 
-          <div className={"online-collipsible-content " +(!activeflags.members ? "" : "show") }>
-
+          <div
+            className={
+              "online-collipsible-content " +
+              (!activeflags.members ? "" : "show")
+            }
+          >
             <div className="online-members">Online-{onlineMembers.length}</div>
             <div className="online-list">
-
               {onlineMembers.map((member) => {
                 return (
                   <>
                     <div className="online-member">
-                      <div className="online-member-icon"><img src={gmi1} alt=""></img></div>
-                      <div className="online-member-name">{member.username}</div>
+                      <div className="online-member-icon">
+                        <img src={gmi1} alt=""></img>
+                      </div>
+                      <div className="online-member-name">
+                        {member.username}
+                      </div>
                     </div>
                   </>
                 );
               })}
-
             </div>
 
-            <div className="online-members offline">Offline-{oflineMembers.length}</div>
+            <div className="online-members offline">
+              Offline-{oflineMembers.length}
+            </div>
             <div className="online-list">
-
               {oflineMembers.map((member) => {
                 return (
                   <>
@@ -183,84 +202,132 @@ function GroupMediaSection() {
                   </>
                 );
               })}
-
             </div>
           </div>
         </div>
 
         <div className="group-media-section">
-
-          <button className="group-online-collipsible-button"
-                  onClick={() => {setActiveFlags({members: false,media: !activeflags.media,files: false,star: false,});}}>
-
-            <div>Media <span>14</span></div>
-            <div className="group-collipsible-icon"><img src={!activeflags.media ? uparrow : downarrow} alt=""></img></div>
-
+          <button
+            className="group-online-collipsible-button"
+            onClick={() => {
+              setActiveFlags({
+                members: false,
+                media: !activeflags.media,
+                files: false,
+                star: false,
+              });
+            }}
+          >
+            <div>
+              Media <span>{imagesArray.length}</span>
+            </div>
+            <div className="group-collipsible-icon">
+              <img src={!activeflags.media ? uparrow : downarrow} alt=""></img>
+            </div>
           </button>
 
-          <div className={ "media-collipsible-content " + (!activeflags.media ? "" : "show")}>
-
+          <div
+            className={
+              "media-collipsible-content " + (!activeflags.media ? "" : "show")
+            }
+          >
             <div className="single-media-file">
-              <div className="single-media-file-container"><img src={smi1} alt=""></img></div>
+              <div className="single-media-file-container">
+                <img src={smi1} alt=""></img>
+              </div>
             </div>
 
             <div className="single-media-file">
-              <div className="single-media-file-container"><img src={smi1} alt=""></img> </div>
+              <div className="single-media-file-container">
+                <img src={smi1} alt=""></img>{" "}
+              </div>
             </div>
 
             <div className="single-media-file">
-              <div className="single-media-file-container single-media-info">18+</div>
+              <div className="single-media-file-container single-media-info">
+                18+
+              </div>
             </div>
-
           </div>
         </div>
-
 
         <div className="group-files-section">
-          <button className="group-online-collipsible-button"
-                   onClick={() => {setActiveFlags({members: false,media: false,files: !activeflags.files,star: false,});}}>
-
-            <div>Files <span>14</span></div>
-            <div className="group-collipsible-icon"><img src={!activeflags.files ? uparrow : downarrow} alt=""></img></div>
-
+          <button
+            className="group-online-collipsible-button"
+            onClick={() => {
+              setActiveFlags({
+                members: false,
+                media: false,
+                files: !activeflags.files,
+                star: false,
+              });
+            }}
+          >
+            <div>
+              Files <span>{documentsArray.length}</span>
+            </div>
+            <div className="group-collipsible-icon">
+              <img src={!activeflags.files ? uparrow : downarrow} alt=""></img>
+            </div>
           </button>
 
-          <div className={"files-collipsible-content " + (!activeflags.files ? "" : "show")}>
-
-            <div className="single-files-container mt">
-              <div className="single-file-icon"><img src={spm1} alt=""></img></div>
-              <div className="single-file-details">
-                <div className="single-file-name">Cirriculum Vitae.pdf</div>
-                <div className="single-file-detail">3.7Mb <span>22Jan 2022</span></div>
-              </div>
-            </div>
-
-            <div className="single-files-container">
-              <div className="single-file-icon"><img src={spm1} alt=""></img></div>
-              <div className="single-file-details">
-                <div className="single-file-name">Cirriculum Vitae.pdf</div>
-                <div className="single-file-detail">3.7Mb <span>22Jan 2022</span></div>
-              </div>
-            </div>
-
-          
+          <div
+            className={
+              "files-collipsible-content " + (!activeflags.files ? "" : "show")
+            }
+          >
+            {documentsArray.map((document) => {
+              return (
+                <>
+                  <div className="single-files-container">
+                    <div className="single-file-icon">
+                      <img src={spm1} alt=""></img>
+                    </div>
+                    <div className="single-file-details">
+                      <div className="single-file-name">{document.name}</div>
+                      <div className="single-file-detail">
+                        {document.size}
+                        <span>
+                          {new Date(document.timestamp).getDate()}
+                          {getmonth(
+                            new Date(document.timestamp).getMonth()
+                          )}{" "}
+                          {new Date(document.timestamp).getFullYear()}{" "}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            })}
           </div>
         </div>
 
-          {/* StarSection   */}
+        {/* StarSection   */}
 
         <div className="group-star-messages-section">
-          <button className="group-online-collipsible-button"
-                  onClick={() => {setActiveFlags({members: false,media: false,files: false,star: !activeflags.star,});}}>
-
+          <button
+            className="group-online-collipsible-button"
+            onClick={() => {
+              setActiveFlags({
+                members: false,
+                media: false,
+                files: false,
+                star: !activeflags.star,
+              });
+            }}
+          >
             <div>Star Messages</div>
-            <div className="group-collipsible-icon"><img src={!activeflags.star ? uparrow : downarrow} alt=""></img></div>
-
+            <div className="group-collipsible-icon">
+              <img src={!activeflags.star ? uparrow : downarrow} alt=""></img>
+            </div>
           </button>
 
-
-          <div className={"files-collipsible-content " + (!activeflags.star ? "" : "show")}>
-
+          <div
+            className={
+              "files-collipsible-content " + (!activeflags.star ? "" : "show")
+            }
+          >
             {StaredMessages.map((message) => {
               if (message.type === "Received") {
                 return (
@@ -313,7 +380,6 @@ function GroupMediaSection() {
                 );
               }
             })}
-            
           </div>
         </div>
       </div>

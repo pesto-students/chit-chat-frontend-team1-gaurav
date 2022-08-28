@@ -5,6 +5,8 @@ import {
   UPDATE_MESSAGE_ARRAY,
   RESET_MESSAGE_ARRAY,
   GET_STARED_MESSAGES,
+  GET_IMAGES_ARRAY,
+  GET_DOCUMENTS_ARRAY,
 } from "../Types/GroupChatTypes";
 
 var GroupChatState = {
@@ -14,6 +16,8 @@ var GroupChatState = {
   GroupChatMessageArray: [],
   GroupChatInfo: [],
   StaredMessages: [],
+  imagesArray:[],
+  documentsArray:[]
 };
 
 export function GroupChatReducer(currentState = GroupChatState, action) {
@@ -45,6 +49,16 @@ export function GroupChatReducer(currentState = GroupChatState, action) {
       return {
         ...currentState,
         StaredMessages: action.payload,
+      };
+    case GET_IMAGES_ARRAY:
+      return {
+        ...currentState,
+        imagesArray: action.payload,
+      };
+    case GET_DOCUMENTS_ARRAY:
+      return {
+        ...currentState,
+        documentsArray: action.payload,
       };
     case RESET_MESSAGE_ARRAY:
       return {

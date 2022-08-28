@@ -6,6 +6,8 @@ import {
   UPDATE_MESSAGE_ARRAY,
   RESET_MESSAGE_ARRAY,
   GET_STARED_MESSAGES,
+  GET_IMAGES_ARRAY,
+  GET_DOCUMENTS_ARRAY
 } from "../Types/GroupChatTypes";
 
 export const loadCurrentGroups = () => {
@@ -24,7 +26,7 @@ export const loadCurrentGroups = () => {
         console.log("error groups data", err);
         dispatch({
           type: LOAD_CURRENT_GROUPS,
-          payload: err,
+          payload: [],
         });
       });
   };
@@ -48,7 +50,7 @@ export const loadCurrentGroupChat = (chatid, start, end) => {
       .catch((err) => {
         dispatch({
           type: LOAD_CURRENT_GROUPCHAT,
-          payload: err,
+          payload: [],
         });
       });
   };
@@ -97,7 +99,50 @@ export const getGroupStaredMessages = (groupid) => {
       .catch((err) => {
         dispatch({
           type: GET_STARED_MESSAGES,
-          payload: err,
+          payload: [],
+        });
+      });
+  };
+};
+
+
+export const getGroupImagesArray = (groupid) => {
+  return (dispatch) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER}/group/getimagesarray`, {
+        groupid: groupid,
+      })
+      .then((res) => {
+        dispatch({
+          type: GET_IMAGES_ARRAY,
+          payload: res.data,
+        });
+      })
+      .catch(() => {
+        dispatch({
+          type: GET_IMAGES_ARRAY,
+          payload: [],
+        });
+      });
+  };
+};
+
+export const getGroupDocumentsArray = (groupid) => {
+  return (dispatch) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER}/group/getdocumentsarray`, {
+        groupid: groupid,
+      })
+      .then((res) => {
+        dispatch({
+          type: GET_DOCUMENTS_ARRAY,
+          payload: res.data,
+        });
+      })
+      .catch(() => {
+        dispatch({
+          type: GET_DOCUMENTS_ARRAY,
+          payload: [],
         });
       });
   };

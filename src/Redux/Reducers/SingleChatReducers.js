@@ -7,6 +7,8 @@ import {
   UPDATE_CURRENT_CHAT,
   GET_STARED_MESSAGES,
   RESET_MESSAGE_ARRAY,
+  GET_IMAGES_ARRAY,
+  GET_DOCUMENTS_ARRAY,
 } from "../Types/SingleChatTypes";
 
 var SingleChatState = {
@@ -16,6 +18,8 @@ var SingleChatState = {
   SingleChatMessageArray: [],
   SingleChatInfo: [],
   StaredMessages: [],
+  imagesArray: [],
+  documentsArray: [],
   flag: false,
 };
 
@@ -59,6 +63,16 @@ export function SingleChatReducer(currentState = SingleChatState, action) {
       return {
         ...currentState,
         StaredMessages: action.payload,
+      };
+    case GET_IMAGES_ARRAY:
+      return {
+        ...currentState,
+        imagesArray: action.payload,
+      };
+    case GET_DOCUMENTS_ARRAY:
+      return {
+        ...currentState,
+        documentsArray: action.payload,
       };
     case RESET_MESSAGE_ARRAY:
       return {

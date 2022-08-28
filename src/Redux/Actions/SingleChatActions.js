@@ -7,7 +7,9 @@ import {
   SET_RECEIVER_DETAILS,
   UPDATE_CURRENT_CHAT,
   GET_STARED_MESSAGES,
-  RESET_MESSAGE_ARRAY
+  RESET_MESSAGE_ARRAY,
+  GET_IMAGES_ARRAY,
+  GET_DOCUMENTS_ARRAY
 } from "../Types/SingleChatTypes";
 
 // export function loadCurrentContacts(){
@@ -15,7 +17,6 @@ import {
 // }
 
 export const loadCurrentContacts = () => {
-  
   return (dispatch) => {
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/currentcontacts`, {
@@ -30,23 +31,21 @@ export const loadCurrentContacts = () => {
       .catch((err) => {
         dispatch({
           type: LOAD_CURRENT_CONTACTS,
-          payload: err,
+          payload: [],
         });
       });
   };
 };
 
-export const loadCurrentChat = (chatid,start,end) => {
-  debugger
+export const loadCurrentChat = (chatid, start, end) => {
   return (dispatch) => {
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/loadchat`, {
         chatid: chatid,
-        start:start,
-        end:end
+        start: start,
+        end: end,
       })
       .then((res) => {
-        debugger;
         dispatch({
           type: LOAD_CURRENT_CHAT,
           payload: res.data,
@@ -55,23 +54,20 @@ export const loadCurrentChat = (chatid,start,end) => {
       .catch((err) => {
         dispatch({
           type: LOAD_CURRENT_CHAT,
-          payload: err,
+          payload: [],
         });
       });
   };
 };
 
-
 export const getStaredMessages = (chatid) => {
-
   return (dispatch) => {
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/loadstarmessages`, {
-        userid:localStorage.getItem('userid'),
+        userid: localStorage.getItem("userid"),
         chatid: chatid,
       })
       .then((res) => {
-        
         dispatch({
           type: GET_STARED_MESSAGES,
           payload: res.data,
@@ -80,7 +76,49 @@ export const getStaredMessages = (chatid) => {
       .catch((err) => {
         dispatch({
           type: GET_STARED_MESSAGES,
-          payload: err,
+          payload: [],
+        });
+      });
+  };
+};
+
+export const getImagesArray = (chatid) => {
+  return (dispatch) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER}/chat/getimagesarray`, {
+        chatid: chatid,
+      })
+      .then((res) => {
+        dispatch({
+          type: GET_IMAGES_ARRAY,
+          payload: res.data,
+        });
+      })
+      .catch(() => {
+        dispatch({
+          type: GET_IMAGES_ARRAY,
+          payload: [],
+        });
+      });
+  };
+};
+
+export const getDocumentsArray = (chatid) => {
+  return (dispatch) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER}/chat/getdocumentsarray`, {
+        chatid: chatid,
+      })
+      .then((res) => {
+        dispatch({
+          type: GET_DOCUMENTS_ARRAY,
+          payload: res.data,
+        });
+      })
+      .catch(() => {
+        dispatch({
+          type: GET_DOCUMENTS_ARRAY,
+          payload: [],
         });
       });
   };
@@ -113,7 +151,6 @@ export const setReceiverDetails = (data) => {
   };
 };
 
-
 export const updateCurrentChat = (data) => {
   return (dispatch) => {
     dispatch({
@@ -122,7 +159,6 @@ export const updateCurrentChat = (data) => {
     });
   };
 };
-
 
 export const resetMessageArray = (data) => {
   return (dispatch) => {

@@ -1,12 +1,12 @@
 import React from 'react'
 import { useNavigate } from "react-router-dom";
-// import "./Home.css";
 import GroupIcon from "Assets/Group.png";
 import SecurityIcon from "Assets/Security.png";
 import VideoIcon from "Assets/VideoCall.png";
 import FileIcon from "Assets/FileSharing.png";
 import MsgIcon from "Assets/MessageIcon.png";
 import Logo from "Assets/Logo.png";
+import "./Home.css";
 
 
 function Home() {
