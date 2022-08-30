@@ -54,6 +54,17 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
    })
   }
 
+
+  const downloadDocumentToLocal = (documenturl) => {
+    let url = `https://chitchatcommunication.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+
+    let link = document.createElement('a');
+    link.href = url;
+    link.click();
+    
+  }
+
+
   const starMessage = () => {
 
     axios
@@ -165,7 +176,7 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
             </div>
           </div>
           <div className="group-document-content ">
-            <div className="download-document-icon">
+            <div className="download-document-icon" onClick={() => downloadDocumentToLocal(payload.key)}>
               <img src={darkDocument} alt=""></img>
             </div>
             <div className="group-document-details">

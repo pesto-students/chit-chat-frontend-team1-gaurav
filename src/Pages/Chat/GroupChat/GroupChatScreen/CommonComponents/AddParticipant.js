@@ -1,105 +1,133 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import Search from "Assets/NavSearch.png";
-import Close from "Assets/close-icon.png"
+import Close from "Assets/close-icon.png";
 import AddParticipantContactCard from "Common/ContactCard/AddParticpantContactCard";
-import axios from 'axios';
-import { useDebouncedCallback } from 'use-debounce';
+import axios from "axios";
+import closeWhite from 'Assets/close-white.png';
+import { useDebouncedCallback } from "use-debounce";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
+function AddParticipant({ setShowPopup, groupid, groupMembers }) {
+  const [contact, setContact] = useState([]);
+  const [selectedContacts, setSelectedContacts] = useState([]);
 
-function AddParticipant({setShowPopup,groupid,groupMembers}) {
+  let navigate = useNavigate();
 
-    const [contact,setContact] = useState([]);
-    const [selectedContacts,setSelectedContacts]=useState([]);
-    
-    let navigate = useNavigate();
-
-
-    const searchContacts = (e) =>{
-
-        if(e.target.value === ''){
-            setContact([]);
-        }else{
-        
-            axios
-            .post("http://localhost:5000/chat/searchcontacts", {
-                userid:localStorage.getItem('userid'),
-                text:e.target.value
-            })
-            .then((res) => {
-                console.log('contacts',res.data)
-                let groupMembersArray=groupMembers.map(member=>member.userid)
-                let filteredContacts=res.data.filter((contact)=>{return !groupMembersArray.includes(contact._id)})
-                setContact(filteredContacts);
-            })
-            .catch((err) => {
-                setContact([]);
-            });
-        }
+  const searchContacts = (e) => {
+    if (e.target.value === "") {
+      setContact([]);
+    } else {
+      axios
+        .post("http://localhost:5000/chat/searchcontacts", {
+          userid: localStorage.getItem("userid"),
+          text: e.target.value,
+        })
+        .then((res) => {
+          console.log("contacts", res.data);
+          let groupMembersArray = groupMembers.map((member) => member.userid);
+          let filteredContacts = res.data.filter((contact) => {
+            return !groupMembersArray.includes(contact._id);
+          });
+          setContact(filteredContacts);
+        })
+        .catch((err) => {
+          setContact([]);
+        });
     }
+  };
 
-    const addParticipantsHandler=async()=>{
-          console.log('selected contacts',selectedContacts,localStorage.getItem('userid'));
-          try{
-           let res=await axios.post("http://localhost:5000/group/addParticipant",{
-            userid:localStorage.getItem('userid'),
-            groupid:groupid,
-            addParticipants:selectedContacts
-           })
-           console.log('response',res);
-           toast.success('Members added')
-          }
-          catch(err){
-            console.log('error',err);
-          }
-          setShowPopup(false);
+  const addParticipantsHandler = async () => {
+    console.log(
+      "selected contacts",
+      selectedContacts,
+      localStorage.getItem("userid")
+    );
+    try {
+      let res = await axios.post("http://localhost:5000/group/addParticipant", {
+        userid: localStorage.getItem("userid"),
+        groupid: groupid,
+        addParticipants: selectedContacts,
+      });
+      console.log("response", res);
+      toast.success("Members added");
+    } catch (err) {
+      console.log("error", err);
     }
+    setShowPopup(false);
+  };
 
-    
-    let styles={
-        container:{
-            position:'absolute',
-            width:'80%',
-            height:'60%',
-            justifySelf:'center',
-            alignSelf:'center'
-        }
-    }
+  let styles = {
+    container: {
+      position: "absolute",
+      width: "50%",
+      minHeight: "50%",
+      height: "auto",
+      placeSelf: "center",
+      borderRadius:'15px',
+      border:'none'
+    },
+  };
 
-    return (
-        <div style={styles.container}  className="chat-list">
-            <div className="search-header">
-            <input className='search-input' type='text' placeholder='Search for participants...' onChange={useDebouncedCallback(searchContacts,500)}></input>
-            <div style={{display:'flex',justifyContent:'space-between',width:'60px'}} className='search-search'><img style={{marginRight:'20px'}} src={Search} alt=''></img> <img onClick={()=>{setShowPopup(false)}} style={{backgroundColor:'white'}} src={Close} alt=''></img></div>
-            </div>
+  return (
+    <div style={styles.container} className="chat-list">
+      <div className="search-header">
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Search for participants..."
+          onChange={useDebouncedCallback(searchContacts, 500)}
+        ></input>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "60px",
+          }}
+          className="search-search"
+        >
+          <img style={{ marginRight: "20px" }} src={Search} alt=""></img>{" "}
+          <img
+            onClick={() => {
+              setShowPopup(false);
+            }}
 
-            
-        
-        <div className="recent-chat">
-
-
-            {contact.map(contact =>{
-
-                let chatDetails = {
-                    username:contact.userName,
-                    contact: `Contact: ${contact.phoneNumber}`,
-                    timestamp: '',
-                    messages:'',
-                    userid:contact._id
-                  };
-
-             return <AddParticipantContactCard key={chatDetails.userid} chatDetails={chatDetails} selectedContacts={selectedContacts} setSelectedContacts={setSelectedContacts}/>
-            })}
-
+            src={closeWhite}
+            alt=""
+          ></img>
         </div>
-        <div style={{marginTop:'20px'}} className='button-wrapper'>
-        <button onClick={addParticipantsHandler} className='create-group-button'>Add Participants</button>
-        </div>
-        
-        </div>
-        
-      )
+      </div>
+
+      <div className="recent-chat">
+        {contact.map((contact) => {
+          let chatDetails = {
+            username: contact.userName,
+            contact: `Contact: ${contact.phoneNumber}`,
+            timestamp: "",
+            messages: "",
+            userid: contact._id,
+          };
+
+          return (
+            <AddParticipantContactCard
+              key={chatDetails.userid}
+              chatDetails={chatDetails}
+              selectedContacts={selectedContacts}
+              setSelectedContacts={setSelectedContacts}
+            />
+          );
+        })}
+      </div>
+      <div style={{ marginTop: "20px" }} className="button-wrapper">
+        <button
+          onClick={addParticipantsHandler}
+          className="create-group-button"
+        >
+          Add Participants
+        </button>
+      </div>
+    </div>
+  );
 }
 
-export default AddParticipant
+export default AddParticipant;

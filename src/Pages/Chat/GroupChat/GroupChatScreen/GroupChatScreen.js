@@ -297,7 +297,7 @@ function GroupChatScreen({ socket }) {
 
 
   const UpdateChat = async (messageType,selectedDocument,key) => {
-
+    debugger;
 
     var updateOrder = false;
     var order = 0;

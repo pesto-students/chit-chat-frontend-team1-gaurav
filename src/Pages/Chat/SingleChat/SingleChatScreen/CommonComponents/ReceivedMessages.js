@@ -56,6 +56,17 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
        })
       }
 
+
+      const downloadDocumentToLocal = (documenturl) => {
+        let url = `https://chitchatcommunication.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+    
+        let link = document.createElement('a');
+        link.href = url;
+        link.click();
+        
+      }
+
+
   const starMessage =() =>{
     axios
     .post(`${process.env.REACT_APP_SERVER}/chat/starmarkmessage`,{
@@ -123,10 +134,10 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
     
     return (
       <div className="single-image">
-        <div className="single-image-content">
-        <div className="hover-star" onClick={starMessage}><img src={starBlack} alt='star'></img></div>
-        {getImageFromKey(payload.key)}
-          <div className="single-image-display"><img src={image} alt=""></img></div>
+        <div className="single-image-content">{getImageFromKey(payload.key)}
+          <div className="single-image-display">
+            <img src={image} alt=""></img>
+            </div>
           <div className="single-image-desc">{getDecryptedMessage(payload.message)}</div>
         </div>
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
@@ -149,13 +160,13 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
     );
 
 
-  } else if (messagetype === "normal-document") {
+  } else if (messagetype === "document" && shouldBeRound) {
 
 
     return (
       <div className="single-image">
         <div className="single-image-content document-flex">
-          <div className="download-document-icon"><img src={downloadDocument} alt=""></img></div>
+          <div className="download-document-icon" onClick={() => downloadDocumentToLocal(payload.key)}><img src={downloadDocument} alt=""></img></div>
           <div className="group-document-details">
             <div className="single-document-name">{payload.message.documentName}</div>
             <div className="single-document-detail">{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>
@@ -167,13 +178,13 @@ function ReceivedMessages({ messagetype, payload ,chatid,contactid,shouldBeRound
     );
 
 
-  } else if (messagetype === "document") {
+  } else if (messagetype === "document" && !shouldBeRound) {
 
 
     return (
       <div className="single-image">
         <div className="single-image-content last-reveived-message document-flex">
-          <div className="download-document-icon"><img src={downloadDocument} alt=""></img></div>
+          <div className="download-document-icon" onClick={() => downloadDocumentToLocal(payload.key)}><img src={downloadDocument} alt=""></img></div>
           <div className="group-document-details">
             <div className="single-document-name">{payload.message.documentName}</div>
             <div className="single-document-detail">{payload.message.documentSize} <span>{payload.message.documentExtention}</span></div>

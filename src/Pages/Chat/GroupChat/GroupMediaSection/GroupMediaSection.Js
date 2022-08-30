@@ -134,6 +134,17 @@ function GroupMediaSection() {
     ).toString(CryptoJS.enc.Utf8);
   };
 
+
+  const downloadDocumentToLocal = (documenturl) => {
+    let url = `https://chitchatcommunication.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+
+    let link = document.createElement('a');
+    link.href = url;
+    link.click();
+    
+  }
+
+
   return (
     <>
       <div className="group-media-container">
@@ -280,7 +291,7 @@ function GroupMediaSection() {
               return (
                 <>
                   <div className="single-files-container">
-                    <div className="single-file-icon">
+                    <div className="single-file-icon" onClick={() => downloadDocumentToLocal(document.key)}>
                       <img src={spm1} alt=""></img>
                     </div>
                     <div className="single-file-details">

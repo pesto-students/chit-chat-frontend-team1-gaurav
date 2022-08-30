@@ -33,7 +33,7 @@ import {
   updateCurrentChat,
   loadCurrentChat,
   getImagesArray,
-  getDocumentsArray
+  getDocumentsArray,
 } from "Redux/Actions/SingleChatActions";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -291,7 +291,6 @@ function SingleChatScreen({ socket }) {
   };
 
   const sendImage = () => {
-
     let nameArray = selectedImage.name.split(".");
 
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
@@ -314,20 +313,18 @@ function SingleChatScreen({ socket }) {
     UpdateChat("image", {}, key);
 
     axios
-    .post(`${process.env.REACT_APP_SERVER}/chat/updateimagesarray`, {
-      chatid: receiverDetails.chatid,
-      key:key
-    })
-    .then((res) => { 
-      if(res.data.statusCode === 200){
-        dispatch(getImagesArray(receiverDetails.chatid));
-      }
-    })
-
+      .post(`${process.env.REACT_APP_SERVER}/chat/updateimagesarray`, {
+        chatid: receiverDetails.chatid,
+        key: key,
+      })
+      .then((res) => {
+        if (res.data.statusCode === 200) {
+          dispatch(getImagesArray(receiverDetails.chatid));
+        }
+      });
   };
 
   const sendDocument = () => {
-
     let nameArray = selectedDocument.documentName.split(".");
 
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
@@ -344,24 +341,23 @@ function SingleChatScreen({ socket }) {
     });
 
     UpdateChat("document", selectedDocument, key);
-    setDocumentBody('');
+    setDocumentBody("");
     setDocumentToggle(false);
-    
+
     axios
-    .post(`${process.env.REACT_APP_SERVER}/chat/updatedocumentsarray`, {
-      chatid: receiverDetails.chatid,
-      key:key,
-      name:selectedDocument.documentName,
-      size:selectedDocument.documentSize
-    })
-    .then((res) => { 
-      if(res.data.statusCode === 200){
-        dispatch(getDocumentsArray(receiverDetails.chatid));
-      }
-    })
+      .post(`${process.env.REACT_APP_SERVER}/chat/updatedocumentsarray`, {
+        chatid: receiverDetails.chatid,
+        key: key,
+        name: selectedDocument.documentName,
+        size: selectedDocument.documentSize,
+      })
+      .then((res) => {
+        if (res.data.statusCode === 200) {
+          dispatch(getDocumentsArray(receiverDetails.chatid));
+        }
+      });
 
     setSelectedDocument({});
-
   };
 
   const closeHandler = () => {
@@ -369,7 +365,7 @@ function SingleChatScreen({ socket }) {
     setSelectedImage("");
     setDisplaySelectedImage("");
     setSelectedDocument({});
-    setDocumentBody('');
+    setDocumentBody("");
     setMediaToggle(false);
     setDocumentToggle(false);
   };
@@ -589,7 +585,13 @@ function SingleChatScreen({ socket }) {
 
       {calling && (
         <header className="self-calling-header">
-          <div className="calling">Calling {receiverDetails.username}...</div>
+          <div className="loading-line"></div>
+          <div className="calling">
+            <div style={{ display: "flex", alignItems: "center" }}>
+              Calling {receiverDetails.username}&nbsp;&nbsp;&nbsp;
+              <div class="dot-flashing"></div>
+            </div>
+          </div>
           <div className="action-buttons">
             <button
               className="action-button reject-button pulse"
@@ -632,6 +634,7 @@ function SingleChatScreen({ socket }) {
       {/* Main - section  */}
 
       <section className="single-main-section" onScroll={handleScroll}>
+
         <fieldset className="day-container">
           <legend> Yesterday </legend>
           {/* {filterChatDateWise(SingleChatMessageArray)} */}
@@ -659,75 +662,81 @@ function SingleChatScreen({ socket }) {
             }
           })}
         </fieldset>
+
+        
       </section>
 
       {/* Footer */}
 
       <footer className="single-chat-footer">
         {/* add attachment popup */}
-        <div className={"single-attachment " + (!showAttachment ? "hide" : "")}>
+        {showAttachment && (
           <div
-            className="single-image-attachment"
-            onClick={() => {
-              inputRef.current.click();
-            }}
+            className={"single-attachment"}
           >
-            <div className="single-attachment-icon">
-              <img src={imageAttachment} alt="img-attachment"></img>
+            <div
+              className="single-image-attachment"
+              onClick={() => {
+                inputRef.current.click();
+              }}
+            >
+              <div className="single-attachment-icon">
+                <img src={imageAttachment} alt="img-attachment"></img>
+              </div>
+              <div className="single-attachment-text">Photo or Video</div>
+              <input
+                style={{ display: "none" }}
+                ref={inputRef}
+                type="file"
+                alt="select-image"
+                onChange={setImage}
+              />
             </div>
-            <div className="single-attachment-text">Photo or Video</div>
-            <input
-              style={{ display: "none" }}
-              ref={inputRef}
-              type="file"
-              alt="select-image"
-              onChange={setImage}
-            />
-          </div>
-          <div
-            className="single-image-attachment"
-            onClick={() => {
-              inputDocumentRef.current.click();
-            }}
-          >
-            <div className="single-attachment-icon">
-              <img src={documentAttachment} alt="img-attachment"></img>
+            <div
+              className="single-image-attachment"
+              onClick={() => {
+                inputDocumentRef.current.click();
+              }}
+            >
+              <div className="single-attachment-icon">
+                <img src={documentAttachment} alt="img-attachment"></img>
+              </div>
+              <div className="single-attachment-text">Documents</div>
+              <input
+                style={{ display: "none" }}
+                ref={inputDocumentRef}
+                type="file"
+                alt="select-image"
+                onChange={setDocument}
+              />
             </div>
-            <div className="single-attachment-text">Documents</div>
-            <input
-              style={{ display: "none" }}
-              ref={inputDocumentRef}
-              type="file"
-              alt="select-image"
-              onChange={setDocument}
-            />
           </div>
-        </div>
+        )}
 
         {/* Send Media Popup    */}
-        <div
-          className={"send-media-screen " + (!showMediaScreen ? "hide" : "")}
-        >
-          <div className="image-close" onClick={closeHandler}>
-            <img src={crossWhite} alt=""></img>
-          </div>
-          <div className="display-image-single-send">
-            <img src={displaySelectedImage} alt=""></img>
-          </div>
-          <div className="image-message">
-            <input
-              type="text"
-              placeholder="Type a Message...."
-              value={imgMessage}
-              onChange={(e) => {
-                setimgMessage(e.target.value);
-              }}
-            ></input>
-            <div className="img-send" onClick={sendImage}>
-              <img src={sendMedia} alt=""></img>
+        {showMediaScreen && (
+          <div className={"send-media-screen "}>
+            <div className="image-close" onClick={closeHandler}>
+              <img src={crossWhite} alt=""></img>
+            </div>
+            <div className="display-image-single-send">
+              <img src={displaySelectedImage} alt=""></img>
+            </div>
+            <div className="image-message">
+              <input
+                type="text"
+                placeholder="Type a Message...."
+                value={imgMessage}
+                onChange={(e) => {
+                  setimgMessage(e.target.value);
+                }}
+              ></input>
+              <div className="img-send" onClick={sendImage}>
+                <img src={sendMedia} alt=""></img>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Send Document Popuo */}
         <div

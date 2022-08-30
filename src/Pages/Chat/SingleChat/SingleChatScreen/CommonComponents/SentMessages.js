@@ -54,6 +54,16 @@ function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
 
    })
   }
+
+  const downloadDocument = (documenturl,name) => {
+    let url = `https://chitchatcommunication.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+
+    let link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    link.click();
+    
+  }
   
   const starMessage =() =>{
       axios
@@ -156,7 +166,8 @@ function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
       <div className="single-image self-sent">
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self  document-flex">
-          <div className="download-document-icon"><img src={darkDocument} alt=""></img></div>
+          <div className="download-document-icon" >
+            <img src={darkDocument} alt="" onClick={() => downloadDocument(payload.key,payload.message.documentName)}></img></div>
           <div className="group-document-details">
             <div className="single-document-name self">{payload.message.documentName}</div>
             <div className="single-document-detail single-flex">
@@ -177,7 +188,7 @@ function SentMessages({ messagetype, payload,chatid,contactid,shouldBeRound }) {
       <div className="single-image self-sent">
         <div className="single-img-timestamp">{getDesiredTimeStamp(payload.timestamp)}</div>
         <div className="single-image-content self last-sent-message document-flex">
-          <div className="download-document-icon"><img src={darkDocument} alt=""></img></div>
+          <div className="download-document-icon"><img src={darkDocument} alt="" onClick={() => downloadDocument(payload.key,payload.message.documentName)}></img></div>
           <div className="group-document-details">
             <div className="single-document-name self">{payload.message.documentName}</div>
             <div className="single-document-detail single-flex">

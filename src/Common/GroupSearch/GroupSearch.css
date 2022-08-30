@@ -71,4 +71,6 @@
     background-color: #1D90F5;
     color: white;
     border-radius: 8px;
+    outline: none;
+    border: none;
 }
