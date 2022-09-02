@@ -1,13 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 import Logo from "../../Assets/Logo.png";
 import VideoScreen from "../../Common/VideoScreen/VideoScreen";
-
+import {setLoading} from "../../Redux/Actions/UserActions"
 
 toast.configure();
 
@@ -20,6 +21,7 @@ function Login() {
   const [error,setError]=useState({phoneNumber:'',password:''});
 
   let navigate = useNavigate();
+  const dispatch=useDispatch();
 
   const phoneNumberHandler = (e) => {
     phoneNumberValidator(e.target.value)
@@ -43,7 +45,7 @@ function Login() {
   }
 
   const loginHandler = () => {
-    
+    dispatch(setLoading(true));
     axios
       .post("http://localhost:5000/authentication/login", {
         phoneNumber: phoneNumber,
@@ -73,14 +75,17 @@ function Login() {
         else{
           toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
         }
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+        dispatch(setLoading(false));
       });
 
   };
 
   return (
+
     <div className="backgroundImage-login">
       <div className="mainContent-login">
         <div className="container-login">

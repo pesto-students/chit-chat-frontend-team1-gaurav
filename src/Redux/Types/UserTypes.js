@@ -1,1 +1,2 @@
-exports.CHANGE_VIEW = 'CHANGE_VIEW'; 
+exports.CHANGE_VIEW = 'CHANGE_VIEW';
+exports.SET_LOADING = 'SET_LOADING'; 

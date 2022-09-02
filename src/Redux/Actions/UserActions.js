@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-    CHANGE_VIEW
+    CHANGE_VIEW, SET_LOADING
 } from "../Types/UserTypes";
 
 export const setView = (view) => {
@@ -11,3 +11,13 @@ export const setView = (view) => {
       });
     };
   };
+
+export const setLoading=(value)=>{
+  console.log('loadin action invoked',value);
+  return (dispatch) => {
+    dispatch({
+      type:SET_LOADING,
+      payload: value,
+    });
+  };
+}  
