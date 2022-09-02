@@ -9,13 +9,15 @@ import Chat from "./Pages/Chat/Chat";
 import SearchSingleContact from 'Pages/Chat/SearchSingleContact/SearchSingleContact'
 import CreateGroupChat from "./Pages/Chat/CreateGroupChat/CreateGroupChat";
 import { useSelector,useDispatch } from "react-redux";
+import LoadingOverlay from 'react-loading-overlay';
 
 import "./App.css";
 
 
 function App() {
-  // const state = useSelector((state) => console.log('state',state));
-
+  let {loading} = useSelector((state) => state.UserReducer);
+  console.log('loading state',loading);
+  LoadingOverlay.propTypes = undefined
 const loggedin = () =>{
   if(localStorage.getItem('token') === null 
   || localStorage.getItem('token') === undefined 
@@ -27,7 +29,12 @@ const loggedin = () =>{
   }
 }
 
-  return <div className="App">
+  return (
+    <LoadingOverlay
+    active={loading}
+    spinner
+    text='Loading your content...'>
+      <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
@@ -38,7 +45,9 @@ const loggedin = () =>{
         <Route path="/search" element={loggedin?<SearchSingleContact />:<Home/>} />
         <Route path="/creategroup" element={loggedin?<CreateGroupChat />:<Home/>} />
       </Routes>
-  </div>;
+      </div>
+  </LoadingOverlay>
+  );
 }
 
 export default App;
