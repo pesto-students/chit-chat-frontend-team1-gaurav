@@ -557,8 +557,12 @@ function SingleChatScreen({ socket }) {
 
       {incomingCall && (
         <header className="single-calling-header">
+          <div className="loading-line"></div>
           <div className="someone-calling">
-            {receiverDetails.username} is Calling...
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {receiverDetails.username} is Calling&nbsp;&nbsp;&nbsp;
+              <div class="dot-flashing-white"></div>
+            </div>
           </div>
           <div className="action-buttons">
             <button
@@ -634,7 +638,6 @@ function SingleChatScreen({ socket }) {
       {/* Main - section  */}
 
       <section className="single-main-section" onScroll={handleScroll}>
-
         <fieldset className="day-container">
           <legend> Yesterday </legend>
           {/* {filterChatDateWise(SingleChatMessageArray)} */}
@@ -662,8 +665,6 @@ function SingleChatScreen({ socket }) {
             }
           })}
         </fieldset>
-
-        
       </section>
 
       {/* Footer */}
@@ -671,9 +672,7 @@ function SingleChatScreen({ socket }) {
       <footer className="single-chat-footer">
         {/* add attachment popup */}
         {showAttachment && (
-          <div
-            className={"single-attachment"}
-          >
+          <div className={"single-attachment"}>
             <div
               className="single-image-attachment"
               onClick={() => {

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ChangePassword from "./ChangePassword/ChangePassword";
 import ChangeContact from "./Change Contact/ChangeContact";
-import profileimg from "../../Assets/profile.png";
-import editIcon from "../../Assets/edit-profile.png";
-import SideBar from "../../Common/SideBar/SideBar";
+import profileimg from "Assets/profile.png";
+import editIcon from "Assets/edit-profile.png";
+import SideBar from "Common/SideBar/SideBar";
+import ProfileEditBlack from "Assets/profileeditblack.png";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,9 @@ toast.configure();
 
 function Profile() {
   let navigate = useNavigate();
+  let usernameRef = useRef();
+  let fullnameRef = useRef();
+  let emailRef = useRef();
 
   const [profileDetails, setProfileDetails] = useState({
     userName: "",
@@ -33,8 +37,6 @@ function Profile() {
     userName: true,
     fullName: true,
     email: true,
-    contact: true,
-    password: true,
   });
 
   const onChangeHandler = (e) => {
@@ -48,10 +50,21 @@ function Profile() {
     });
   };
 
-  const editClickHandler = (e) => {
-    editStatus[e.target.name] = !editStatus[e.target.name];
-    setEditStatus({ ...editStatus });
-  };
+ 
+  const editUserNameHandler = (e) => {
+    debugger;
+    setEditStatus({...editStatus,userName:!editStatus.userName});
+    if(editStatus.userName === true)
+    usernameRef.current.focus();
+    // alert('hello')
+  }
+  const editFullNameHandler = (e) => {
+    setEditStatus({...editStatus,fullName:!editStatus.fullName});
+
+  }
+  const editEmailHandler = (e) => {
+    setEditStatus({...editStatus,email:!editStatus.email})
+  }
 
   const changeContact = (number) => {
     setProfileDetails((prev) => {
@@ -151,8 +164,8 @@ function Profile() {
 
 
               <div className="username-profile">
-                <input disabled={editStatus.userName} onChange={onChangeHandler} name="userName" value={profileDetails.userName}/>
-                <img name="userName" onClick={editClickHandler} className="usernameEdit" src={editIcon} alt=""/>
+                <input disabled={editStatus.userName} ref={usernameRef} onChange={onChangeHandler} name="userName" value={profileDetails.userName}/>
+                <img name="userName" onClick={editUserNameHandler} className="usernameEdit" src={editIcon} alt=""/>
               </div>
             </div> 
 
@@ -163,9 +176,9 @@ function Profile() {
 
                     <div className="left-profile">
                         <label>Full name</label>
-                        <input disabled={editStatus.fullName} onChange={onChangeHandler} name="fullName" value={profileDetails.fullName}/>
+                        <input disabled={editStatus.fullName} ref={fullnameRef} onChange={onChangeHandler} name="fullName" value={profileDetails.fullName}/>
                     </div>
-                    <button onClick={editClickHandler} name="fullName">Edit</button>
+                    <button onClick={editFullNameHandler} name="fullName">Edit</button>
 
                  </div>
                   
@@ -173,9 +186,9 @@ function Profile() {
 
                         <div className="left-profile">
                             <label>Email</label>
-                            <input onChange={onChangeHandler} name="email" type="email" value={profileDetails.email} />
+                            <input disabled={editStatus.email} onChange={onChangeHandler} ref={emailRef} name="email" type="email" value={profileDetails.email} />
                         </div>
-                        <button onClick={editClickHandler} name="email">Edit</button>
+                        <button onClick={editEmailHandler} name="email">Edit</button>
 
                 </div>
 
@@ -183,7 +196,7 @@ function Profile() {
 
                         <div className="left-profile">
                             <label>Contact</label>
-                            <input onChange={onChangeHandler} name="contact" value={profileDetails.contact}/>
+                            <input onChange={onChangeHandler} disabled={true} name="contact" value={profileDetails.contact}/>
                         </div>
                         <button onClick={() => { setShowModal((prev) => { return { ...prev, contact: true };});}} name="contact"> Edit</button>
 
@@ -193,7 +206,7 @@ function Profile() {
 
                     <div className="left-profile">
                         <label>Password</label>
-                        <input onChange={onChangeHandler} name="password" type="password" value={profileDetails.password}/>
+                        <input onChange={onChangeHandler} disabled={true} name="password" type="password" value={profileDetails.password}/>
                     </div>
                     <button onClick={() => { setShowModal((prev) => { return { ...prev, password: true };});}} name="password">Change</button>
 

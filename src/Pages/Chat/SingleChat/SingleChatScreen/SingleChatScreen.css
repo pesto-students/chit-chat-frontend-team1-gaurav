@@ -125,6 +125,9 @@
     /* background-color: #b8e3d7; */
     border-bottom: 1px solid rgba(128, 128, 128, 0.4);
     height: 9vh;
+    position: relative;
+    overflow: hidden;
+    animation: fadein 1s ease;
 }
 
 .someone-calling{
@@ -159,6 +162,7 @@
 .reject-button{
     background-color: #F41D1D;
     margin-left: 1vw;
+    z-index: 1;
 }
 
 .reject{
@@ -370,6 +374,63 @@
   @keyframes dotFlashing {
     0% {
       background-color: #000000;
+    }
+    50%,
+    100% {
+      background-color: transparent;
+    }
+  }
+
+
+   /**
+ * ==============================================
+ * Dot Flashing White
+ * ==============================================
+ */
+.dot-flashing-white {
+    position: relative;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #ffffff;
+    animation: dotFlashing .8s infinite linear alternate;
+    animation-delay: .4s;
+  }
+  
+  .dot-flashing-white::before, .dot-flashing-white::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+  }
+  
+  .dot-flashing-white::before {
+    left: -15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #ffffff;
+    animation: dotFlashing .8s infinite alternate;
+    animation-delay: 0s;
+  }
+  
+  .dot-flashing-white::after {
+    left: 15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #ffffff;
+    animation: dotFlashingwhite .8s infinite alternate;
+    animation-delay: .8s;
+  }
+  
+  @keyframes dotFlashingwhite {
+    0% {
+      background-color: #ffffff;
     }
     50%,
     100% {

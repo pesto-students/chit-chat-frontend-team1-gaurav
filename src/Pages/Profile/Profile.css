@@ -114,11 +114,13 @@
 .inner-profile button {
   background: #3b3546;
   border: none;
-  color: grey;
+  color: #f7e6a6;
+  font-weight: 600;
   /* height: 50%; */
   padding: 0.1rem 1rem;
   border-radius: 10px;
   cursor: pointer;
+  width: calc(8vh + 2vw);
 }
 
 .updateButton-profile {
@@ -130,6 +132,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.4s ease;
+  font-size: calc(1.5vh + .4vw);
 }
 
 .updateButton-profile:hover {
