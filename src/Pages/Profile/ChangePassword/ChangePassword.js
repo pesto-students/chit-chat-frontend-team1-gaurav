@@ -30,28 +30,42 @@ function ChangePassword({ setShowModal }) {
   return (
     <>
       <div className="modal-background"></div>
-      <div className="changeContactContainer">
+      <div className="changepasswordContainer">
         <div className="heading">
           <span> ChangeContact</span>
-          <img onClick={closeModalHandler} src={CloseIcon} />
+          <img onClick={closeModalHandler} src={CloseIcon} alt="" />
         </div>
         <div className="form">
           <div className="phoneNumber">
             <input
+            style={{width:'22vw',marginTop:'1vh'}}
+              className="contactmodalinput"
               value={formData.phoneNumber}
               name="phoneNumber"
               onChange={onChangeHandler}
               placeholder="New Phone Number"
             />
-            <button onClick={otpClickHandler}>Send OTP</button>
           </div>
 
-          <div className="firstName">
+          <div className="phoneNumber">
             <input
-              value={formData.otp}
+            style={{width:'22vw',marginTop:'1vh'}}
+              className="contactmodalinput"
+              value={formData.phoneNumber}
+              name="phoneNumber"
               onChange={onChangeHandler}
-              name="otp"
-              placeholder="Enter OTP"
+              placeholder="New Phone Number"
+            />
+          </div>
+
+          <div className="phoneNumber">
+            <input
+            style={{width:'22vw',marginTop:'1vh'}}
+              className="contactmodalinput"
+              value={formData.phoneNumber}
+              name="phoneNumber"
+              onChange={onChangeHandler}
+              placeholder="New Phone Number"
             />
           </div>
 

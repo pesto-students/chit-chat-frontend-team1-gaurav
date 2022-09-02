@@ -39,6 +39,7 @@ function ChangeContact({ setShowModal }) {
      <div className="form">
        <div className="phoneNumber">
          <input
+         style={{width:'15vw',marginTop:'1vh'}}
            value={formData.phoneNumber}
            className="contactmodalinput"
            name="phoneNumber"
@@ -50,7 +51,7 @@ function ChangeContact({ setShowModal }) {
 
        <div className="firstName">
          <input
-           style={{width:'100%',marginTop:'1vh'}}
+           style={{width:'22vw',marginTop:'1vh'}}
            value={formData.otp}
            onChange={onChangeHandler}
            className="contactmodalinput"

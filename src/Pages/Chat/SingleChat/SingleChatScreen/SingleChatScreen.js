@@ -204,9 +204,10 @@ function SingleChatScreen({ socket }) {
 
   const handleScroll = (e) => {
     if (
-      Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 ===
-      Math.floor(e.target.clientHeight)
+      // Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 === Math.floor(e.target.clientHeight)
+      Math.ceil(e.target.scrollHeight + e.target.scrollTop)  === Math.floor(e.target.clientHeight)
     ) {
+      debugger;
       dispatch(loadCurrentChat(receiverDetails.chatid, lastChatNum, 25));
       setLastChatNum(lastChatNum + 25);
     }

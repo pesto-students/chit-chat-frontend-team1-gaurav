@@ -331,13 +331,15 @@
   border-bottom-left-radius: 0;
   padding: 2vh;
   z-index: 1;
-  animation: fadeout .3s ease;
+  transform-origin: 0% 100%;
+  animation: popup .3s ease;
 
   /* transition: .4s ease; */
 }
 
 .hide {
   display: none;
+  
   /* transition: .4s ease; */
 }
 

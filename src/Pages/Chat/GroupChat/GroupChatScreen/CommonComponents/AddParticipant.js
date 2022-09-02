@@ -3,7 +3,7 @@ import Search from "Assets/NavSearch.png";
 import Close from "Assets/close-icon.png";
 import AddParticipantContactCard from "Common/ContactCard/AddParticpantContactCard";
 import axios from "axios";
-import closeWhite from 'Assets/close-white.png';
+import closeWhite from 'Assets/cross-thin.png';
 import { useDebouncedCallback } from "use-debounce";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -64,12 +64,25 @@ function AddParticipant({ setShowPopup, groupid, groupMembers }) {
       minHeight: "50%",
       height: "auto",
       placeSelf: "center",
-      borderRadius:'15px',
-      border:'none'
+      borderRadius:'10px',
+      border:'none',
+      animation: 'popup .35s linear',
+      transformOrigin: '90% -90%'
     },
+    modalBackground : {
+      position: 'fixed',
+      top:'0',
+      right:'0',
+      height:'100vh',
+      width:'100vw',
+      background:'#000000',
+      opacity:'.8',
+      animation:'fadeincontact .3s',
+    }
   };
 
-  return (
+  return (<>
+    <div style={styles.modalBackground}></div>
     <div style={styles.container} className="chat-list">
       <div className="search-header">
         <input
@@ -127,6 +140,7 @@ function AddParticipant({ setShowPopup, groupid, groupMembers }) {
         </button>
       </div>
     </div>
+    </>
   );
 }
 

@@ -19,10 +19,13 @@
     flex-direction: column;
     padding: 1rem;
     position: fixed;
-    top: 30vh;
-    left: 40vw;
-    transform-origin: 60% 60%;
-    /* transform: translate(-50%, -50%);  */
+    top: 25vh;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 27vw;
+    /* transform-origin: 100% 80%; */
     animation: fadeinmodale .3s linear;
   }
 
@@ -71,7 +74,7 @@
     padding: calc(1vh + 0.3vw);
     margin-left: 2vh;
     border-radius: 20px;
-    width: 50%;
+    width: 35%;
     text-align: center;
     transition: 0.4s ease;
     border: none;

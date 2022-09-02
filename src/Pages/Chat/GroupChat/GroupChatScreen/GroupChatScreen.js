@@ -76,7 +76,7 @@ function GroupChatScreen({ socket }) {
 
 
   useEffect(() => {
-    
+    if(socket.current !== undefined){
     socket.current.on("receive-message-to-group", (data) => {
       if(membersarray.includes(data.senderid))
       dispatch(updateMessageArray(data));
@@ -97,13 +97,18 @@ function GroupChatScreen({ socket }) {
       setTypingUser('');
       setsomeonetyping(false);
     });
-
+  }
   }, [socket]);
 
 
   const handleScroll  = (e) => {
 
-    if((Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))){
+    if(
+      // (Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))
+      Math.floor(e.target.scrollHeight + e.target.scrollTop)  === Math.floor(e.target.clientHeight)
+      // Math.ceil(window.innerHeight + document.documentElement.scrollTop) === document.documentElement.offsetHeight
+      ){
+        debugger;
        dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,lastChatNum,25));
        setLastChatNum(lastChatNum + 25);
     }
