@@ -32,7 +32,7 @@ const loggedin = () =>{
     <LoadingOverlay
     active={false}
     spinner
-    text='Loading your content...'>
+    text='Loading...'>
       <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />

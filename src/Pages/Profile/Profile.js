@@ -1,5 +1,6 @@
 import React, { useEffect, useState,useRef } from "react";
 import { toast } from "react-toastify";
+import AWS from "aws-sdk";
 import axios from "axios";
 import ChangePassword from "./ChangePassword/ChangePassword";
 import ChangeContact from "./Change Contact/ChangeContact";
@@ -43,11 +44,55 @@ function Profile() {
     profileDetails[e.target.name] = e.target.value;
     setProfileDetails({ ...profileDetails });
   };
+  
+  AWS.config.update({
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
+  });
 
   const fileInputHandler = (e) => {
-    setProfileDetails((prevState) => {
-      return { ...prevState, profileImg: e.target.files[0] };
-    });
+    let selectedImage=e.target.files[0];
+    // setProfileDetails((prevState) => {
+    //   return { ...prevState, profileImg: selectedImage };
+    // });
+
+    const sendImage = () => {
+      debugger;
+      let nameArray = selectedImage.name.split(".");
+  
+      let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+  
+      const params = {
+        ACL: "public-read",
+        Body: selectedImage,
+        Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+        Key: key,
+      };
+      debugger;
+      myBucket.putObject(params).send((err, data) => {
+        if (err) console.log(err);
+      });
+
+      axios.post(`${process.env.REACT_APP_SERVER}/authentication/updateprofilepic`,{
+        userid:localStorage.getItem("userid"),
+        profilePic:key
+      }).then((res)=>{if (res.data.statusCode === 200) {
+        setProfileDetails((prevState) => {
+          return { ...prevState, profileImg: selectedImage };
+        });
+      } 
+      else{
+        throw new Error('Image upload unsuccessful')
+      }
+    }).catch((err)=>{console.log('error',err)})
+    };
+
+    sendImage();
   };
 
  
@@ -55,7 +100,6 @@ function Profile() {
     setEditStatus({...editStatus,userName:!editStatus.userName});
     if(editStatus.userName === true)
     usernameRef.current.focus();
-    // alert('hello')
   }
   const editFullNameHandler = (e) => {
     setEditStatus({...editStatus,fullName:!editStatus.fullName});
