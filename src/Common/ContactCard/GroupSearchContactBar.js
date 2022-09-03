@@ -13,8 +13,6 @@ toast.configure();
 function GroupSearchContactBar({chatDetails,selectedContacts,setSelectedContacts}) {
 
 
-  
-     console.log('chatDetails',chatDetails);
     let mockProps = {
         profileImg: Sample,
         name: chatDetails?chatDetails.username:'',

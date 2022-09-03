@@ -6,7 +6,6 @@ var UserState = {
   };
   
   export function UserReducer(currentState = UserState, action) {
-    console.log('inside reducer',action);
     switch (action.type) {
       case CHANGE_VIEW:
         return { ...currentState, view: action.payload };

@@ -16,7 +16,6 @@ import "./App.css";
 
 function App() {
   let {loading} = useSelector((state) => state.UserReducer);
-  console.log('loading state',loading);
   LoadingOverlay.propTypes = undefined
 const loggedin = () =>{
   if(localStorage.getItem('token') === null 

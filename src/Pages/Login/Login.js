@@ -35,7 +35,6 @@ function Login() {
   const phoneNumberValidator=(value)=>{
   let phonereg=/^[0-9]*$/
   let result=value.match(phonereg);
-  console.log('here',result,value)
   if(!result){
     setError((prev)=>{return {...prev,phoneNumber:'Enter a valid phone number'}})
   }

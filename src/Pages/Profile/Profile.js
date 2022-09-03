@@ -52,7 +52,6 @@ function Profile() {
 
  
   const editUserNameHandler = (e) => {
-    debugger;
     setEditStatus({...editStatus,userName:!editStatus.userName});
     if(editStatus.userName === true)
     usernameRef.current.focus();

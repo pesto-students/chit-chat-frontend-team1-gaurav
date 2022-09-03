@@ -30,13 +30,13 @@ toast.configure();
 function GroupChatScreen({ socket }) {
 
   AWS.config.update({
-    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
-    secretAccessKey: "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",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
   });
 
   const myBucket = new AWS.S3({
-    params: { Bucket: "chitchatcommunication" },
-    region: "ap-south-1",
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
   });
 
   const dispatch = useDispatch();
@@ -108,7 +108,6 @@ function GroupChatScreen({ socket }) {
       Math.floor(e.target.scrollHeight + e.target.scrollTop)  === Math.floor(e.target.clientHeight)
       // Math.ceil(window.innerHeight + document.documentElement.scrollTop) === document.documentElement.offsetHeight
       ){
-        debugger;
        dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,lastChatNum,25));
        setLastChatNum(lastChatNum + 25);
     }
@@ -210,7 +209,7 @@ function GroupChatScreen({ socket }) {
     const params = {
       ACL: "public-read",
       Body: selectedImage,
-      Bucket: "chitchatcommunication",
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
     };
 
@@ -247,7 +246,7 @@ function GroupChatScreen({ socket }) {
     const params = {
       ACL: "public-read",
       Body: documentBody,
-      Bucket: "chitchatcommunication",
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
     };
 
@@ -302,7 +301,6 @@ function GroupChatScreen({ socket }) {
 
 
   const UpdateChat = async (messageType,selectedDocument,key) => {
-    debugger;
 
     var updateOrder = false;
     var order = 0;

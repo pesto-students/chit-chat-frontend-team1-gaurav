@@ -28,7 +28,6 @@ function Chat() {
   var {receiverDetails} = state;
   var {receiverGroupDetails}=groupstate
   let {view}=userstate;
-  console.log('receiver details', receiverDetails, receiverGroupDetails);
   const dispatch=useDispatch();
 
   let navigate = useNavigate();

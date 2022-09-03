@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
@@ -41,13 +42,13 @@ toast.configure();
 
 function SingleChatScreen({ socket }) {
   AWS.config.update({
-    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
-    secretAccessKey: "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",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
   });
 
   const myBucket = new AWS.S3({
-    params: { Bucket: "chitchatcommunication" },
-    region: "ap-south-1",
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
   });
 
   const dispatch = useDispatch();
@@ -80,6 +81,7 @@ function SingleChatScreen({ socket }) {
   const state = useSelector((state) => state.SingleChatReducer);
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =
     state;
+
   var getUserMedia =
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
@@ -113,10 +115,10 @@ function SingleChatScreen({ socket }) {
         setShowHeader(true);
         setIncomingCall(false);
 
-        var getUserMedia =
-          navigator.getUserMedia ||
-          navigator.webkitGetUserMedia ||
-          navigator.mozkitGetUserMedia;
+        // var getUserMedia =
+        //   navigator.getUserMedia ||
+        //   navigator.webkitGetUserMedia ||
+        //   navigator.mozkitGetUserMedia;
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
           currentUserVideoRef.current.srcObject = mediaStream;
@@ -173,6 +175,7 @@ function SingleChatScreen({ socket }) {
         setShowHeader(true);
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
+        
           currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
 
@@ -185,8 +188,18 @@ function SingleChatScreen({ socket }) {
       });
 
       socket.current.on("call-Hanged", (data) => {
+        getUserMedia({ video: true, audio: true }, (mediaStream) => {
+          mediaStream.getTracks().forEach(function (track) {
+            if (track.readyState === "live") {
+              track.stop();
+            }
+          });
+        });
+
         setVideoScreen(false);
       });
+
+
     }
   }, [socket]);
 
@@ -205,9 +218,9 @@ function SingleChatScreen({ socket }) {
   const handleScroll = (e) => {
     if (
       // Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 === Math.floor(e.target.clientHeight)
-      Math.ceil(e.target.scrollHeight + e.target.scrollTop)  === Math.floor(e.target.clientHeight)
+      Math.ceil(e.target.scrollHeight + e.target.scrollTop) ===
+      Math.floor(e.target.clientHeight)
     ) {
-      debugger;
       dispatch(loadCurrentChat(receiverDetails.chatid, lastChatNum, 25));
       setLastChatNum(lastChatNum + 25);
     }
@@ -292,6 +305,7 @@ function SingleChatScreen({ socket }) {
   };
 
   const sendImage = () => {
+    debugger;
     let nameArray = selectedImage.name.split(".");
 
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
@@ -299,10 +313,10 @@ function SingleChatScreen({ socket }) {
     const params = {
       ACL: "public-read",
       Body: selectedImage,
-      Bucket: "chitchatcommunication",
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
     };
-
+    debugger;
     myBucket.putObject(params).send((err, data) => {
       if (err) console.log(err);
     });
@@ -333,7 +347,7 @@ function SingleChatScreen({ socket }) {
     const params = {
       ACL: "public-read",
       Body: documentBody,
-      Bucket: "chitchatcommunication",
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
     };
 
@@ -371,11 +385,11 @@ function SingleChatScreen({ socket }) {
     setDocumentToggle(false);
   };
 
-  const callUser = () => {
+  const callUser = (callType) => {
     setShowHeader(false);
     setCalling(true);
 
-    socket.current.emit("call-user", { userid: receiverDetails.userid });
+    socket.current.emit("call-user", { userid: receiverDetails.userid,callType });
   };
 
   const cancleCalling = () => {
@@ -404,6 +418,16 @@ function SingleChatScreen({ socket }) {
       userid: receiverDetails.userid,
       peerid: peerId,
     });
+
+    getUserMedia({ video: true, audio: true }, (mediaStream) => {
+      mediaStream.getTracks().forEach(function (track) {
+        if (track.readyState === "live") {
+          track.stop();
+        }
+      });
+    });
+  
+
     setVideoScreen(false);
   };
 
@@ -543,10 +567,10 @@ function SingleChatScreen({ socket }) {
           </div>
 
           <div className="single-header-icons">
-            <div className="right-icons video-call-single" onClick={callUser}>
+            <div className="right-icons video-call-single" onClick={() => callUser('video')}>
               <img src={videoCall} alt="video-call"></img>
             </div>
-            <div className="right-icons">
+            <div className="right-icons" onClick={() => callUser('audio')}>
               <img src={audioCall} alt="audio-call"></img>
             </div>
             <div className="right-icons ">
@@ -688,6 +712,7 @@ function SingleChatScreen({ socket }) {
                 style={{ display: "none" }}
                 ref={inputRef}
                 type="file"
+                accept="image/*"
                 alt="select-image"
                 onChange={setImage}
               />

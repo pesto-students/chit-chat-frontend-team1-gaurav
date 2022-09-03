@@ -16,14 +16,14 @@ toast.configure();
 function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
 
   AWS.config.update({
-    accessKeyId: 'AKIAZVTSLHVBBB6G7TOL',
-    secretAccessKey: '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'
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
   });
-  
+
   const myBucket = new AWS.S3({
-    params: { Bucket: 'chitchatcommunication'},
-    region: 'ap-south-1',
-  })
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
+  });
   
   const dispatch = useDispatch();
 
@@ -41,7 +41,7 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
 
   const getImageFromKey = (key) => {
     myBucket.getObject({ 
-      Bucket: 'chitchatcommunication',
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
      Key: key},
 
      (err,data) => {
@@ -56,7 +56,7 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
 
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `https://chitchatcommunication.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
 
     let link = document.createElement('a');
     link.href = url;
@@ -130,7 +130,8 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
         <div className="group-image-content self last-sent-message">
           <div className="group-image-display">
-            <img src={displayImage} alt=""></img>
+          {getImageFromKey(payload.key)}
+            <img src={image} alt=""></img>
           </div>
           <div className="group-image-desc self group-flex">
             {getDecryptedMessage(payload.message)}

@@ -44,7 +44,6 @@ function GroupSearch({changescreen,changeContact}) {
     }
 
     let createGroupHandler=()=>{
-        console.log('data',{groupName,selectedContacts});
         
         let validationStatus=validate();
         let userid= localStorage.getItem('userid');
@@ -57,7 +56,6 @@ function GroupSearch({changescreen,changeContact}) {
                 groupname:groupName
             })
             .then((res) => {
-               console.log('res') 
                toast.success('Group Created')
                setGroupName('');
                setSelectedContacts([]);

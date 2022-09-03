@@ -37,7 +37,6 @@ function Signup() {
 
   let navigate = useNavigate();
 
-  console.log('testing',process.env.REACT_APP_MESSAGE_SECRET_KEY);
 
   const onChangeHandler = (e) => {
     
@@ -118,7 +117,6 @@ function Signup() {
   const phoneNumberValidator=(value)=>{
     let phonereg=/^[0-9]{10}$/
     let result=value.match(phonereg);
-    console.log('phoneNumber',result,value)
     if(!result){
       setError((prev)=>{return {...prev,phoneNumber:'Enter a valid phone number'}})
     }
@@ -131,7 +129,6 @@ function Signup() {
     let emailreg=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     let result=emailreg.test(value);
 
-    console.log('email',result,value)
     
     if(!result){
       setError((prev)=>{return {...prev,email:'Enter a valid email address'}})
@@ -144,7 +141,6 @@ function Signup() {
   const passwordValidator=(value)=>{
     let passwordreg=/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/   
     let result=value.match(passwordreg);
-    console.log('password',result,value)
     if(!result){
       setError((prev)=>{return {...prev,password:'Enter a strong password'}})
     }
@@ -156,7 +152,6 @@ function Signup() {
   const confirmPasswordValidator=(value)=>{
    
     let result=(formData.password ===value)
-    console.log('confirmPassword',result,value)
     if(!result){
       setError((prev)=>{return {...prev,confirmPassword:'Password does not match'}})
     }

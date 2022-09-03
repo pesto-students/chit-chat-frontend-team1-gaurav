@@ -23,7 +23,6 @@ export const loadCurrentGroups = () => {
         });
       })
       .catch((err) => {
-        console.log("error groups data", err);
         dispatch({
           type: LOAD_CURRENT_GROUPS,
           payload: [],
@@ -41,7 +40,6 @@ export const loadCurrentGroupChat = (chatid, start, end) => {
         end: end,
       })
       .then((res) => {
-        console.log("res-chat", res);
         dispatch({
           type: LOAD_CURRENT_GROUPCHAT,
           payload: res.data,

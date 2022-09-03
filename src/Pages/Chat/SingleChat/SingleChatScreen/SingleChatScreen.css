@@ -159,6 +159,31 @@
   z-index: 1;
 }
 
+.hang-button {
+  display: flex;
+  border: none;
+  outline:none;
+  border-radius: 7px;
+  color: #ffffff;
+  font-size: calc(1vh + 0.5vw);
+  padding: calc(1.5vh + 0.1vw) calc(0.8vh + 0.3vw);
+  background-color: #f41d1d;
+  animation: pulse 1.3s infinite;
+  margin-left: 1vw;
+  z-index: 1;
+}
+
+.hang-Img{
+  height: calc(.5vh + .5vw);
+  width: calc(1vh + 1vw);
+  margin-right: .8vh;
+}
+
+.hang-Img img{
+  height: 100%;
+  width: 100%;
+}
+
 .reject {
   height: calc(3vh + 0.7vw);
   width: calc(3vh + 0.7vw);
@@ -394,7 +419,7 @@
   border-radius: 5px;
   background-color: #ffffff;
   color: #ffffff;
-  animation: dotFlashing 0.8s infinite linear alternate;
+  animation: dotFlashingwhite 0.8s infinite linear alternate;
   animation-delay: 0.4s;
 }
 
@@ -413,7 +438,7 @@
   border-radius: 5px;
   background-color: #ffffff;
   color: #ffffff;
-  animation: dotFlashing 0.8s infinite alternate;
+  animation: dotFlashingwhite 0.8s infinite alternate;
   animation-delay: 0s;
 }
 

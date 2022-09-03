@@ -13,7 +13,6 @@ export const setView = (view) => {
   };
 
 export const setLoading=(value)=>{
-  console.log('loadin action invoked',value);
   return (dispatch) => {
     dispatch({
       type:SET_LOADING,

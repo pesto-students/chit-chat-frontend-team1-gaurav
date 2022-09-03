@@ -10,13 +10,13 @@ import "./SingleMediaSection.css";
 
 function SingleMediaSection() {
   AWS.config.update({
-    accessKeyId: "AKIAZVTSLHVBBB6G7TOL",
-    secretAccessKey: "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",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
   });
 
   const myBucket = new AWS.S3({
-    params: { Bucket: "chitchatcommunication" },
-    region: "ap-south-1",
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
   });
 
   const state = useSelector((state) => state.SingleChatReducer);
@@ -60,7 +60,7 @@ function SingleMediaSection() {
   const getImageFromKey = async (key, index) => {
     await myBucket.getObject(
       {
-        Bucket: "chitchatcommunication",
+        Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
         Key: key,
       },
 
@@ -77,7 +77,7 @@ function SingleMediaSection() {
 
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `https://chitchatcommunication.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
 
     let link = document.createElement('a');
     link.href = url;

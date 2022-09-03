@@ -24,7 +24,6 @@ function AddParticipant({ setShowPopup, groupid, groupMembers }) {
           text: e.target.value,
         })
         .then((res) => {
-          console.log("contacts", res.data);
           let groupMembersArray = groupMembers.map((member) => member.userid);
           let filteredContacts = res.data.filter((contact) => {
             return !groupMembersArray.includes(contact._id);
@@ -38,18 +37,12 @@ function AddParticipant({ setShowPopup, groupid, groupMembers }) {
   };
 
   const addParticipantsHandler = async () => {
-    console.log(
-      "selected contacts",
-      selectedContacts,
-      localStorage.getItem("userid")
-    );
     try {
       let res = await axios.post("http://localhost:5000/group/addParticipant", {
         userid: localStorage.getItem("userid"),
         groupid: groupid,
         addParticipants: selectedContacts,
       });
-      console.log("response", res);
       toast.success("Members added");
     } catch (err) {
       console.log("error", err);
