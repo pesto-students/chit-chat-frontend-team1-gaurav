@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 import Logo from "../../Assets/Logo.png";
 import VideoScreen from "../../Common/VideoScreen/VideoScreen";
-import {setLoading} from "../../Redux/Actions/UserActions"
+import {setLoading,setUserName,setUserProfile} from "../../Redux/Actions/UserActions";
 
 toast.configure();
 
@@ -56,6 +56,9 @@ function Login() {
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);
           localStorage.setItem('username',res.data.username);
+          localStorage.setItem('profilepic',res.data.profileImg);
+          dispatch(setUserName(res.data.username));
+          dispatch(setUserProfile(res.data.profileImg));
 
           if(localStorage.getItem('order') === undefined || localStorage.getItem('order') === '' || localStorage.getItem('order') === null){
             localStorage.setItem('order',JSON.stringify(['',0]));

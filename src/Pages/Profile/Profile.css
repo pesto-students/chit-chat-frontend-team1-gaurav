@@ -43,6 +43,7 @@
 .profilepic-image {
   height: 7vmax;
   width: 7vmax;
+  border-radius: 50%;
 }
 
 .profilePic .profileImgEdit {

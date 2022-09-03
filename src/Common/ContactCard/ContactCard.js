@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import CryptoJS from "crypto-js";
 import Sample from "../../Assets/SampleUserImg1.png";
+import AWS from "aws-sdk";
 import {
   setReceiverDetails,
   getStaredMessages,
   resetMessageArray,
   loadCurrentChat,
   getImagesArray,
-  getDocumentsArray
+  getDocumentsArray,
 } from "Redux/Actions/SingleChatActions";
 import {
   setReceiverGroupDetails,
@@ -16,7 +17,7 @@ import {
   ResetMessageArray,
   loadCurrentGroupChat,
   getGroupDocumentsArray,
-  getGroupImagesArray
+  getGroupImagesArray,
 } from "../../Redux/Actions/GroupChatActions";
 import { setView } from "../../Redux/Actions/UserActions";
 import doubletick from "Assets/double-tick.png";
@@ -30,7 +31,19 @@ export function ContactCard({
   activeUserId,
   setActiveUserid,
 }) {
+  AWS.config.update({
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
+  });
+
   const dispatch = useDispatch();
+
+  const [profileimg, setProfileimg] = useState("");
 
   const getTimeStamp = (timestamp) => {
     if (timestamp === "" || timestamp === undefined || timestamp === null) {
@@ -40,7 +53,9 @@ export function ContactCard({
         new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
       );
     }
-  };
+    
+};
+
 
   const getDecryptedMessage = (message) => {
     return message === undefined
@@ -51,8 +66,29 @@ export function ContactCard({
         ).toString(CryptoJS.enc.Utf8);
   };
 
+  useEffect(() => {
+    if (chatDetails.profileImg === "" || chatDetails.profileImg === undefined) {
+      setProfileimg(Sample);
+    } else {
+      myBucket.getObject(
+        {
+          Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+          Key: chatDetails.profileImg,
+        },
+
+        (err, data) => {
+          if (err) setProfileimg(Sample);
+
+          setProfileimg(
+            `data:image/png;base64,${data.Body.toString("base64")}`
+          );
+        }
+      );
+    }
+  },[])
+
+  
   let mockProps = {
-    profileImg: Sample,
     name: chatDetails ? chatDetails.username : "",
     lastChatMessage: chatDetails
       ? getDecryptedMessage(chatDetails.lastMessage)
@@ -60,13 +96,17 @@ export function ContactCard({
     lastChatTime: chatDetails ? getTimeStamp(chatDetails.timestamp) : "",
     unseenMsgs: "2",
   };
+
+
   if (chatType === "single") {
-    var { username, userid, chatid } = chatDetails;
+    var { username } = chatDetails;
   } else {
-    var { groupid, groupname: username, groupmembersarray } = chatDetails;
+    var { groupname: username } = chatDetails;
   }
 
+
   var isActive;
+
 
   if (chatType === "single") {
     if (
@@ -81,6 +121,9 @@ export function ContactCard({
       isActive = true;
     }
   }
+
+
+
 
   const onClickHandler = () => {
     if (chatType === "single") {
@@ -114,7 +157,7 @@ export function ContactCard({
       <img
         alt="profile-img"
         className="profile-img"
-        src={mockProps.profileImg}
+        src={profileimg}
       />
 
       <div className="chat-profile-details">

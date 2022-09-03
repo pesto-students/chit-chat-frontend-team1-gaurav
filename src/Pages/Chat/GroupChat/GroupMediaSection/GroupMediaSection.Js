@@ -43,6 +43,27 @@ function GroupMediaSection() {
 
   //for setting online and offline members list initially
   useEffect(() => {
+    const getImageFromKey = (key) => {
+      debugger;
+      // return gmi1;
+      if (key === "" || key === undefined) {
+        return gmi1;
+      } else {
+        myBucket.getObject(
+          {
+            Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+            Key: key,
+          },
+
+          (err, data) => {
+            if (err) return gmi1;
+
+            return `data:image/png;base64,${data.Body.toString("base64")}`;
+          }
+        );
+      }
+    };
+
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
@@ -53,6 +74,11 @@ function GroupMediaSection() {
       }
     );
 
+    onlineMembers = onlineMembers.map((member) => {
+      let image = getImageFromKey(member.profileImg);
+      return { ...member, profileImg: image };
+    });
+
     setonlineMembers(onlineMembers);
 
     let oflineMembers = receiverGroupDetails.groupmembersarray.filter(
@@ -60,12 +86,38 @@ function GroupMediaSection() {
         return !onlineusersArray.includes(groupMember.userid);
       }
     );
+
+    oflineMembers = oflineMembers.map((member) => {
+      let image = getImageFromKey(member.profileImg);
+      return { ...member, profileImg: image };
+    });
 
     setoflineMembers(oflineMembers);
   }, []);
 
   // for setting online and offline members list when there is change in socket
   useEffect(() => {
+    const getImageFromKey = (key) => {
+      debugger;
+      // return gmi1;
+      if (key === "" || key === undefined) {
+        return gmi1;
+      } else {
+        myBucket.getObject(
+          {
+            Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+            Key: key,
+          },
+
+          (err, data) => {
+            if (err) return gmi1;
+
+            return `data:image/png;base64,${data.Body.toString("base64")}`;
+          }
+        );
+      }
+    };
+
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
@@ -75,6 +127,11 @@ function GroupMediaSection() {
         return onlineusersArray.includes(groupMember.userid);
       }
     );
+    
+    onlineMembers = onlineMembers.map((member) => {
+      let image = getImageFromKey(member.profileImg);
+      return { ...member, profileImg: image };
+    });
 
     setonlineMembers(onlineMembers);
 
@@ -83,6 +140,11 @@ function GroupMediaSection() {
         return !onlineusersArray.includes(groupMember.userid);
       }
     );
+
+    oflineMembers = oflineMembers.map((member) => {
+      let image = getImageFromKey(member.profileImg);
+      return { ...member, profileImg: image };
+    });
 
     setoflineMembers(oflineMembers);
   }, [onlineUsers]);
@@ -134,16 +196,36 @@ function GroupMediaSection() {
     ).toString(CryptoJS.enc.Utf8);
   };
 
+  const getImageFromKey = (key) => {
+    debugger;
+    return gmi1;
+    // if (key === "" || key === undefined) {
+    //   return gmi1;
+    // } else {
+    //   await myBucket.getObject(
+    //     {
+    //       Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+    //       Key: key,
+    //     },
+
+    //     (err, data) => {
+    //       if (err) return gmi1;
+
+    //       return `data:image/png;base64,${data.Body.toString("base64")}`;
+    //     }
+    //   );
+    // }
+  };
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(
+      documenturl
+    )}`;
 
-    let link = document.createElement('a');
+    let link = document.createElement("a");
     link.href = url;
     link.click();
-    
-  }
-
+  };
 
   return (
     <>
@@ -184,7 +266,7 @@ function GroupMediaSection() {
                   <>
                     <div className="online-member">
                       <div className="online-member-icon">
-                        <img src={gmi1} alt=""></img>
+                        <img src={member.profileImg} alt=""></img>
                       </div>
                       <div className="online-member-name">
                         {member.username}
@@ -199,12 +281,13 @@ function GroupMediaSection() {
               Offline-{oflineMembers.length}
             </div>
             <div className="online-list">
+              {console.log(oflineMembers)}
               {oflineMembers.map((member) => {
                 return (
                   <>
                     <div className="online-member">
                       <div className="online-member-icon">
-                        <img src={gmi1} alt=""></img>
+                        <img src={member.profileImg} alt=""></img>
                       </div>
                       <div className="online-member-name offline">
                         {member.username}
@@ -291,7 +374,10 @@ function GroupMediaSection() {
               return (
                 <>
                   <div className="single-files-container">
-                    <div className="single-file-icon" onClick={() => downloadDocumentToLocal(document.key)}>
+                    <div
+                      className="single-file-icon"
+                      onClick={() => downloadDocumentToLocal(document.key)}
+                    >
                       <img src={spm1} alt=""></img>
                     </div>
                     <div className="single-file-details">

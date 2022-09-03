@@ -6,7 +6,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Sen", sans-serif;
+   font-family: 'Sen', sans-serif;
+    /* font-family: 'Vollkorn', serif; */
+    /* font-family: 'Alice', serif; */
+    /* font-family: 'Roboto', sans-serif; */
 }
 
 

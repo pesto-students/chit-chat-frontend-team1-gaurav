@@ -47,11 +47,12 @@ function GroupSearch({changescreen,changeContact}) {
         
         let validationStatus=validate();
         let userid= localStorage.getItem('userid');
-        let username=localStorage.getItem('username')
+        let username=localStorage.getItem('username');
+        let profileImg=localStorage.getItem('profilepic');
         if(validationStatus){
             axios
             .post(`${process.env.REACT_APP_SERVER}/group/creategroup`, {
-                user:{userid,username},
+                user:{userid,username,profileImg},
                 groupmembers:selectedContacts,
                 groupname:groupName
             })

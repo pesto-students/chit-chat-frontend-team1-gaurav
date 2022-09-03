@@ -30,6 +30,7 @@
   .chatcard-container .profile-img {
     height: calc(2.3vh + 1.5vw);
     width: calc(2.3vh + 1.5vw);
+    border-radius: 50%;
   }
   
   .chatcard-container .chat-profile-details {
