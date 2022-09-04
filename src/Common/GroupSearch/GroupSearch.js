@@ -48,7 +48,6 @@ function GroupSearch({changescreen,changeContact}) {
         let userid= localStorage.getItem('userid');
         let username=localStorage.getItem('username');
         let profileImg=localStorage.getItem('profilepic');
-        console.log('profileImg',profileImg);
         if(validationStatus){
             axios
             .post(`${process.env.REACT_APP_SERVER}/group/creategroup`, {
