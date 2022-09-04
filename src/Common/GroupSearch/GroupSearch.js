@@ -16,7 +16,7 @@ function GroupSearch({changescreen,changeContact}) {
     const [selectedContacts,setSelectedContacts]=useState([]);
     
     let navigate = useNavigate();
-
+    
 
     const searchContacts = (e) =>{
 
@@ -30,7 +30,6 @@ function GroupSearch({changescreen,changeContact}) {
                 text:e.target.value
             })
             .then((res) => {
-                
                 setContact(res.data);
             })
             .catch((err) => {
@@ -49,6 +48,7 @@ function GroupSearch({changescreen,changeContact}) {
         let userid= localStorage.getItem('userid');
         let username=localStorage.getItem('username');
         let profileImg=localStorage.getItem('profilepic');
+        console.log('profileImg',profileImg);
         if(validationStatus){
             axios
             .post(`${process.env.REACT_APP_SERVER}/group/creategroup`, {
@@ -109,7 +109,8 @@ function GroupSearch({changescreen,changeContact}) {
                     contact: `Contact: ${contact.phoneNumber}`,
                     timestamp: '',
                     messages:'',
-                    userid:contact._id
+                    userid:contact._id,
+                    profileImg:contact.profileImg
                   };
 
              return <GroupSearchContactBar changescreen={changescreen} chatDetails={chatDetails} selectedContacts={selectedContacts} setSelectedContacts={setSelectedContacts}/>
