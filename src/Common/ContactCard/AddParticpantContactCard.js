@@ -1,12 +1,6 @@
 import React from 'react'
 import { toast } from "react-toastify";
 import Sample from "Assets/SampleUserImg1.png";
-import axios from 'axios';
-import {useDispatch } from "react-redux";
-import {setReceiverDetails,loadCurrentChat} from "Redux/Actions/SingleChatActions"
-import { useNavigate } from "react-router-dom";
-import { useState } from 'react';
-import { useEffect } from 'react';
 
 
 
@@ -16,8 +10,6 @@ toast.configure();
 
 function AddParticpantContactCard({chatDetails,selectedContacts,setSelectedContacts}) {
 
-  let navigate = useNavigate();
-  const dispatch=useDispatch();
     let mockProps = {
         profileImg: Sample,
         name: chatDetails?chatDetails.username:'',

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import CryptoJS from "crypto-js";
 import Sample from "Assets/single-header-img.png";
+import groupPic from "Assets/group-icon.png";
 import {
   setReceiverDetails,
   getStaredMessages,
@@ -30,7 +31,6 @@ export function ContactCard({
   activeUserId,
   setActiveUserid,
 }) {
- 
 
   const dispatch = useDispatch();
 
@@ -44,28 +44,28 @@ export function ContactCard({
         new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
       );
     }
-    
-};
-
+  };
 
   const getDecryptedMessage = (message) => {
     return message === undefined
       ? ""
-      : CryptoJS.AES.decrypt(
-          message,
-          process.env.REACT_APP_MESSAGE_SECRET_KEY
-        ).toString(CryptoJS.enc.Utf8);
+      : CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
   };
 
+  // for Setting up profile images for chats
   useEffect(() => {
-    if (chatDetails.profileImg === "" || chatDetails.profileImg === undefined) {
-      setProfileimg(Sample);
-    } else {
+    if (chatType === "single") {
+      if (chatDetails.profileImg === "" ||chatDetails.profileImg === undefined) {
+        setProfileimg(Sample);
+      } else {
         setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(chatDetails.profileImg)}`);
+      }
+    } else {
+      setProfileimg(groupPic);
     }
-  },[])
+  }, []);
 
-  
+
   let mockProps = {
     name: chatDetails ? chatDetails.username : "",
     lastChatMessage: chatDetails
@@ -75,16 +75,14 @@ export function ContactCard({
     unseenMsgs: "2",
   };
 
-
+  
   if (chatType === "single") {
     var { username } = chatDetails;
   } else {
     var { groupname: username } = chatDetails;
   }
 
-
   var isActive;
-
 
   if (chatType === "single") {
     if (
@@ -101,13 +99,13 @@ export function ContactCard({
   }
 
 
-
-
+  // setting up initial data of receiver user of group initially
   const onClickHandler = () => {
     if (chatType === "single") {
       dispatch(setView("single"));
       dispatch(setReceiverDetails(chatDetails));
       dispatch(resetMessageArray());
+      // initially it will load first 25 messages
       dispatch(loadCurrentChat(chatDetails.chatid, 0, 25));
       dispatch(getImagesArray(chatDetails.chatid));
       dispatch(getDocumentsArray(chatDetails.chatid));
@@ -118,6 +116,7 @@ export function ContactCard({
       dispatch(setReceiverGroupDetails(chatDetails));
       setActiveUserid(chatDetails.groupid);
       dispatch(ResetMessageArray());
+      // initially it will load first 25 messages
       dispatch(loadCurrentGroupChat(chatDetails.groupid, 0, 25));
       dispatch(getGroupImagesArray(chatDetails.groupid));
       dispatch(getGroupDocumentsArray(chatDetails.groupid));
@@ -132,16 +131,12 @@ export function ContactCard({
       className={"chatcard-container " + (isActive && "border-bottom-none")}
     >
       {isActive && <div className="overlay"></div>}
-      <img
-        alt="profile-img"
-        className="profile-img"
-        src={profileimg}
-      />
+      <img alt="profile-img" className="profile-img" src={profileimg} />
 
       <div className="chat-profile-details">
         <h3>{username}</h3>
         <span>
-          {chatDetails.sent && (
+          {chatDetails.sent && mockProps.lastChatMessage !== "" && (
             <div className="tick-icon-contact">
               <img src={doubletick} alt=""></img>
             </div>
