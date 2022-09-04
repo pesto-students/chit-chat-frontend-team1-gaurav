@@ -13,7 +13,7 @@ function Home() {
   let navigate = useNavigate();
   return (
     <div className='landingPageContainer'>
-      <div className='navigation'>
+      <div className='home-navigation'>
         <ul className='logoList'>
           <li>
             <img src={Logo} alt="chitchat logo" />
