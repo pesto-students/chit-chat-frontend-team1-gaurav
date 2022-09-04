@@ -3,10 +3,11 @@ import React, { useEffect, useState,useRef } from "react";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AWS from "aws-sdk";
 import { useDebouncedCallback } from "use-debounce";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
-import groupHeaderImg from "Assets/group-header-img.png";
+import groupPic from "Assets/group-icon.png";
 import search from "Assets/search.png";
 import audioCall from "Assets/audio-call.png";
 import videoCall from "Assets/videocallchat.png";
@@ -17,16 +18,27 @@ import emoji from "Assets/emoji.png";
 import imageAttachment from "Assets/image-attachment.png";
 import documentAttachment from "Assets/document-attachment.png";
 import crossWhite from "Assets/cross-white.png";
-import AddParticipant from "../../AddParticipant/AddParticipant";
+import AddParticipant from "./CommonComponents/AddParticipant";
 import { useSelector, useDispatch } from "react-redux";
 import previewImage from 'Assets/preview.png';
 import sendMedia from "Assets/send-media.png";
-import { updateMessageArray,loadCurrentGroups,loadCurrentGroupChat,ResetMessageArray } from "Redux/Actions/GroupChatActions";
+import { updateMessageArray,loadCurrentGroups,loadCurrentGroupChat,getGroupImagesArray,getGroupDocumentsArray } from "Redux/Actions/GroupChatActions";
 import "./GroupChatScreen.css";
 
 toast.configure();
 
 function GroupChatScreen({ socket }) {
+
+  AWS.config.update({
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
+    region: process.env.REACT_APP_AWS_BUCKET_REGION,
+  });
+
   const dispatch = useDispatch();
 
   const inputRef = useRef(null);
@@ -35,7 +47,6 @@ function GroupChatScreen({ socket }) {
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails, GroupChatMessageArray } = groupDetails;
 
-  console.log('check',receiverGroupDetails);
 
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [issomeonetyping, setsomeonetyping] = useState(false); 
@@ -46,16 +57,14 @@ function GroupChatScreen({ socket }) {
   const [membersarray, setmembersarray] = useState("");
   const [typinguser, setTypingUser] = useState("");
   const [selectedImage, setSelectedImage] = useState('');
+  const [displaySelectedImage, setDisplaySelectedImage] = useState("");
   const [selectedDocument, setSelectedDocument] = useState({});
+  const [documentBody, setDocumentBody] = useState({});
   const [lastChatNum,setLastChatNum] = useState(25);
-
-
   const [showPopup,setShowPopup]=useState(false);
 
-  useEffect(() => {
-    dispatch(ResetMessageArray());
-    dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,0,25));
 
+  useEffect(() => {
 
     var membersarray = receiverGroupDetails.groupmembersarray.map((item) => {
       return item.userid;
@@ -65,15 +74,16 @@ function GroupChatScreen({ socket }) {
     
   }, []);
 
+
   useEffect(() => {
-    
+    if(socket.current !== undefined){
     socket.current.on("receive-message-to-group", (data) => {
       if(membersarray.includes(data.senderid))
       dispatch(updateMessageArray(data));
     });
 
+
     socket.current.on("someone-typing-in-group", (data) => {
-    
       receiverGroupDetails.groupmembersarray.map((user) => {
         if (user.userid === data) {
           setTypingUser(user.username);
@@ -82,17 +92,23 @@ function GroupChatScreen({ socket }) {
       });
     });
 
+
     socket.current.on("stops-typing-in-group", (data) => {
       setTypingUser('');
       setsomeonetyping(false);
     });
+  }
   }, [socket]);
 
 
   const handleScroll  = (e) => {
-    if((Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))){
-       dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,lastChatNum,25));
 
+    if(
+      // (Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))
+      Math.floor(e.target.scrollHeight + e.target.scrollTop)  === Math.floor(e.target.clientHeight)
+      // Math.ceil(window.innerHeight + document.documentElement.scrollTop) === document.documentElement.offsetHeight
+      ){
+       dispatch(loadCurrentGroupChat(receiverGroupDetails.groupid,lastChatNum,25));
        setLastChatNum(lastChatNum + 25);
     }
  
@@ -101,6 +117,9 @@ function GroupChatScreen({ socket }) {
   const getTimeDifference = (index) => {
 
     if(index === 0){
+      return false;
+    }
+    else if(GroupChatMessageArray[index].senderid !== GroupChatMessageArray[index-1].senderid){
       return false;
     }
     else{
@@ -122,20 +141,25 @@ function GroupChatScreen({ socket }) {
 
 
   const setImage = (e) => {
+
     const fileObj = e.target.files && e.target.files[0];
+
     if (!fileObj)
       return;
 
     e.target.value = null;
 
-    setSelectedImage(URL.createObjectURL(fileObj));
+    setDisplaySelectedImage(URL.createObjectURL(fileObj));
+    setSelectedImage(fileObj);
     setAttachmentToggle(false);
     setMediaToggle(true);
 
   }
 
   const setDocument = (e) => {
+
     const fileObj = e.target.files && e.target.files[0];
+
     if (!fileObj)
       return;
 
@@ -150,6 +174,7 @@ function GroupChatScreen({ socket }) {
 
     }
 
+      setDocumentBody(fileObj);
       setSelectedDocument(documentDetails);
       setDocumentToggle(true);
       setAttachmentToggle(false);
@@ -157,6 +182,7 @@ function GroupChatScreen({ socket }) {
   }
 
   const getSize = (bytes) => {
+
     if(bytes < 1000){
       return `${bytes} B`;
     }
@@ -170,32 +196,99 @@ function GroupChatScreen({ socket }) {
     else{
       return '';
     }
+
   }
 
+
   const sendImage = () => {
+
+    let nameArray = selectedImage.name.split(".");
+
+    let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+
+    const params = {
+      ACL: "public-read",
+      Body: selectedImage,
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+      Key: key,
+      ContentType: 'image/png'
+    };
+
+    myBucket.putObject(params).send((err, data) => {
+      if (err) console.log(err);
+    });
+
+
     setimgMessage("");
     setSelectedImage("");
+    setDisplaySelectedImage("");
     setMediaToggle(false);
-    UpdateChat("image",{});
+    UpdateChat("image",{},key);
+
+    
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/group/updateimagesarray`, {
+      groupid: receiverGroupDetails.groupid,
+      key:key
+    })
+    .then((res) => { 
+      if(res.data.statusCode === 200){
+        dispatch(getGroupImagesArray(receiverGroupDetails.groupid));
+      }
+    })
   };
 
+
   const sendDocument = () => {
-    UpdateChat("document",selectedDocument);
+    let nameArray = selectedDocument.documentName.split(".");
+
+    let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
+
+    const params = {
+      ACL: "public-read",
+      Body: documentBody,
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+      Key: key,
+    };
+
+    myBucket.putObject(params).send((err, data) => {
+      if (err) console.log(err);
+    });
+
+    UpdateChat("document",selectedDocument,key);
     setSelectedDocument({});
+    setDocumentBody('');
     setDocumentToggle(false);
+
+    axios
+    .post(`${process.env.REACT_APP_SERVER}/group/updatedocumentsarray`, {
+      groupid: receiverGroupDetails.groupid,
+      key:key,
+      name:selectedDocument.documentName,
+      size:selectedDocument.documentSize
+    })
+    .then((res) => { 
+      if(res.data.statusCode === 200){
+        dispatch(getGroupDocumentsArray(receiverGroupDetails.groupid));
+      }
+    })
+
+    setSelectedDocument({});
   };
 
 
   const closeHandler = () =>{
     setimgMessage("");
     setSelectedImage("");
+    setDisplaySelectedImage("");
+    setDocumentBody('');
     setSelectedDocument({});
     setMediaToggle(false);
     setDocumentToggle(false);
   }
 
+
   const typingHandler = (e) => {
-    
     setNewMessage(e.target.value);
     socket.current.emit("user-typing-in-group", {userid:localStorage.getItem("userid"),groupid:receiverGroupDetails.groupid});
   };
@@ -203,16 +296,12 @@ function GroupChatScreen({ socket }) {
 
 
   const keyUpHandler = () => {
-    socket.current.emit(
-      "user-stops-typing-in-group",
-      receiverGroupDetails.groupid
-    );
+    socket.current.emit("user-stops-typing-in-group",receiverGroupDetails.groupid);
   };
 
 
 
-  const UpdateChat = async (messageType,selectedDocument) => {
-    
+  const UpdateChat = async (messageType,selectedDocument,key) => {
 
     var updateOrder = false;
     var order = 0;
@@ -220,19 +309,17 @@ function GroupChatScreen({ socket }) {
     let orderVar = JSON.parse(localStorage.getItem("grouporder"))[0];
 
     if (orderVar === "") {
-      localStorage.setItem(
-        "grouporder",
-        JSON.stringify([receiverGroupDetails.groupid, 1])
-      );
+
+      localStorage.setItem("grouporder",JSON.stringify([receiverGroupDetails.groupid, 1]));
       updateOrder = true;
       order = 1;
+
     } else if (orderVar !== receiverGroupDetails.groupid) {
+
       updateOrder = true;
       order = JSON.parse(localStorage.getItem("grouporder"))[1] + 1;
-      localStorage.setItem(
-        "grouporder",
-        JSON.stringify([receiverGroupDetails.groupid, order])
-      );
+      localStorage.setItem("grouporder",JSON.stringify([receiverGroupDetails.groupid, order]));
+
     }
 
     let messagePayload = {
@@ -243,24 +330,22 @@ function GroupChatScreen({ socket }) {
       order: order,
     };
 
+
     if(messageType === 'message'){
       messagePayload.message = CryptoJS.AES.encrypt(newMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
     }
     else if(messageType === 'image'){
       messagePayload.message = CryptoJS.AES.encrypt(imgMessage,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString();
-      messagePayload.url = "Assets/send-media.png";
+      messagePayload.key = key;
     }
     else if(messageType === 'document'){
       messagePayload.message = selectedDocument;
-      messagePayload.url = "Assets/send-media.png";
+      messagePayload.key = key;
     }
 
 
     axios
-      .post(
-        `${process.env.REACT_APP_SERVER}/group/updategroupmessagearray`,
-        messagePayload
-      )
+      .post(`${process.env.REACT_APP_SERVER}/group/updategroupmessagearray`,messagePayload)
       .then((res) => {
         if (res.data.message) {
 
@@ -270,7 +355,6 @@ function GroupChatScreen({ socket }) {
           dispatch(updateMessageArray(res.data));
           dispatch(loadCurrentGroups());
 
-
         }
       })
       .catch((err) => {
@@ -278,7 +362,7 @@ function GroupChatScreen({ socket }) {
       });
   };
 
-;
+
   const addParticipantHandler=()=>{
        setShowPopup(true)
   }
@@ -290,19 +374,15 @@ function GroupChatScreen({ socket }) {
       <header className="group-chat-header">
         <div className="group-header-leftbar">
           <div className="group-header-logo">
-            <img src={groupHeaderImg} alt="chat-logo"></img>
+            <img src={groupPic} alt="chat-logo"></img>
           </div>
           <div className="group-header-info">
-            <h1 className="group-person-name">
-              {receiverGroupDetails.groupname}
-            </h1>
+            <h1 className="group-person-name">{receiverGroupDetails.groupname}</h1>
+
             {issomeonetyping ? (
-              <div className="typing " style={{ marginTop: ".5vh" }}>
-                {typinguser} is typing...
-              </div>
-            ) : (
-              ""
-            )}
+              <div className="typing " style={{ marginTop: ".5vh" }}>{typinguser} is typing...</div>
+              ) : ( "")}
+
           </div>
         </div>
 
@@ -310,7 +390,7 @@ function GroupChatScreen({ socket }) {
           <div className="right-icons">
             <img onClick={addParticipantHandler} src={inviteMember} alt="invite-member"></img>
           </div>
-          <div className="right-icons video-call-group">
+          {/* <div className="right-icons video-call-group">
             <img src={videoCall} alt="video-call"></img>
           </div>
           <div className="right-icons">
@@ -318,7 +398,7 @@ function GroupChatScreen({ socket }) {
           </div>
           <div className="right-icons ">
             <img src={search} alt="search"></img>
-          </div>
+          </div> */}
         </div>
       </header>
 
@@ -328,15 +408,15 @@ function GroupChatScreen({ socket }) {
 
 
         <fieldset className="day-container">
-          {console.clear()}
-          {console.log(GroupChatMessageArray)}
           {GroupChatMessageArray
             .map((message,i) => {
               if (membersarray.includes(message.senderid)) {
                 return (
                   <ReceivedMessages
+                  key={i}
                   messagetype={message.type}
                   payload={message}
+                  groupid={receiverGroupDetails.groupid}
                   shouldBeRound={getTimeDifference(i)}
                   />
                 );
@@ -345,6 +425,7 @@ function GroupChatScreen({ socket }) {
                   <SentMessages
                     messagetype={message.type}
                     payload={message}
+                    groupid={receiverGroupDetails.groupid}
                     shouldBeRound={getTimeDifference(i)}
                   />
                 );
@@ -384,7 +465,7 @@ function GroupChatScreen({ socket }) {
             <img src={crossWhite} alt="" ></img>
           </div>
           <div className="display-image-single-send">
-            <img src={selectedImage} alt=""></img>
+            <img src={displaySelectedImage} alt=""></img>
           </div>
           <div className="image-message">
             <input type="text" placeholder="Type a Message...." value={imgMessage} onChange={(e) => {setimgMessage(e.target.value); }} ></input>
@@ -414,12 +495,7 @@ function GroupChatScreen({ socket }) {
 
 
 
-        <div
-          className="group-attach-icon"
-          onClick={() => {
-            setAttachmentToggle(!showAttachment);
-          }}
-        >
+        <div className="group-attach-icon" onClick={() => { setAttachmentToggle(!showAttachment); }}>
           <img src={attachment} alt="attach"></img>
         </div>
 
@@ -434,9 +510,9 @@ function GroupChatScreen({ socket }) {
         </div>
 
         <div className="group-footer-right-icons">
-          <div className="group-footer-right-icon">
+          {/* <div className="group-footer-right-icon">
             <img src={emoji} alt="emoji"></img>
-          </div>
+          </div> */}
           <div className="group-footer-right-icon" onClick={sendMessage}>
             <img src={send} alt="send"></img>
           </div>
@@ -445,7 +521,7 @@ function GroupChatScreen({ socket }) {
 
         <div className="group-right-footer"></div>
       </footer>
-      {showPopup && <AddParticipant groupid={receiverGroupDetails.groupid} setShowPopup={setShowPopup}/>}
+      {showPopup && <AddParticipant groupid={receiverGroupDetails.groupid} setShowPopup={setShowPopup} groupMembers={receiverGroupDetails.groupmembersarray} />}
     </div>
   );
 }

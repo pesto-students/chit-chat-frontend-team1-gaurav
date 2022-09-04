@@ -37,6 +37,7 @@
     height: calc(2.5vh + 2vw);
     width: calc(2.5vh + 2vw);
     margin-left: 1vw;
+    border-radius: 50%;
   }
 
   .chat-list-header h1{

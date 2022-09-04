@@ -1,13 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 import Logo from "../../Assets/Logo.png";
 import VideoScreen from "../../Common/VideoScreen/VideoScreen";
-
+import {setLoading,setUserName,setUserProfile} from "../../Redux/Actions/UserActions";
 
 toast.configure();
 
@@ -20,6 +21,7 @@ function Login() {
   const [error,setError]=useState({phoneNumber:'',password:''});
 
   let navigate = useNavigate();
+  const dispatch=useDispatch();
 
   const phoneNumberHandler = (e) => {
     phoneNumberValidator(e.target.value)
@@ -33,7 +35,6 @@ function Login() {
   const phoneNumberValidator=(value)=>{
   let phonereg=/^[0-9]*$/
   let result=value.match(phonereg);
-  console.log('here',result,value)
   if(!result){
     setError((prev)=>{return {...prev,phoneNumber:'Enter a valid phone number'}})
   }
@@ -43,18 +44,20 @@ function Login() {
   }
 
   const loginHandler = () => {
-    
+    dispatch(setLoading(true));
     axios
       .post(`${process.env.REACT_APP_SERVER}/authentication/login`, {
         phoneNumber: phoneNumber,
         password: password,
       })
       .then((res) => {
-        
         if(res.data.statusCode === 200){
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);
           localStorage.setItem('username',res.data.username);
+          localStorage.setItem('profilepic',res.data.profileImg);
+          dispatch(setUserName(res.data.username));
+          dispatch(setUserProfile(res.data.profileImg));
 
           if(localStorage.getItem('order') === undefined || localStorage.getItem('order') === '' || localStorage.getItem('order') === null){
             localStorage.setItem('order',JSON.stringify(['',0]));
@@ -73,14 +76,17 @@ function Login() {
         else{
           toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
         }
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+        dispatch(setLoading(false));
       });
 
   };
 
   return (
+
     <div className="backgroundImage-login">
       <div className="mainContent-login">
         <div className="container-login">
@@ -102,7 +108,7 @@ function Login() {
             <span className="span">Please enter your details</span>
             <>
             <div class="row login-phone">
-              <input className="input-login" value={phoneNumber} onChange={phoneNumberHandler} placeholder="Phone Number"/>
+              <input className="input-login" name='phone-number' value={phoneNumber} onChange={phoneNumberHandler} placeholder="Phone Number"/>
               <div className="phone-icon-login"></div>
             </div>
            {error.phoneNumber && <span className="error-msg">{error.phoneNumber}</span>}

@@ -38,7 +38,6 @@ useEffect(() => {
 }, [])
 
 const callHandler=(peerId)=>{
-  console.log('calling peer id ',peerId);
   var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozkitGetUserMedia
    
   getUserMedia({video:true,audio:true},mediaStream =>{

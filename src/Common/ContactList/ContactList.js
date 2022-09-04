@@ -1,13 +1,13 @@
 import React,{useEffect, useState} from 'react';
-import axios from 'axios';
 import {ContactCard} from "../ContactCard/ContactCard"
-import UserPic from "../../Assets/ProfilePic.png"
+import UserPic from "Assets/ProfilePic.png";
 import { useSelector,useDispatch } from "react-redux";
-import "./ContactList.css"
-import {loadCurrentContacts,changeflag} from "Redux/Actions/SingleChatActions"
+import {loadCurrentContacts} from "Redux/Actions/SingleChatActions"
 import {loadCurrentGroups} from "Redux/Actions/GroupChatActions"
+import "./ContactList.css"
 
 function ContactList({socket}) {
+
 
   let [activeUserId, setActiveUserid] = useState('');
 
@@ -16,9 +16,8 @@ function ContactList({socket}) {
   var {currentContacts} = state;
   var {currentGroups}=Groupstate;
  
+  const [profileimg, setProfileimg] = useState("");
   
-  console.clear();
-  console.log(state);
 
   const dispatch=useDispatch();
 
@@ -27,15 +26,23 @@ function ContactList({socket}) {
    
     dispatch(loadCurrentContacts())
     dispatch(loadCurrentGroups());
+    getImageFromKey();
 
   },[])
 
- 
+
+   const getImageFromKey = () => {
+    if (localStorage.getItem('profilepic') === "") {
+      setProfileimg(UserPic);
+    } else {
+        setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(localStorage.getItem('profilepic'))}`);
+    }
+  };
 
   return (
     <div className="chat-list">
         <div className="chat-list-header">
-          <img src={UserPic} alt=''/>
+          <img src={profileimg} alt=''/>
           <h1>{localStorage.getItem('username')} </h1>
         </div>
         <div className='recent-chat-container'>
@@ -43,8 +50,9 @@ function ContactList({socket}) {
         <div className="recent-chat">
 
 
-        {currentContacts.length!==0 && currentContacts.map(contact =>{
+        {currentContacts.length!==0 && currentContacts.map((contact,index) =>{
            return  <ContactCard   
+           key={index}
            chatType='single' chatDetails = {contact} 
            activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
         })}
@@ -58,8 +66,10 @@ function ContactList({socket}) {
         <div className="recent-group">
      
      
-        {currentGroups.length!==0 && currentGroups.map(contact =>{
-           return  <ContactCard  socket={socket}
+        {currentGroups.length!==0 && currentGroups.map((contact,index) =>{
+           return  <ContactCard  
+           key={index}
+           socket={socket}
            chatType='group' activeUserId={activeUserId} setActiveUserid={setActiveUserid}  chatDetails = {contact} 
            />
         })}

@@ -1,84 +1,113 @@
-import React from 'react'
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Home.module.css";
-import GroupIcon from "../../Assets/Group.png";
-import SecurityIcon from "../../Assets/Security.png";
-import VideoIcon from "../../Assets/VideoCall.png";
-import FileIcon from "../../Assets/FileSharing.png";
-import MsgIcon from "../../Assets/MessageIcon.png";
-import Logo from "../../Assets/Logo.png";
-
+import GroupIcon from "Assets/group-chat.gif";
+import SecurityIcon from "Assets/946-equity-security-gradient.gif";
+import Videogif from "Assets/970-video-conference-gradient.gif";
+import FileGif from "Assets/56-document-gradient.gif";
+import Msggif from "Assets/177-envelope-mail-send-gradient.gif";
+import Logo from "Assets/Logo.png";
+import displayImg from "Assets/chat-screen.png"
+import "./Home.css";
 
 function Home() {
   let navigate = useNavigate();
   return (
-    <div className={styles.landingPageContainer}>
-      <div className={styles.navigation}>
-        <ul className={styles.logoList}>
-          <li>
-            <img src={Logo} alt="chitchat logo" />
-          </li>
-        </ul>
+    <>
+      <header className="header">
+        <navbar className="navbar">
+          <div className="home-logo">
+            <img src={Logo} alt="chit-chat"></img>
+          </div>
+          <div className="nav-links">
+            <ul>
+              <li onClick={() => navigate('/')}>Home</li>
+              <li onClick={() => navigate('/login')}>Login</li>
+              <li onClick={() => navigate('/signup')}>Signup</li>
+              <li>Blog</li>
+            </ul>
+          </div>
+        </navbar>
 
-        <ul className={styles.navList}>
-          <li onClick={()=>{ navigate('/login')}}>Login</li>
-          <li>About Us</li>
-          <li>Support</li>
-          <li>Blog</li>
-        </ul>
-      </div>
-      <div className={styles.mainContainer}>
-        <h1>Talking with everyone and keep secure</h1>
-        <button onClick={()=>{ navigate('/signup')}}>Get Started</button>
-        <div className={styles.feauturesContainer}>
-          <div className={styles.feauture}>
-            <img src={MsgIcon} alt="message icon" />
-            <h3>Messaging</h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor{" "}
-            </p>
+        <div className="header-desc">
+          <h1 className="header-h1">Connect Anywhere, Anytime</h1>
+          <p className="header-one-liner">
+            we create our buildings and then they create us. Likewise, we help
+            you construct your circle of friends and your communities and then
+            they construct you
+          </p>
+        </div>
+
+      </header>
+        <section className="display-image-sec">
+          <div><img src={displayImg} alt='Chat-Page'></img></div>
+        </section>
+
+      <section className="features">
+        <div className="container-home">
+          <h1 className="feature-header">Check out All Features</h1>
+
+          <div className="first-row">
+            <container className="feature-container">
+              <div className="feature-card">
+                <img className="feature-logo" src={Msggif} alt=""></img>
+                <p className="feature-name">Messaging</p>
+                <p className="feature-description">
+                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
+                  Design, Web App
+                </p>
+              </div>
+            </container>
+
+            <container className="feature-container">
+              <div className="feature-card">
+                <img className="feature-logo" src={GroupIcon} alt=""></img>
+                <p className="feature-name">Group Chat</p>
+                <p className="feature-description">
+                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
+                  Design, Web App
+                </p>
+              </div>
+            </container>
+
+            <container className="feature-container">
+              <div className="feature-card">
+                <img className="feature-logo" src={Videogif} alt=""></img>
+                <p className="feature-name">Video Call</p>
+                <p className="feature-description">
+                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
+                  Design, Web App
+                </p>
+              </div>
+            </container>
           </div>
 
-          <div className={styles.feauture}>
-            <img src={GroupIcon} alt="message icon" />
-            <h3>Group Chat</h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor{" "}
-            </p>
-          </div>
+          <div className="second-row">
+            <container className="feature-container">
+              <div className="feature-card">
+                <img className="feature-logo" src={FileGif} alt=""></img>
+                <p className="feature-name">File Sharing</p>
+                <p className="feature-description">
+                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
+                  Design, Web App
+                </p>
+              </div>
+            </container>
 
-          <div className={styles.feauture}>
-            <img src={VideoIcon} alt="message icon" />
-            <h3>Video Call</h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor{" "}
-            </p>
-          </div>
-
-          <div className={styles.feauture}>
-            <img src={FileIcon} alt="message icon" />
-            <h3>File Sharing</h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor{" "}
-            </p>
-          </div>
-
-          <div className={styles.feauture}>
-            <img src={SecurityIcon} alt="message icon" />
-            <h3>Privacy & Security</h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor{" "}
-            </p>
+            <container className="feature-container">
+              <div className="feature-card">
+                <img className="feature-logo" src={SecurityIcon} alt=""></img>
+                <p className="feature-name">Privacy & Security</p>
+                <p className="feature-description">
+                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
+                  Design, Web App
+                </p>
+              </div>
+            </container>
           </div>
         </div>
-      </div>
-    </div>
-  )
+      </section>
+    </>
+  );
 }
 
-export default Home
+export default Home;

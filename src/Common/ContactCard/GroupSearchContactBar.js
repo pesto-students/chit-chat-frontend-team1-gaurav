@@ -1,8 +1,6 @@
 import React from 'react'
 import { toast } from "react-toastify";
 import Sample from "Assets/SampleUserImg1.png";
-import {useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 
 
@@ -13,8 +11,6 @@ toast.configure();
 function GroupSearchContactBar({chatDetails,selectedContacts,setSelectedContacts}) {
 
 
-  
-     console.log('chatDetails',chatDetails);
     let mockProps = {
         profileImg: Sample,
         name: chatDetails?chatDetails.username:'',
@@ -29,8 +25,7 @@ function GroupSearchContactBar({chatDetails,selectedContacts,setSelectedContacts
           setSelectedContacts((prev)=> prev.filter((item)=>{return (item.userid!==chatDetails.userid)}) )
         }
         else{
-        setSelectedContacts((prev)=>[...prev,{userid:chatDetails.userid,username:chatDetails.username}])
-           
+        setSelectedContacts((prev)=>[...prev,{userid:chatDetails.userid,username:chatDetails.username,profileImg:chatDetails.profileImg}])
     }
 
         

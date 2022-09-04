@@ -61,7 +61,7 @@ function SearchBar({ changescreen }) {
 
       <h2 className="recent-heading">Recent Chat</h2>
       <div className="recent-chat">
-        {contact.map((contact) => {
+        {contact.map((contact,index) => {
           let chatDetails = {
             username: contact.userName,
             contact: `Contact: ${contact.phoneNumber}`,
@@ -72,6 +72,7 @@ function SearchBar({ changescreen }) {
 
           return (
             <SearchedContactCard
+              key={index}
               changescreen={changescreen}
               chatDetails={chatDetails}
             />

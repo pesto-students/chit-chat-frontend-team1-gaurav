@@ -38,7 +38,7 @@ function SearchedContactCard({chatDetails}) {
             if(res.data.statusCode === 200){
                 toast.success(`User ${chatDetails.username} Added in Your Contact List`, { autoClose: 1000 });
                 dispatch(setReceiverDetails(chatDetails));
-                dispatch(loadCurrentChat(res.data.chatid,0,15));
+                dispatch(loadCurrentChat(res.data.chatid,0,25));
 
                 navigate('/chat');
 

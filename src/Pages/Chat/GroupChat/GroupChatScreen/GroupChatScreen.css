@@ -141,6 +141,7 @@
 .group-message-image img {
   height: 100%;
   width: 100%;
+  border-radius: 50%;
 }
 
 .group-message-content {
@@ -183,6 +184,7 @@
 .group-image-display img {
   height: 100%;
   width: 100%;
+  border-radius: 15px;
 }
 
 
@@ -330,11 +332,15 @@
   border-bottom-left-radius: 0;
   padding: 2vh;
   z-index: 1;
+  transform-origin: 0% 100%;
+  animation: popup .3s ease;
+
   /* transition: .4s ease; */
 }
 
 .hide {
   display: none;
+  
   /* transition: .4s ease; */
 }
 

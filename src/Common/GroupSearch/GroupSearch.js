@@ -16,7 +16,7 @@ function GroupSearch({changescreen,changeContact}) {
     const [selectedContacts,setSelectedContacts]=useState([]);
     
     let navigate = useNavigate();
-
+    
 
     const searchContacts = (e) =>{
 
@@ -30,7 +30,6 @@ function GroupSearch({changescreen,changeContact}) {
                 text:e.target.value
             })
             .then((res) => {
-                
                 setContact(res.data);
             })
             .catch((err) => {
@@ -44,20 +43,19 @@ function GroupSearch({changescreen,changeContact}) {
     }
 
     let createGroupHandler=()=>{
-        console.log('data',{groupName,selectedContacts});
         
         let validationStatus=validate();
         let userid= localStorage.getItem('userid');
-        let username=localStorage.getItem('username')
+        let username=localStorage.getItem('username');
+        let profileImg=localStorage.getItem('profilepic');
         if(validationStatus){
             axios
             .post(`${process.env.REACT_APP_SERVER}/group/creategroup`, {
-                user:{userid,username},
+                user:{userid,username,profileImg},
                 groupmembers:selectedContacts,
                 groupname:groupName
             })
             .then((res) => {
-               console.log('res') 
                toast.success('Group Created')
                setGroupName('');
                setSelectedContacts([]);
@@ -103,17 +101,19 @@ function GroupSearch({changescreen,changeContact}) {
         <div className="recent-chat">
 
 
-            {contact.map(contact =>{
-
+            {contact.map((contact,index) =>{
+                 
+                 console.log('index',index);
                 let chatDetails = {
                     username:contact.userName,
                     contact: `Contact: ${contact.phoneNumber}`,
                     timestamp: '',
                     messages:'',
-                    userid:contact._id
+                    userid:contact._id,
+                    profileImg:contact.profileImg
                   };
 
-             return <GroupSearchContactBar changescreen={changescreen} chatDetails={chatDetails} selectedContacts={selectedContacts} setSelectedContacts={setSelectedContacts}/>
+             return <GroupSearchContactBar key={index} changescreen={changescreen} chatDetails={chatDetails} selectedContacts={selectedContacts} setSelectedContacts={setSelectedContacts}/>
             })}
 
         </div>
