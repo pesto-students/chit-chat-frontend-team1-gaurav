@@ -197,7 +197,6 @@ function GroupMediaSection() {
               Offline-{oflineMembers.length}
             </div>
             <div className="online-list">
-              {console.log(oflineMembers)}
               {oflineMembers.map((member) => {
                 return (
                   <>

@@ -413,6 +413,7 @@ function GroupChatScreen({ socket }) {
               if (membersarray.includes(message.senderid)) {
                 return (
                   <ReceivedMessages
+                  key={i}
                   messagetype={message.type}
                   payload={message}
                   groupid={receiverGroupDetails.groupid}

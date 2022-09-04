@@ -22,7 +22,6 @@ export const setLoading=(value)=>{
 }  
 
 export const setUserProfile=(value)=>{
-  debugger;
   return (dispatch) => {
     dispatch({
       type:SET_USER_PROFILE,

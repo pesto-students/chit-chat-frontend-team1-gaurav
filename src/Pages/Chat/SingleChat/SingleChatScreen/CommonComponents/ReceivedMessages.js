@@ -33,7 +33,6 @@ function ReceivedMessages({
 
 
   const downloadDocumentToLocal = (documenturl) => {
-    debugger;
     let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
     let link = document.createElement("a");
     link.href = url;

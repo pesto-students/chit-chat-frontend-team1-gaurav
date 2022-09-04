@@ -66,8 +66,9 @@ function ContactList({socket}) {
         <div className="recent-chat">
 
 
-        {currentContacts.length!==0 && currentContacts.map(contact =>{
+        {currentContacts.length!==0 && currentContacts.map((contact,index) =>{
            return  <ContactCard   
+           key={index}
            chatType='single' chatDetails = {contact} 
            activeUserId={activeUserId} setActiveUserid={setActiveUserid}/>
         })}
@@ -81,8 +82,10 @@ function ContactList({socket}) {
         <div className="recent-group">
      
      
-        {currentGroups.length!==0 && currentGroups.map(contact =>{
-           return  <ContactCard  socket={socket}
+        {currentGroups.length!==0 && currentGroups.map((contact,index) =>{
+           return  <ContactCard  
+           key={index}
+           socket={socket}
            chatType='group' activeUserId={activeUserId} setActiveUserid={setActiveUserid}  chatDetails = {contact} 
            />
         })}

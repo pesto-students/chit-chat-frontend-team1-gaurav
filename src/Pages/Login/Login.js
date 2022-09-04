@@ -51,7 +51,6 @@ function Login() {
         password: password,
       })
       .then((res) => {
-        debugger;
         if(res.data.statusCode === 200){
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);

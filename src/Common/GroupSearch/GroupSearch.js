@@ -101,8 +101,9 @@ function GroupSearch({changescreen,changeContact}) {
         <div className="recent-chat">
 
 
-            {contact.map(contact =>{
-
+            {contact.map((contact,index) =>{
+                 
+                 console.log('index',index);
                 let chatDetails = {
                     username:contact.userName,
                     contact: `Contact: ${contact.phoneNumber}`,
@@ -112,7 +113,7 @@ function GroupSearch({changescreen,changeContact}) {
                     profileImg:contact.profileImg
                   };
 
-             return <GroupSearchContactBar changescreen={changescreen} chatDetails={chatDetails} selectedContacts={selectedContacts} setSelectedContacts={setSelectedContacts}/>
+             return <GroupSearchContactBar key={index} changescreen={changescreen} chatDetails={chatDetails} selectedContacts={selectedContacts} setSelectedContacts={setSelectedContacts}/>
             })}
 
         </div>
