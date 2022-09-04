@@ -30,7 +30,7 @@ const loggedin = () =>{
 
   return (
     <LoadingOverlay
-    active={false}
+    active={loading}
     spinner
     text='Loading...'>
       <div className="App">
