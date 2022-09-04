@@ -241,21 +241,20 @@ function GroupMediaSection() {
 
           <div
             className={"media-collipsible-content " + (!activeflags.media ? "" : "show")}>
-              
+              <div className="group-image-cotainer">
             {imagesArray.map((image) => {
               return (
                 <>
-                  <div className="single-media-file">
-                    <div className="single-media-file-container">
+                    <div className="group-media-file-container">
                       <img
                         src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(image.key)}`}
                         alt=""
                       ></img>
                     </div>
-                  </div>
                 </>
               );
             })}
+            </div>
           </div>
         </div>
 
