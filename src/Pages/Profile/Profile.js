@@ -147,20 +147,7 @@ function Profile() {
     if (key === "") {
       setProfileimg(defaultimg);
     } else {
-      myBucket.getObject(
-        {
-          Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-          Key: key,
-        },
-
-        (err, data) => {
-          if (err) setProfileimg(defaultimg);
-
-          setProfileimg(
-            `data:image/png;base64,${data.Body.toString("base64")}`
-          );
-        }
-      );
+      setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(key)}`); 
     }
   };
 

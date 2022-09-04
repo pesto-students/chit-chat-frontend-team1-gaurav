@@ -315,6 +315,7 @@ function SingleChatScreen({ socket }) {
       Body: selectedImage,
       Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
+      ContentType: 'image/png'
     };
     debugger;
     myBucket.putObject(params).send((err, data) => {
@@ -539,7 +540,9 @@ function SingleChatScreen({ socket }) {
         <header className="single-chat-header">
           <div className="single-header-leftbar">
             <div className="single-header-logo">
-              <img src={singleHeaderImg} alt="chat-logo"></img>
+              <img 
+              src={receiverDetails.profileImg === '' ? singleHeaderImg : `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(receiverDetails.profileImg)}`} 
+              alt="chat-logo"></img>
             </div>
             <div className="single-header-info">
               <h1 className="single-person-name">

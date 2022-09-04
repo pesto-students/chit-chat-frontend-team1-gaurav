@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import CryptoJS from "crypto-js";
-import Sample from "../../Assets/SampleUserImg1.png";
-import AWS from "aws-sdk";
+import Sample from "Assets/single-header-img.png";
 import {
   setReceiverDetails,
   getStaredMessages,
@@ -31,15 +30,7 @@ export function ContactCard({
   activeUserId,
   setActiveUserid,
 }) {
-  AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
-    region: process.env.REACT_APP_AWS_BUCKET_REGION,
-  });
+ 
 
   const dispatch = useDispatch();
 
@@ -70,20 +61,7 @@ export function ContactCard({
     if (chatDetails.profileImg === "" || chatDetails.profileImg === undefined) {
       setProfileimg(Sample);
     } else {
-      myBucket.getObject(
-        {
-          Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-          Key: chatDetails.profileImg,
-        },
-
-        (err, data) => {
-          if (err) setProfileimg(Sample);
-
-          setProfileimg(
-            `data:image/png;base64,${data.Body.toString("base64")}`
-          );
-        }
-      );
+        setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(chatDetails.profileImg)}`);
     }
   },[])
 

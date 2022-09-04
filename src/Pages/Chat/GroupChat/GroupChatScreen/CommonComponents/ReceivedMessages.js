@@ -1,11 +1,9 @@
-import React,{useState} from "react";
+import React from "react";
 import axios from "axios";
-import AWS from 'aws-sdk'
 import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
 import downloadDocument from "Assets/download-document.png";
 import threeDot from "Assets/three-dot.png";
-import displayImage from "Assets/display-image.png";
 import starWhite from "Assets/star-white.svg";
 import gmi2 from "Assets/group-message-image-2.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,20 +13,7 @@ toast.configure();
 
 function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
 
-  AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
-    region: process.env.REACT_APP_AWS_BUCKET_REGION,
-  });
-
   const dispatch = useDispatch();
-
-  const [image,setImage] = useState('');
-
 
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails } = groupDetails;
@@ -43,41 +28,19 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
   };
 
   const getDesiredTimeStamp = (timestamp) => {
-    return (
-      new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
-    );
+    return (new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes());
   };
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(
-      message,
-      process.env.REACT_APP_MESSAGE_SECRET_KEY
-    ).toString(CryptoJS.enc.Utf8);
+    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
   };
 
-  const getImageFromKey = (key) => {
-    myBucket.getObject({ 
-      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-     Key: key},
-
-     (err,data) => {
-
-      if(err)
-      setImage(null);
-
-      setImage(`data:image/png;base64,${data.Body.toString('base64')}`);
-
-   })
-  }
-
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
-
-    let link = document.createElement('a');
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
+    let link = document.createElement("a");
     link.href = url;
     link.click();
-    
-  }
+  };
 
   const starMessage = () => {
     axios
@@ -157,8 +120,10 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         <div className="group-image-content">
           {/* <div className='group-message-name'>{getUserName(payload.senderid)}</div> */}
           <div className="group-image-display">
-          {getImageFromKey(payload.key)}
-            <img src={image} alt=""></img>
+            <img
+              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              alt=""
+            ></img>
           </div>
           <div className="group-image-desc">
             {getDecryptedMessage(payload.message)}
@@ -180,8 +145,10 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
             {getUserName(payload.senderid)}
           </div>
           <div className="group-image-display">
-          {getImageFromKey(payload.key)}
-            <img src={image} alt=""></img>
+            <img
+              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              alt=""
+            ></img>
           </div>
           <div className="group-image-desc">
             {getDecryptedMessage(payload.message)}
@@ -208,13 +175,19 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
             </div>
           </div>
           <div className="group-document-content">
-            <div className="download-document-icon" onClick={() => downloadDocumentToLocal(payload.key)}>
+            <div
+              className="download-document-icon"
+              onClick={() => downloadDocumentToLocal(payload.key)}
+            >
               <img src={downloadDocument} alt=""></img>
             </div>
             <div className="group-document-details">
-              <div className="group-document-name">{payload.message.documentName}</div>
+              <div className="group-document-name">
+                {payload.message.documentName}
+              </div>
               <div className="group-document-detail">
-              {payload.message.documentSize} <span>{payload.message.documentExtention}</span>
+                {payload.message.documentSize}{" "}
+                <span>{payload.message.documentExtention}</span>
               </div>
             </div>
           </div>
