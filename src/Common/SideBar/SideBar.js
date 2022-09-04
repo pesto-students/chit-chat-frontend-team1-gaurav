@@ -42,10 +42,11 @@ export default function SideBar({changeContact}) {
 }
 
  const logoutHandler = () =>{
+  debugger;
   localStorage.removeItem('token');
   localStorage.removeItem('userid');
   localStorage.removeItem('username');
-  navigate('/');
+  navigate('/login');
  }
 
   useEffect(() => {

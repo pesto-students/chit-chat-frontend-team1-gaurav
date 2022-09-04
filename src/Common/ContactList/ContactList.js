@@ -1,34 +1,18 @@
 import React,{useEffect, useState} from 'react';
-import axios from 'axios';
-import AWS from "aws-sdk";
 import {ContactCard} from "../ContactCard/ContactCard"
-import UserPic from "../../Assets/ProfilePic.png"
+import UserPic from "Assets/ProfilePic.png";
 import { useSelector,useDispatch } from "react-redux";
-import "./ContactList.css"
-import {loadCurrentContacts,changeflag} from "Redux/Actions/SingleChatActions"
+import {loadCurrentContacts} from "Redux/Actions/SingleChatActions"
 import {loadCurrentGroups} from "Redux/Actions/GroupChatActions"
+import "./ContactList.css"
 
 function ContactList({socket}) {
-
-  
-  AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
-    region: process.env.REACT_APP_AWS_BUCKET_REGION,
-  });
-
 
 
   let [activeUserId, setActiveUserid] = useState('');
 
-  const user = useSelector((state) => state.UserReducer);  
   const state = useSelector((state) => state.SingleChatReducer);  
   const Groupstate = useSelector((state) => state.GroupChatReducer); 
-  var {userName,profilepic} = user;
   var {currentContacts} = state;
   var {currentGroups}=Groupstate;
  

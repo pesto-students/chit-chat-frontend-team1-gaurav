@@ -7,7 +7,7 @@ import AWS from "aws-sdk";
 import { useDebouncedCallback } from "use-debounce";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
-import groupHeaderImg from "Assets/group-header-img.png";
+import groupPic from "Assets/group-icon.png";
 import search from "Assets/search.png";
 import audioCall from "Assets/audio-call.png";
 import videoCall from "Assets/videocallchat.png";
@@ -374,7 +374,7 @@ function GroupChatScreen({ socket }) {
       <header className="group-chat-header">
         <div className="group-header-leftbar">
           <div className="group-header-logo">
-            <img src={groupHeaderImg} alt="chat-logo"></img>
+            <img src={groupPic} alt="chat-logo"></img>
           </div>
           <div className="group-header-info">
             <h1 className="group-person-name">{receiverGroupDetails.groupname}</h1>
@@ -390,7 +390,7 @@ function GroupChatScreen({ socket }) {
           <div className="right-icons">
             <img onClick={addParticipantHandler} src={inviteMember} alt="invite-member"></img>
           </div>
-          <div className="right-icons video-call-group">
+          {/* <div className="right-icons video-call-group">
             <img src={videoCall} alt="video-call"></img>
           </div>
           <div className="right-icons">
@@ -398,7 +398,7 @@ function GroupChatScreen({ socket }) {
           </div>
           <div className="right-icons ">
             <img src={search} alt="search"></img>
-          </div>
+          </div> */}
         </div>
       </header>
 
@@ -510,9 +510,9 @@ function GroupChatScreen({ socket }) {
         </div>
 
         <div className="group-footer-right-icons">
-          <div className="group-footer-right-icon">
+          {/* <div className="group-footer-right-icon">
             <img src={emoji} alt="emoji"></img>
-          </div>
+          </div> */}
           <div className="group-footer-right-icon" onClick={sendMessage}>
             <img src={send} alt="send"></img>
           </div>

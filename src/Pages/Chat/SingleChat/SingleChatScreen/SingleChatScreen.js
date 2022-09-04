@@ -575,12 +575,12 @@ function SingleChatScreen({ socket }) {
             <div className="right-icons video-call-single" onClick={() => callUser('video')}>
               <img src={videoCall} alt="video-call"></img>
             </div>
-            <div className="right-icons" onClick={() => callUser('audio')}>
+            {/* <div className="right-icons" onClick={() => callUser('audio')}>
               <img src={audioCall} alt="audio-call"></img>
-            </div>
-            <div className="right-icons ">
+            </div> */}
+            {/* <div className="right-icons ">
               <img src={search} alt="search"></img>
-            </div>
+            </div> */}
           </div>
         </header>
       )}
@@ -826,10 +826,9 @@ function SingleChatScreen({ socket }) {
           {/* <InputEmoji /> */}
           {/* <Picker pickerStyle={{}} /> */}
 
-          <div className="single-footer-right-icon">
-            {/* <InputEmoji style={{display:'none'}}/> */}
+          {/* <div className="single-footer-right-icon">
             <img src={emoji} alt="emoji"></img>
-          </div>
+          </div> */}
           <div className="single-footer-right-icon" onClick={sendMessage}>
             <img src={send} alt="send"></img>
           </div>

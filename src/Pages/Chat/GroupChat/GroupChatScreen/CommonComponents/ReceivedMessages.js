@@ -12,7 +12,6 @@ import { getGroupStaredMessages } from "Redux/Actions/GroupChatActions";
 toast.configure();
 
 function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
-
   const dispatch = useDispatch();
 
   const groupDetails = useSelector((state) => state.GroupChatReducer);
@@ -27,16 +26,37 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
     return username;
   };
 
+  const getUserImage = (userid) => {
+    var userImage = gmi2;
+
+    receiverGroupDetails.groupmembersarray.map((member) => {
+
+      if (member.userid === userid) 
+      if(member.profileImg !== '' || member.profileImg !== undefined)
+      userImage = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(member.profileImg)}`;
+      
+    });
+
+    return userImage;
+  };
+
   const getDesiredTimeStamp = (timestamp) => {
-    return (new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes());
+    return (
+      new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
+    );
   };
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+    return CryptoJS.AES.decrypt(
+      message,
+      process.env.REACT_APP_MESSAGE_SECRET_KEY
+    ).toString(CryptoJS.enc.Utf8);
   };
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
+      documenturl
+    )}`;
     let link = document.createElement("a");
     link.href = url;
     link.click();
@@ -86,7 +106,7 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
     return (
       <div className="group-message">
         <div className="group-message-image">
-          <img src={gmi2} alt=""></img>
+          <img src={getUserImage(payload.senderid)} alt=""></img>
         </div>
         <div
           className="group-message-content last-reveived-message"
@@ -121,7 +141,9 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
           {/* <div className='group-message-name'>{getUserName(payload.senderid)}</div> */}
           <div className="group-image-display">
             <img
-              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              src={`${
+                process.env.REACT_APP_AWS_BUCKET_PATH
+              }${encodeURIComponent(payload.key)}`}
               alt=""
             ></img>
           </div>
@@ -138,7 +160,7 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
     return (
       <div className="group-message">
         <div className="group-message-image">
-          <img src={gmi2} alt=""></img>
+          <img src={getUserImage(payload.senderid)} alt=""></img>
         </div>
         <div className="group-image-content last-reveived-message">
           <div className="group-message-name">
@@ -146,7 +168,9 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
           </div>
           <div className="group-image-display">
             <img
-              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              src={`${
+                process.env.REACT_APP_AWS_BUCKET_PATH
+              }${encodeURIComponent(payload.key)}`}
               alt=""
             ></img>
           </div>
@@ -163,7 +187,7 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
     return (
       <div className="group-message">
         <div className="group-message-image">
-          <img src={gmi2} alt=""></img>
+          <img src={getUserImage(payload.senderid)} alt=""></img>
         </div>
         <div className="group-image-content last-reveived-message">
           <div className="group-document-header">

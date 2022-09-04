@@ -1,8 +1,6 @@
 import React from 'react'
 import { toast } from "react-toastify";
 import Sample from "Assets/SampleUserImg1.png";
-import {useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 
 
