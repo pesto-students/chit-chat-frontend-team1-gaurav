@@ -211,6 +211,7 @@ function GroupChatScreen({ socket }) {
       Body: selectedImage,
       Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
+      ContentType: 'image/png'
     };
 
     myBucket.putObject(params).send((err, data) => {

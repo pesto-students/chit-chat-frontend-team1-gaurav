@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import CryptoJS from "crypto-js";
-import AWS from "aws-sdk";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import smi1 from "Assets/single-media-i-1.png";
 import spm1 from "Assets/single-pdf-media.png";
 import starReveived from "Assets/star-received.svg";
@@ -9,20 +8,10 @@ import starSent from "Assets/star-sent.svg";
 import "./SingleMediaSection.css";
 
 function SingleMediaSection() {
-  AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
-    region: process.env.REACT_APP_AWS_BUCKET_REGION,
-  });
 
   const state = useSelector((state) => state.SingleChatReducer);
   var { StaredMessages, imagesArray, documentsArray } = state;
 
-  const [images, setImages] = useState({});
 
   useEffect(() => {}, []);
 
@@ -57,27 +46,10 @@ function SingleMediaSection() {
     }
   };
 
-  const getImageFromKey = async (key, index) => {
-    await myBucket.getObject(
-      {
-        Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-        Key: key,
-      },
-
-      (err, data) => {
-        if (err) setImages({ ...images, index: `` });
-
-        setImages({
-          ...images,
-          index: `data:image/png;base64,${data.Body.toString("base64")}`,
-        });
-      }
-    );
-  };
 
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(documenturl)}`;
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
 
     let link = document.createElement('a');
     link.href = url;
@@ -106,22 +78,26 @@ function SingleMediaSection() {
             </div>
           </div>
           <div className="single-media-content">
+              {imagesArray.length > 0 &&
             <div className="single-media-file">
               <div className="single-media-file-container">
-                <img src={images["0"]} alt=""></img>
+                <img src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(imagesArray[0].key)}`} alt=""></img>
               </div>
             </div>
+              }
+            {imagesArray.length > 1 &&
             <div className="single-media-file">
               <div className="single-media-file-container">
-                <img src={images["1"]} alt=""></img>
+                <img src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(imagesArray[1].key)}`} alt=""></img>
               </div>
             </div>
+            }
 
-            {imagesArray.length > 3 ? (
+            {imagesArray.length > 2 ? (
               <>
                 <div className="single-media-file">
                   <div className="single-media-file-container single-media-info">
-                    18+
+                    {imagesArray.length - 2}+
                   </div>
                 </div>
               </>

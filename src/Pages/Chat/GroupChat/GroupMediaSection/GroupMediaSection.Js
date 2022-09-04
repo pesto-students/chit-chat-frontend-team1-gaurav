@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
-import AWS from "aws-sdk";
 import uparrow from "Assets/up-arrow.png";
 import downarrow from "Assets/down-arrow.png";
 import gmi1 from "Assets/group-message-image-1.png";
@@ -14,16 +13,6 @@ import { useSelector } from "react-redux";
 import "./GroupMediaSection.css";
 
 function GroupMediaSection() {
-  AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_AWS_SECERET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
-    region: process.env.REACT_APP_AWS_BUCKET_REGION,
-  });
-
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const state = useSelector((state) => state.SingleChatReducer);
 
@@ -43,27 +32,6 @@ function GroupMediaSection() {
 
   //for setting online and offline members list initially
   useEffect(() => {
-    const getImageFromKey = (key) => {
-      debugger;
-      // return gmi1;
-      if (key === "" || key === undefined) {
-        return gmi1;
-      } else {
-        myBucket.getObject(
-          {
-            Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-            Key: key,
-          },
-
-          (err, data) => {
-            if (err) return gmi1;
-
-            return `data:image/png;base64,${data.Body.toString("base64")}`;
-          }
-        );
-      }
-    };
-
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
@@ -74,11 +42,6 @@ function GroupMediaSection() {
       }
     );
 
-    onlineMembers = onlineMembers.map((member) => {
-      let image = getImageFromKey(member.profileImg);
-      return { ...member, profileImg: image };
-    });
-
     setonlineMembers(onlineMembers);
 
     let oflineMembers = receiverGroupDetails.groupmembersarray.filter(
@@ -86,38 +49,11 @@ function GroupMediaSection() {
         return !onlineusersArray.includes(groupMember.userid);
       }
     );
-
-    oflineMembers = oflineMembers.map((member) => {
-      let image = getImageFromKey(member.profileImg);
-      return { ...member, profileImg: image };
-    });
-
     setoflineMembers(oflineMembers);
   }, []);
 
   // for setting online and offline members list when there is change in socket
   useEffect(() => {
-    const getImageFromKey = (key) => {
-      debugger;
-      // return gmi1;
-      if (key === "" || key === undefined) {
-        return gmi1;
-      } else {
-        myBucket.getObject(
-          {
-            Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-            Key: key,
-          },
-
-          (err, data) => {
-            if (err) return gmi1;
-
-            return `data:image/png;base64,${data.Body.toString("base64")}`;
-          }
-        );
-      }
-    };
-
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
@@ -127,11 +63,6 @@ function GroupMediaSection() {
         return onlineusersArray.includes(groupMember.userid);
       }
     );
-    
-    onlineMembers = onlineMembers.map((member) => {
-      let image = getImageFromKey(member.profileImg);
-      return { ...member, profileImg: image };
-    });
 
     setonlineMembers(onlineMembers);
 
@@ -140,12 +71,6 @@ function GroupMediaSection() {
         return !onlineusersArray.includes(groupMember.userid);
       }
     );
-
-    oflineMembers = oflineMembers.map((member) => {
-      let image = getImageFromKey(member.profileImg);
-      return { ...member, profileImg: image };
-    });
-
     setoflineMembers(oflineMembers);
   }, [onlineUsers]);
 
@@ -196,35 +121,23 @@ function GroupMediaSection() {
     ).toString(CryptoJS.enc.Utf8);
   };
 
-  const getImageFromKey = (key) => {
-    debugger;
-    return gmi1;
-    // if (key === "" || key === undefined) {
-    //   return gmi1;
-    // } else {
-    //   await myBucket.getObject(
-    //     {
-    //       Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-    //       Key: key,
-    //     },
-
-    //     (err, data) => {
-    //       if (err) return gmi1;
-
-    //       return `data:image/png;base64,${data.Body.toString("base64")}`;
-    //     }
-    //   );
-    // }
-  };
-
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `https://chitchatcommunicationn.s3.ap-south-1.amazonaws.com/${encodeURIComponent(
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
       documenturl
     )}`;
-
     let link = document.createElement("a");
     link.href = url;
     link.click();
+  };
+
+  const getProfileImg = (key) => {
+    if (key === "" || key === undefined) {
+      return gmi1;
+    } else {
+      return `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
+        key
+      )}`;
+    }
   };
 
   return (
@@ -266,7 +179,10 @@ function GroupMediaSection() {
                   <>
                     <div className="online-member">
                       <div className="online-member-icon">
-                        <img src={member.profileImg} alt=""></img>
+                        <img
+                          src={getProfileImg(member.profileImg)}
+                          alt=""
+                        ></img>
                       </div>
                       <div className="online-member-name">
                         {member.username}
@@ -287,7 +203,10 @@ function GroupMediaSection() {
                   <>
                     <div className="online-member">
                       <div className="online-member-icon">
-                        <img src={member.profileImg} alt=""></img>
+                        <img
+                          src={getProfileImg(member.profileImg)}
+                          alt=""
+                        ></img>
                       </div>
                       <div className="online-member-name offline">
                         {member.username}
@@ -321,27 +240,22 @@ function GroupMediaSection() {
           </button>
 
           <div
-            className={
-              "media-collipsible-content " + (!activeflags.media ? "" : "show")
-            }
-          >
-            <div className="single-media-file">
-              <div className="single-media-file-container">
-                <img src={smi1} alt=""></img>
-              </div>
-            </div>
-
-            <div className="single-media-file">
-              <div className="single-media-file-container">
-                <img src={smi1} alt=""></img>{" "}
-              </div>
-            </div>
-
-            <div className="single-media-file">
-              <div className="single-media-file-container single-media-info">
-                18+
-              </div>
-            </div>
+            className={"media-collipsible-content " + (!activeflags.media ? "" : "show")}>
+              
+            {imagesArray.map((image) => {
+              return (
+                <>
+                  <div className="single-media-file">
+                    <div className="single-media-file-container">
+                      <img
+                        src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(image.key)}`}
+                        alt=""
+                      ></img>
+                    </div>
+                  </div>
+                </>
+              );
+            })}
           </div>
         </div>
 

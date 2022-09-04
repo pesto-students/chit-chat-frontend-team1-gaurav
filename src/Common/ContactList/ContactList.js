@@ -51,20 +51,7 @@ function ContactList({socket}) {
     if (localStorage.getItem('profilepic') === "") {
       setProfileimg(UserPic);
     } else {
-      myBucket.getObject(
-        {
-          Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-          Key: localStorage.getItem('profilepic'),
-        },
-
-        (err, data) => {
-          if (err) setProfileimg(UserPic);
-
-          setProfileimg(
-            `data:image/png;base64,${data.Body.toString("base64")}`
-          );
-        }
-      );
+        setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(localStorage.getItem('profilepic'))}`);
     }
   };
 

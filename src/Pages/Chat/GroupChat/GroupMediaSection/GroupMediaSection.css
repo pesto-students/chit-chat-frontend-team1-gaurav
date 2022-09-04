@@ -87,6 +87,7 @@
     height: 64vh;
     max-height: 64vh;
     overflow-y: scroll;
+    padding-top: 2vh;
 }
 
 .online-members{
@@ -120,6 +121,7 @@
 .online-member-icon img{
     height: 100%;
     width: 100%;
+    border-radius: 50%;
 }
 
 .online-member-name{
