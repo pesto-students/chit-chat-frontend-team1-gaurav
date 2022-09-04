@@ -27,8 +27,7 @@ function GroupSearchContactBar({chatDetails,selectedContacts,setSelectedContacts
           setSelectedContacts((prev)=> prev.filter((item)=>{return (item.userid!==chatDetails.userid)}) )
         }
         else{
-        setSelectedContacts((prev)=>[...prev,{userid:chatDetails.userid,username:chatDetails.username}])
-           
+        setSelectedContacts((prev)=>[...prev,{userid:chatDetails.userid,username:chatDetails.username,profileImg:chatDetails.profileImg}])
     }
 
         
