@@ -64,7 +64,6 @@ function Profile() {
       var jwtPayload = JSON.parse(window.atob(JWTtoken.split(".")[1]));
 
       var tokenExpired = jwtPayload.exp * 1000 <= Date.now();
-      debugger;
       if (!tokenExpired) {
         axios
           .post(`${process.env.REACT_APP_SERVER}/authentication/getprofile`, {

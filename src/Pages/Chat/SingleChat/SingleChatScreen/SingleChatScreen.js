@@ -257,6 +257,10 @@ function SingleChatScreen({ socket }) {
     socket.current.emit("user-stops-typing", receiverDetails.userid);
   };
 
+  const keyDownHandler=(e)=>{
+    if(e.keyCode==13){sendMessage()}
+  }
+
   const sendMessage = () => {
     if (newMessage !== "") UpdateChat("message", {}, "");
     setNewMessage("");
@@ -305,7 +309,6 @@ function SingleChatScreen({ socket }) {
   };
 
   const sendImage = () => {
-    debugger;
     let nameArray = selectedImage.name.split(".");
 
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
@@ -317,7 +320,6 @@ function SingleChatScreen({ socket }) {
       Key: key,
       ContentType: 'image/png'
     };
-    debugger;
     myBucket.putObject(params).send((err, data) => {
       if (err) console.log(err);
     });
@@ -673,6 +675,7 @@ function SingleChatScreen({ socket }) {
             if (message.senderid === receiverDetails.userid) {
               return (
                 <ReceivedMessages
+                  key={i}
                   messagetype={message.type}
                   payload={message}
                   chatid={receiverDetails.chatid}
@@ -683,6 +686,7 @@ function SingleChatScreen({ socket }) {
             } else {
               return (
                 <SentMessages
+                  key={i}
                   messagetype={message.type}
                   payload={message}
                   chatid={receiverDetails.chatid}
@@ -814,6 +818,7 @@ function SingleChatScreen({ socket }) {
             }
             onChange={typingHandler}
             onKeyUp={useDebouncedCallback(keyUpHandler, 1500)}
+            onKeyDown={keyDownHandler}
           ></input>
         </div>
 
