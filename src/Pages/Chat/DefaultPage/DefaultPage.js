@@ -1,6 +1,6 @@
 import React from 'react';
-import logo from '../../../Assets/Logo.png'
-import security from '../../../Assets/security-default.png'
+import logo from 'Assets/Logo.png'
+import security from 'Assets/security-default.png'
 import './DefaultPage.css';
 
 function DefaultPage() {

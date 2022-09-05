@@ -7,8 +7,6 @@ import {setReceiverDetails,loadCurrentChat} from "Redux/Actions/SingleChatAction
 import { useNavigate } from "react-router-dom";
 
 
-
-
 toast.configure();
 
 

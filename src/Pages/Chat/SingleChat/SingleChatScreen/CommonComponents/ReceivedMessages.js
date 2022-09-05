@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import downloadDocument from "Assets/download-document.png";
 import threeDot from "Assets/three-dot.png";
 import starWhite from "Assets/star-white.svg";
-import starBlack from "Assets/star-black.svg";
 import { useDispatch } from "react-redux";
 import { getStaredMessages } from "Redux/Actions/SingleChatActions";
 
@@ -21,14 +20,16 @@ function ReceivedMessages({
 
   const dispatch = useDispatch();
 
-
   const getDesiredTimeStamp = (timestamp) => {
     return (new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes());
   };
 
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt( message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+    return CryptoJS.AES.decrypt(
+      message,
+      process.env.REACT_APP_MESSAGE_SECRET_KEY
+    ).toString(CryptoJS.enc.Utf8);
   };
 
 
@@ -38,7 +39,6 @@ function ReceivedMessages({
     link.href = url;
     link.click();
   };
-
 
   const starMessage = () => {
     axios
@@ -63,6 +63,7 @@ function ReceivedMessages({
       });
   };
 
+// Normal Message With round border
   if (messagetype === "message" && shouldBeRound) {
     return (
       <div className="single-message ">
@@ -74,6 +75,8 @@ function ReceivedMessages({
         </div>
       </div>
     );
+
+// normal Message with one side sharp edge
   } else if (messagetype === "message" && !shouldBeRound) {
     return (
       <div className="single-message">
@@ -91,13 +94,17 @@ function ReceivedMessages({
         </div>
       </div>
     );
+
+// Normal image With round border
   } else if (messagetype === "image" && shouldBeRound) {
     return (
       <div className="single-image">
         <div className="single-image-content">
           <div className="single-image-display">
             <img
-              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              src={`${
+                process.env.REACT_APP_AWS_BUCKET_PATH
+              }${encodeURIComponent(payload.key)}`}
               alt=""
             ></img>
           </div>
@@ -110,13 +117,17 @@ function ReceivedMessages({
         </div>
       </div>
     );
+
+// normal image with one side sharp edge
   } else if (messagetype === "image" && !shouldBeRound) {
     return (
       <div className="single-image">
         <div className="single-image-content last-reveived-message">
           <div className="single-image-display">
             <img
-              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              src={`${
+                process.env.REACT_APP_AWS_BUCKET_PATH
+              }${encodeURIComponent(payload.key)}`}
               alt=""
             ></img>
           </div>
@@ -129,6 +140,8 @@ function ReceivedMessages({
         </div>
       </div>
     );
+
+// Normal document With round border
   } else if (messagetype === "document" && shouldBeRound) {
     return (
       <div className="single-image">
@@ -157,6 +170,8 @@ function ReceivedMessages({
         </div>
       </div>
     );
+
+// normal document with one side sharp edge
   } else if (messagetype === "document" && !shouldBeRound) {
     return (
       <div className="single-image">

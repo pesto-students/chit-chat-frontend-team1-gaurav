@@ -12,12 +12,13 @@ import { getGroupStaredMessages } from "Redux/Actions/GroupChatActions";
 toast.configure();
 
 function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
+
   const dispatch = useDispatch();
 
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const { receiverGroupDetails } = groupDetails;
 
-  const getUserName = (userid) => {
+  const getUserNameFromUserID = (userid) => {
     var username;
     receiverGroupDetails.groupmembersarray.map((member) => {
       if (member.userid === userid) username = member.username;
@@ -26,16 +27,16 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
     return username;
   };
 
-  const getUserImage = (userid) => {
-    debugger;
+  const getUserImageFromUserID = (userid) => {
+    // default image
     var userImage = gmi2;
 
     receiverGroupDetails.groupmembersarray.map((member) => {
-
-      if (member.userid === userid) 
-      if(member.profileImg !== '' && member.profileImg !== undefined)
-      userImage = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(member.profileImg)}`;
-      
+      if (member.userid === userid)
+        if (member.profileImg !== "" && member.profileImg !== undefined)
+          userImage = `${
+            process.env.REACT_APP_AWS_BUCKET_PATH
+          }${encodeURIComponent(member.profileImg)}`;
     });
 
     return userImage;
@@ -55,9 +56,7 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
   };
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
-      documenturl
-    )}`;
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
     let link = document.createElement("a");
     link.href = url;
     link.click();
@@ -86,6 +85,7 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
       });
   };
 
+  // Normal Message With round border
   if (messagetype === "message" && shouldBeRound) {
     return (
       <div className="group-message">
@@ -103,11 +103,13 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // normal Message with one side sharp edge
   } else if (messagetype === "message" && !shouldBeRound) {
     return (
       <div className="group-message">
         <div className="group-message-image">
-          <img src={getUserImage(payload.senderid)} alt=""></img>
+          <img src={getUserImageFromUserID(payload.senderid)} alt=""></img>
         </div>
         <div
           className="group-message-content last-reveived-message"
@@ -119,7 +121,7 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         >
           <div style={{ flexDirection: "column" }}>
             <div className="group-message-name">
-              {getUserName(payload.senderid)}
+              {getUserNameFromUserID(payload.senderid)}
             </div>
             <div className="group-message-message">
               {getDecryptedMessage(payload.message)}
@@ -134,12 +136,14 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // Normal image With round border
   } else if (messagetype === "image" && shouldBeRound) {
     return (
       <div className="group-message">
         <div className="group-message-image"></div>
         <div className="group-image-content">
-          {/* <div className='group-message-name'>{getUserName(payload.senderid)}</div> */}
+          {/* <div className='group-message-name'>{getUserNameFromUserID(payload.senderid)}</div> */}
           <div className="group-image-display">
             <img
               src={`${
@@ -157,15 +161,17 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // normal image with one side sharp edge
   } else if (messagetype === "image" && !shouldBeRound) {
     return (
       <div className="group-message">
         <div className="group-message-image">
-          <img src={getUserImage(payload.senderid)} alt=""></img>
+          <img src={getUserImageFromUserID(payload.senderid)} alt=""></img>
         </div>
         <div className="group-image-content last-reveived-message">
           <div className="group-message-name">
-            {getUserName(payload.senderid)}
+            {getUserNameFromUserID(payload.senderid)}
           </div>
           <div className="group-image-display">
             <img
@@ -184,16 +190,18 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // normal Document
   } else if (messagetype === "document") {
     return (
       <div className="group-message">
         <div className="group-message-image">
-          <img src={getUserImage(payload.senderid)} alt=""></img>
+          <img src={getUserImageFromUserID(payload.senderid)} alt=""></img>
         </div>
         <div className="group-image-content last-reveived-message">
           <div className="group-document-header">
             <div className="group-message-name">
-              {getUserName(payload.senderid)}
+              {getUserNameFromUserID(payload.senderid)}
             </div>
             <div className="three-dot-icon">
               <img src={threeDot} alt=""></img>

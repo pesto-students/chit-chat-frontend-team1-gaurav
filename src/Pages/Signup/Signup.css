@@ -43,7 +43,6 @@
 .signup {
   width: 50%;
   margin: auto;
-  margin-top: 4vh;
   text-align: left;
 }
 
@@ -137,13 +136,21 @@
 .password-icon {
   top: 6px;
   right: 11px;
-  background-image: url("../../Assets/password.png");
+}
+
+.password-icon img{
+  height: 100%;
+  width: 100%;
 }
 
 .eye-icon {
   top: 6px;
   right: 11px;
-  background-image: url("../../Assets/enye.png");
+}
+
+.eye-icon img {
+  height: 100%;
+  width: 100%;
 }
 
 .phonenumber {
@@ -158,11 +165,12 @@
   color: #000000;
   cursor: pointer;
   align-self: center;
-  padding: 0.8rem;
+  padding: calc(.6vh + .5vw) calc(.5vh + .2vw);
   word-wrap: none;
   font-weight: 700;
   transition: 0.4s ease;
-  font-size: 1rem;
+  font-size: calc(1.1vh + .4vw);
+  line-height: 1.5;
 }
 
 .otp:hover {
@@ -216,6 +224,14 @@ color: white;
   }
 }
 
+@media screen and (height<830px) {
+  .signup{
+    max-height: 80vh;
+    overflow: scroll;
+  }
+}
+
+
 @media screen and (height>=1080px){
   .signup{
     margin-top: 12vh;
@@ -225,36 +241,15 @@ color: white;
 
 @media screen and  (width>=1484px) {
   
-  .otp{
-    font-size: 1rem;
-  }
   .btnSignup button{
     padding:0.8rem;
   }
 }
 
-@media screen and  (width<1484px) {
 
-  .otp{
-    font-size: 0.9rem;
-  }
- 
-}
-
-@media screen and  (width<1395px) {
-
-  .otp{
-    font-size: 0.8rem;
-  }
- 
-}
 
 @media screen and  (width<1310px) {
 
-  .otp{
-    font-size: 0.7rem;
-  }
- 
   .h1-signup{
     font-size: 1.9rem;
   }

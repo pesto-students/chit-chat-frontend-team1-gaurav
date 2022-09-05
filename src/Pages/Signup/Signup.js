@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../Assets/Logo.png";
+import eye from "Assets/enye.png";
+import eyeClose from "Assets/eye-close.png";
 import "react-toastify/dist/ReactToastify.css";
 import "./Signup.css";
 
@@ -33,6 +35,9 @@ function Signup() {
   });
 
   const [otpkey, setotpkey] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
 
   let navigate = useNavigate();
@@ -238,8 +243,8 @@ function Signup() {
             <>
             <div class="row">
               <div className="parentdiv password">
-                <input className="sighup-input" name="password"  onChange={debounce(onChangeHandler,200)} type="password" placeholder="Enter Password" />
-                <div className="base-icon password-icon"></div>
+                <input className="sighup-input" name="password"  onChange={debounce(onChangeHandler,200)} type={showPassword?'text':'password'} placeholder="Enter Password" />
+                <div className="base-icon password-icon" onClick={() => setShowPassword(!showPassword)}><img src={showPassword?eyeClose:eye} alt="show-Password"></img></div>
               </div>
             </div>
             {error.password && <span className="error-msg">{error.password}</span>}
@@ -249,8 +254,8 @@ function Signup() {
             <>
             <div class="row">
               <div className="parentdiv confpassword">
-                <input className="sighup-input" name="confirmPassword"  onChange={debounce(onChangeHandler,200)} type="password" placeholder="Confirm Password" />
-                <div className="base-icon eye-icon"></div>
+                <input className="sighup-input" name="confirmPassword"  onChange={debounce(onChangeHandler,200)} type={showConfirmPassword?'text':'password'} placeholder="Confirm Password" />
+                <div className="base-icon eye-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}><img src={showConfirmPassword?eyeClose:eye} alt="show-Password"></img></div>
               </div>
             </div>
             {error.confirmPassword && <span className="error-msg">{error.confirmPassword}</span>}

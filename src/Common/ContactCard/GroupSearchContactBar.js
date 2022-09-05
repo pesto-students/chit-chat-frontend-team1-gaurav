@@ -3,8 +3,6 @@ import { toast } from "react-toastify";
 import Sample from "Assets/SampleUserImg1.png";
 
 
-
-
 toast.configure();
 
 
