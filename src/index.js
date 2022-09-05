@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
+import { Integrations  } from "@sentry/tracing";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -10,8 +10,8 @@ import { Provider } from 'react-redux'
 import {store} from "./Redux/store"
 
 Sentry.init({
-  dsn: "https://examplePublicKey@o0.ingest.sentry.io/0",
-  integrations: [new BrowserTracing()],
+  dsn: "https://b8e899d9f3bb485c8818e1f45a4e0e27@o1368837.ingest.sentry.io/6671716",
+  integrations: [new Integrations.BrowserTracing()],
 
   // We recommend adjusting this value in production, or using tracesSampler
   // for finer control
