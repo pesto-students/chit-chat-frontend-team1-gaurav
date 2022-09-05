@@ -27,12 +27,13 @@ function ReceivedMessages({ messagetype, payload, shouldBeRound, groupid }) {
   };
 
   const getUserImage = (userid) => {
+    debugger;
     var userImage = gmi2;
 
     receiverGroupDetails.groupmembersarray.map((member) => {
 
       if (member.userid === userid) 
-      if(member.profileImg !== '' || member.profileImg !== undefined)
+      if(member.profileImg !== '' && member.profileImg !== undefined)
       userImage = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(member.profileImg)}`;
       
     });

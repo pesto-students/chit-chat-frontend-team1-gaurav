@@ -17,7 +17,6 @@ function App() {
   LoadingOverlay.propTypes = undefined;
 
   const loggedin = () => {
-    debugger;
     var JWTtoken = localStorage.getItem("token");
 
     if (JWTtoken) {
