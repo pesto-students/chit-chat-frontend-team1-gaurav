@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Logo from "Assets/Logo.png";
+import {setLoading} from "Redux/Actions/UserActions";
+import eye from "Assets/enye.png";
+import eyeClose from "Assets/eye-close.png";
 import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
-import Logo from "../../Assets/Logo.png";
-import VideoScreen from "../../Common/VideoScreen/VideoScreen";
-import {setLoading,setUserName,setUserProfile} from "../../Redux/Actions/UserActions";
 
 toast.configure();
 
@@ -17,6 +18,7 @@ toast.configure();
 function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [error,setError]=useState({phoneNumber:'',password:''});
 
@@ -57,8 +59,6 @@ function Login() {
           localStorage.setItem('userid',res.data.userid);
           localStorage.setItem('username',res.data.username);
           localStorage.setItem('profilepic',res.data.profileImg);
-          dispatch(setUserName(res.data.username));
-          dispatch(setUserProfile(res.data.profileImg));
 
           if(localStorage.getItem('order') === undefined || localStorage.getItem('order') === '' || localStorage.getItem('order') === null){
             localStorage.setItem('order',JSON.stringify(['',0]));
@@ -116,8 +116,8 @@ function Login() {
             </>
 
             <div class="row login-pass">
-              <input className="input-login" value={password} onChange={passwordHandler}  type="password" placeholder="Enter Password"/>
-              <div className="password-icon-login"></div>
+              <input className="input-login" value={password} onChange={passwordHandler}  type={showPassword?'text':'password'} placeholder="Enter Password"/>
+              <div className="password-icon-login" onClick={() => setShowPassword(!showPassword)}><img src={showPassword?eyeClose:eye} alt="show-Password"></img></div>
             </div>
 
 

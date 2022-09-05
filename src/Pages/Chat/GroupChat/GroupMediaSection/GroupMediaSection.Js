@@ -5,7 +5,6 @@ import CryptoJS from "crypto-js";
 import uparrow from "Assets/up-arrow.png";
 import downarrow from "Assets/down-arrow.png";
 import gmi1 from "Assets/group-message-image-1.png";
-import smi1 from "Assets/single-media-i-1.png";
 import spm1 from "Assets/single-pdf-media.png";
 import starReveived from "Assets/star-received.svg";
 import starSent from "Assets/star-sent.svg";
@@ -16,8 +15,7 @@ function GroupMediaSection() {
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const state = useSelector((state) => state.SingleChatReducer);
 
-  const { receiverGroupDetails, StaredMessages, imagesArray, documentsArray } =
-    groupDetails;
+  const { receiverGroupDetails, StaredMessages, imagesArray, documentsArray } =groupDetails;
   const { onlineUsers } = state;
 
   const [activeflags, setActiveFlags] = useState({
@@ -29,6 +27,7 @@ function GroupMediaSection() {
 
   const [onlineMembers, setonlineMembers] = useState([]);
   const [oflineMembers, setoflineMembers] = useState([]);
+
 
   //for setting online and offline members list initially
   useEffect(() => {
@@ -52,6 +51,7 @@ function GroupMediaSection() {
     setoflineMembers(oflineMembers);
   }, []);
 
+
   // for setting online and offline members list when there is change in socket
   useEffect(() => {
     let onlineusersArray = onlineUsers.map((item) => {
@@ -74,6 +74,7 @@ function GroupMediaSection() {
     setoflineMembers(oflineMembers);
   }, [onlineUsers]);
 
+  
   const getmonth = (month) => {
     switch (month) {
       case 1:
@@ -105,7 +106,7 @@ function GroupMediaSection() {
     }
   };
 
-  const getUserName = (userid) => {
+  const getUserNameFromUserID = (userid) => {
     var username;
     receiverGroupDetails.groupmembersarray.map((member) => {
       if (member.userid === userid) username = member.username;
@@ -122,27 +123,27 @@ function GroupMediaSection() {
   };
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
-      documenturl
-    )}`;
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
     let link = document.createElement("a");
     link.href = url;
     link.click();
   };
 
+
   const getProfileImg = (key) => {
     if (key === "" || key === undefined) {
       return gmi1;
     } else {
-      return `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
-        key
-      )}`;
+      return `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(key)}`;
     }
   };
+
 
   return (
     <>
       <div className="group-media-container">
+
+        {/* Online/Offline Members Section */}
         <div className="group-online-section">
           <button
             className="group-online-collipsible-button"
@@ -166,12 +167,7 @@ function GroupMediaSection() {
             </div>
           </button>
 
-          <div
-            className={
-              "online-collipsible-content " +
-              (!activeflags.members ? "" : "show")
-            }
-          >
+          <div className={"online-collipsible-content " +(!activeflags.members ? "" : "show")}>
             <div className="online-members">Online-{onlineMembers.length}</div>
             <div className="online-list">
               {onlineMembers.map((member) => {
@@ -219,6 +215,8 @@ function GroupMediaSection() {
           </div>
         </div>
 
+
+         {/* images Section      */}
         <div className="group-media-section">
           <button
             className="group-online-collipsible-button"
@@ -240,24 +238,29 @@ function GroupMediaSection() {
           </button>
 
           <div
-            className={"media-collipsible-content " + (!activeflags.media ? "" : "show")}>
-              <div className="group-image-cotainer">
-            {imagesArray.map((image) => {
-              return (
-                <>
+            className={
+              "media-collipsible-content " + (!activeflags.media ? "" : "show")
+            }
+          >
+            <div className="group-image-cotainer">
+              {imagesArray.map((image) => {
+                return (
+                  <>
                     <div className="group-media-file-container">
                       <img
                         src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(image.key)}`}
                         alt=""
                       ></img>
                     </div>
-                </>
-              );
-            })}
+                  </>
+                );
+              })}
             </div>
           </div>
         </div>
 
+
+        {/* documents Section */}
         <div className="group-files-section">
           <button
             className="group-online-collipsible-button"
@@ -313,6 +316,7 @@ function GroupMediaSection() {
           </div>
         </div>
 
+
         {/* StarSection   */}
 
         <div className="group-star-messages-section">
@@ -346,7 +350,7 @@ function GroupMediaSection() {
                       <div className="single-message-content last-reveived-message star-flex">
                         <div style={{ flexDirection: "column" }}>
                           <div className="group-message-name">
-                            {getUserName(message.senderid)}
+                            {getUserNameFromUserID(message.senderid)}
                           </div>
                           {getDecryptedMessage(message.message)}
                         </div>

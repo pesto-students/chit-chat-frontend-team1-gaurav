@@ -100,12 +100,17 @@
 
 .password-icon-login{
   position: absolute;
-  height: 30px;
-  width: 30px;
-  top: 6px;
+  height: calc(1.5vh + 1vw);
+  width: calc(1.5vh + 1vw);
+  top: 8px;
   right: 13px;
-  background-image: url("../../Assets/password.png");
+  /* background-image: url("../../Assets/password.png"); */
   background-repeat: no-repeat;
+  cursor: pointer;
+}
+.password-icon-login img{
+  height: 100%;
+  width: 100%;
 }
 
   .forgotPassword-login {

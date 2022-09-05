@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Search from "Assets/NavSearch.png";
 import "./SearchBar.css";
 import SearchedContactCard from "../ContactCard/SearchedContactCard";
@@ -7,14 +7,11 @@ import { useDebouncedCallback } from "use-debounce";
 import { useSelector } from "react-redux";
 
 function SearchBar({ changescreen }) {
+
   const state = useSelector((state) => state.SingleChatReducer);
   var { currentContacts } = state;
 
   const [contact, setContact] = useState([]);
-
-  useEffect(() => {
-    let con = currentContacts;
-  }, []);
 
   const searchContacts = (e) => {
     if (e.target.value === "") {
@@ -26,7 +23,6 @@ function SearchBar({ changescreen }) {
           text: e.target.value,
         })
         .then((res) => {
-
           let currentcontacts = currentContacts.map((item) => {
             return item.userid;
           });
@@ -36,7 +32,6 @@ function SearchBar({ changescreen }) {
           });
 
           setContact(finalContacts);
-          
         })
         .catch((err) => {
           setContact([]);
