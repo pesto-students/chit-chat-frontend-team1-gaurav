@@ -138,7 +138,12 @@ function SingleChatScreen({ socket }) {
   useEffect(() => {
     if (socket.current !== undefined) {
       socket.current.on("receive-message", (data) => {
+        debugger;
         dispatch(updateCurrentChat(data));
+        if(data.type === 'image')
+        dispatch(getImagesArray(receiverDetails.chatid));
+        if(data.type === 'document')
+        dispatch(getDocumentsArray(receiverDetails.chatid));
       });
 
       socket.current.on("receiver-typing", (data) => {
