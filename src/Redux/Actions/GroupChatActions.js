@@ -96,7 +96,7 @@ export const getGroupStaredMessages = (groupid) => {
           payload: res.data,
         });
         // debugger;
-        // dispatch(setLoading(true));
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         dispatch({
@@ -104,7 +104,7 @@ export const getGroupStaredMessages = (groupid) => {
           payload: [],
         });
         // debugger;
-        // dispatch(setLoading(true));
+        dispatch(setLoading(false));
       });
   };
 };
