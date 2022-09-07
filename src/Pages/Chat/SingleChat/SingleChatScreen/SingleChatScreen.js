@@ -10,6 +10,7 @@ import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
 import CryptoJS from "crypto-js";
 import axios from "axios";
+import {getFilteredMessageArrayDayWise} from "Common/Common";
 import InputEmoji from "react-input-emoji";
 import Picker from "emoji-picker-react";
 import singleHeaderImg from "Assets/single-header-img.png";
@@ -82,14 +83,13 @@ function SingleChatScreen({ socket }) {
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =
     state;
 
+  // to get stream of audio or video from device
   var getUserMedia =
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     navigator.mozkitGetUserMedia;
 
-  // Checks if Receiver is online when we start conversation
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
     const peer = new Peer();
 
     peer.on("open", (id) => {
@@ -98,6 +98,7 @@ function SingleChatScreen({ socket }) {
 
     peerInstance.current = peer;
 
+    // Checks if Receiver is online when we start conversation
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);
@@ -106,8 +107,10 @@ function SingleChatScreen({ socket }) {
         setuseronline(false);
       }
     }
+
   }, []);
 
+  // for Video Call
   useEffect(() => {
     if (peerInstance.current !== null) {
       peerInstance.current.on("call", (call) => {
@@ -115,17 +118,14 @@ function SingleChatScreen({ socket }) {
         setShowHeader(true);
         setIncomingCall(false);
 
-        // var getUserMedia =
-        //   navigator.getUserMedia ||
-        //   navigator.webkitGetUserMedia ||
-        //   navigator.mozkitGetUserMedia;
-
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
+          // will set current users video stream
           currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
 
           call.answer(mediaStream);
           call.on("stream", (remoteStream) => {
+            // will set other users video stream
             remoteVideoRef.current.srcObject = remoteStream;
             remoteVideoRef.current.play();
           });
@@ -140,10 +140,10 @@ function SingleChatScreen({ socket }) {
       socket.current.on("receive-message", (data) => {
         debugger;
         dispatch(updateCurrentChat(data));
-        if(data.type === 'image')
-        dispatch(getImagesArray(receiverDetails.chatid));
-        if(data.type === 'document')
-        dispatch(getDocumentsArray(receiverDetails.chatid));
+        if (data.type === "image")
+          dispatch(getImagesArray(receiverDetails.chatid));
+        if (data.type === "document")
+          dispatch(getDocumentsArray(receiverDetails.chatid));
       });
 
       socket.current.on("receiver-typing", (data) => {
@@ -180,7 +180,6 @@ function SingleChatScreen({ socket }) {
         setShowHeader(true);
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
-        
           currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
 
@@ -203,8 +202,6 @@ function SingleChatScreen({ socket }) {
 
         setVideoScreen(false);
       });
-
-
     }
   }, [socket]);
 
@@ -220,29 +217,34 @@ function SingleChatScreen({ socket }) {
     }
   }, [onlineUsers]);
 
+
+  // to implement lazy loading and infinite scrolling functionality
   const handleScroll = (e) => {
     if (
       // Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 === Math.floor(e.target.clientHeight)
       Math.ceil(e.target.scrollHeight + e.target.scrollTop) ===
       Math.floor(e.target.clientHeight)
     ) {
+      // will load next 25 messages
       dispatch(loadCurrentChat(receiverDetails.chatid, lastChatNum, 25));
       setLastChatNum(lastChatNum + 25);
     }
   };
 
-  const getTimeDifference = (index) => {
+  /* it will get time difference between 2 messages and if it is less than 1 min 
+   then it will return true which means message or media should be rounded */
+  const getTimeDifference = (index,subArray) => {
     if (index === 0) {
       return false;
     } else if (
-      SingleChatMessageArray[index].senderid !==
-      SingleChatMessageArray[index - 1].senderid
+      subArray[index].senderid !==
+      subArray[index - 1].senderid
     ) {
       return false;
     } else {
       if (
-        (Number(SingleChatMessageArray[index - 1].timestamp) -
-          Number(SingleChatMessageArray[index].timestamp)) /
+        (Number(subArray[index - 1].timestamp) -
+          Number(subArray[index].timestamp)) /
           60000 <
         1
       ) {
@@ -318,13 +320,15 @@ function SingleChatScreen({ socket }) {
 
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
 
+    // to upload image in aws
     const params = {
       ACL: "public-read",
       Body: selectedImage,
       Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
       Key: key,
-      ContentType: 'image/png'
+      ContentType: "image/png",
     };
+
     myBucket.putObject(params).send((err, data) => {
       if (err) console.log(err);
     });
@@ -335,6 +339,7 @@ function SingleChatScreen({ socket }) {
     setMediaToggle(false);
     UpdateChat("image", {}, key);
 
+    // will update the images array to show uploaded image in media section
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/updateimagesarray`, {
         chatid: receiverDetails.chatid,
@@ -342,6 +347,7 @@ function SingleChatScreen({ socket }) {
       })
       .then((res) => {
         if (res.data.statusCode === 200) {
+          // will get updated image array through redux in real time
           dispatch(getImagesArray(receiverDetails.chatid));
         }
       });
@@ -352,6 +358,7 @@ function SingleChatScreen({ socket }) {
 
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
 
+    // to upload document in aws
     const params = {
       ACL: "public-read",
       Body: documentBody,
@@ -367,6 +374,7 @@ function SingleChatScreen({ socket }) {
     setDocumentBody("");
     setDocumentToggle(false);
 
+    // will update the documents array to show uploaded image in media section
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/updatedocumentsarray`, {
         chatid: receiverDetails.chatid,
@@ -376,6 +384,7 @@ function SingleChatScreen({ socket }) {
       })
       .then((res) => {
         if (res.data.statusCode === 200) {
+          // will get updated image array through redux in real time
           dispatch(getDocumentsArray(receiverDetails.chatid));
         }
       });
@@ -397,7 +406,10 @@ function SingleChatScreen({ socket }) {
     setShowHeader(false);
     setCalling(true);
 
-    socket.current.emit("call-user", { userid: receiverDetails.userid,callType });
+    socket.current.emit("call-user", {
+      userid: receiverDetails.userid,
+      callType,
+    });
   };
 
   const cancleCalling = () => {
@@ -434,7 +446,6 @@ function SingleChatScreen({ socket }) {
         }
       });
     });
-  
 
     setVideoScreen(false);
   };
@@ -530,16 +541,7 @@ function SingleChatScreen({ socket }) {
       });
   };
 
-  // const filterChatDateWise = (chatArray) => {
 
-  //   if(chatArray.length > 0){
-  //   let firstDate = chatArray[0].timestamp;
-  //   let lastDate = chatArray[chatArray.length - 1].timestamp;
-
-  //   let hello;
-  //   }
-
-  // }
 
   return (
     <div className="single-main-container">
@@ -547,9 +549,16 @@ function SingleChatScreen({ socket }) {
         <header className="single-chat-header">
           <div className="single-header-leftbar">
             <div className="single-header-logo">
-              <img 
-              src={receiverDetails.profileImg === '' ? singleHeaderImg : `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(receiverDetails.profileImg)}`} 
-              alt="chat-logo"></img>
+              <img
+                src={
+                  receiverDetails.profileImg === ""
+                    ? singleHeaderImg
+                    : `${
+                        process.env.REACT_APP_AWS_BUCKET_PATH
+                      }${encodeURIComponent(receiverDetails.profileImg)}`
+                }
+                alt="chat-logo"
+              ></img>
             </div>
             <div className="single-header-info">
               <h1 className="single-person-name">
@@ -577,7 +586,10 @@ function SingleChatScreen({ socket }) {
           </div>
 
           <div className="single-header-icons">
-            <div className="right-icons video-call-single" onClick={() => callUser('video')}>
+            <div
+              className="right-icons video-call-single"
+              onClick={() => callUser("video")}
+            >
               <img src={videoCall} alt="video-call"></img>
             </div>
             {/* <div className="right-icons" onClick={() => callUser('audio')}>
@@ -673,35 +685,40 @@ function SingleChatScreen({ socket }) {
       {/* Main - section  */}
 
       <section className="single-main-section" onScroll={handleScroll}>
-        <fieldset className="day-container">
-          <legend> Yesterday </legend>
-          {/* {filterChatDateWise(SingleChatMessageArray)} */}
-          {SingleChatMessageArray.map((message, i) => {
-            if (message.senderid === receiverDetails.userid) {
-              return (
-                <ReceivedMessages
-                  key={i}
-                  messagetype={message.type}
-                  payload={message}
-                  chatid={receiverDetails.chatid}
-                  contactid={receiverDetails.userid}
-                  shouldBeRound={getTimeDifference(i)}
-                />
-              );
-            } else {
-              return (
-                <SentMessages
-                  key={i}
-                  messagetype={message.type}
-                  payload={message}
-                  chatid={receiverDetails.chatid}
-                  contactid={receiverDetails.userid}
-                  shouldBeRound={getTimeDifference(i)}
-                />
-              );
-            }
-          })}
-        </fieldset>
+ 
+
+        {getFilteredMessageArrayDayWise(SingleChatMessageArray).map((dayObj) => {
+          return (
+            <>
+              <fieldset className="day-container">
+                <legend> {dayObj.label} </legend>
+                {dayObj.messageArray.map((message, i) => {
+                  if (message.senderid === receiverDetails.userid) {
+                    return (
+                      <ReceivedMessages
+                        messagetype={message.type}
+                        payload={message}
+                        chatid={receiverDetails.chatid}
+                        contactid={receiverDetails.userid}
+                        shouldBeRound={getTimeDifference(i,dayObj.messageArray)}
+                      />
+                    );
+                  } else {
+                    return (
+                      <SentMessages
+                        messagetype={message.type}
+                        payload={message}
+                        chatid={receiverDetails.chatid}
+                        contactid={receiverDetails.userid}
+                        shouldBeRound={getTimeDifference(i,dayObj.messageArray)}
+                      />
+                    );
+                  }
+                })}
+              </fieldset>
+            </>
+          );
+        })}
       </section>
 
       {/* Footer */}
@@ -719,7 +736,7 @@ function SingleChatScreen({ socket }) {
               <div className="single-attachment-icon">
                 <img src={imageAttachment} alt="img-attachment"></img>
               </div>
-              <div className="single-attachment-text">Photo or Video</div>
+              <div className="single-attachment-text">Images</div>
               <input
                 style={{ display: "none" }}
                 ref={inputRef}

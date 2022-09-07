@@ -45,10 +45,7 @@ function SingleMediaSection() {
   };
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
-      documenturl
-    )}`;
-
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
     let link = document.createElement("a");
     link.href = url;
     link.click();
@@ -103,7 +100,10 @@ function SingleMediaSection() {
 
                 {imagesArray.length > 2 ? (
                   <>
-                    <div className="single-media-file"  onClick={() => setShowAllImages(true)}>
+                    <div
+                      className="single-media-file"
+                      onClick={() => setShowAllImages(true)}
+                    >
                       <div className="single-media-file-container single-media-info">
                         {imagesArray.length - 2}+
                       </div>
@@ -116,7 +116,10 @@ function SingleMediaSection() {
             </>
           ) : (
             <>
-              <div className="single-media-content show-all-media" id="single-media-content">
+              <div
+                className="single-media-content show-all-media"
+                id="single-media-content"
+              >
                 {imagesArray.map((image) => {
                   return (
                     <>

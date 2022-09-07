@@ -12,19 +12,20 @@ import { getGroupStaredMessages } from "Redux/Actions/GroupChatActions";
 toast.configure();
 
 function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
-
   const dispatch = useDispatch();
 
-
   const getDesiredTimeStamp = (timestamp) => {
-    return (new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes());
+    return (
+      new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
+    );
   };
-
 
   const getDecryptedMessage = (message) => {
-    return CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+    return CryptoJS.AES.decrypt(
+      message,
+      process.env.REACT_APP_MESSAGE_SECRET_KEY
+    ).toString(CryptoJS.enc.Utf8);
   };
-
 
   const downloadDocumentToLocal = (documenturl) => {
     let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
@@ -55,6 +56,7 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
       });
   };
 
+// Normal Message With round border
   if (messagetype === "message" && shouldBeRound) {
     return (
       <div className="group-message self-sent">
@@ -72,6 +74,8 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+    
+    // Normal Message With round border
   } else if (messagetype === "message" && !shouldBeRound) {
     return (
       <div className="group-message self-sent">
@@ -91,6 +95,8 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // Normal image With round border
   } else if (messagetype === "image" && shouldBeRound) {
     return (
       <div className="group-message self-sent">
@@ -100,7 +106,9 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         <div className="group-image-content self last-sent-message">
           <div className="group-image-display">
             <img
-              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              src={`${
+                process.env.REACT_APP_AWS_BUCKET_PATH
+              }${encodeURIComponent(payload.key)}`}
               alt=""
             ></img>
           </div>
@@ -113,6 +121,8 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // image with one side sharp edge
   } else if (messagetype === "image" && !shouldBeRound) {
     return (
       <div className="single-image self-sent">
@@ -124,7 +134,9 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         <div className="single-image-content self last-sent-message">
           <div className="single-image-display">
             <img
-              src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(payload.key)}`}
+              src={`${
+                process.env.REACT_APP_AWS_BUCKET_PATH
+              }${encodeURIComponent(payload.key)}`}
               alt=""
             ></img>
           </div>
@@ -137,6 +149,8 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
         </div>
       </div>
     );
+
+    // normal document
   } else if (messagetype === "document") {
     return (
       <div className="group-message self-sent">

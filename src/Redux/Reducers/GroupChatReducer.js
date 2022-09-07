@@ -16,8 +16,8 @@ var GroupChatState = {
   GroupChatMessageArray: [],
   GroupChatInfo: [],
   StaredMessages: [],
-  imagesArray:[],
-  documentsArray:[]
+  imagesArray: [],
+  documentsArray: [],
 };
 
 export function GroupChatReducer(currentState = GroupChatState, action) {

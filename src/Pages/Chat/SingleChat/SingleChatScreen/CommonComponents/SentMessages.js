@@ -62,6 +62,7 @@ function SentMessages({
       });
   };
 
+  // Normal Message With round border
   if (messagetype === "message" && shouldBeRound) {
     return (
       <div className="single-message self-sent">
@@ -76,6 +77,8 @@ function SentMessages({
         </div>
       </div>
     );
+
+    // normal Message with one side sharp edge
   } else if (messagetype === "message" && !shouldBeRound) {
     return (
       <div className="single-message self-sent">
@@ -93,6 +96,8 @@ function SentMessages({
         </div>
       </div>
     );
+
+    // Normal image With round border
   } else if (messagetype === "image" && shouldBeRound) {
     return (
       <div className="single-image self-sent">
@@ -115,6 +120,8 @@ function SentMessages({
         </div>
       </div>
     );
+
+    // normal image with one side sharp edge
   } else if (messagetype === "image" && !shouldBeRound) {
     return (
       <div className="single-image self-sent">
@@ -137,6 +144,8 @@ function SentMessages({
         </div>
       </div>
     );
+
+    // Normal document With round border
   } else if (messagetype === "document" && shouldBeRound) {
     return (
       <div className="single-image self-sent">
@@ -173,6 +182,8 @@ function SentMessages({
         </div>
       </div>
     );
+
+    // normal document with one side sharp edge
   } else if (messagetype === "document" && !shouldBeRound) {
     return (
       <div className="single-image self-sent">

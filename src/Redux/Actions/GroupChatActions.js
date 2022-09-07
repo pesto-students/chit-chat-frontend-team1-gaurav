@@ -7,8 +7,9 @@ import {
   RESET_MESSAGE_ARRAY,
   GET_STARED_MESSAGES,
   GET_IMAGES_ARRAY,
-  GET_DOCUMENTS_ARRAY
+  GET_DOCUMENTS_ARRAY,
 } from "../Types/GroupChatTypes";
+import {setLoading} from "Redux/Actions/UserActions";
 
 export const loadCurrentGroups = () => {
   return (dispatch) => {
@@ -82,6 +83,7 @@ export const ResetMessageArray = (data) => {
 };
 
 export const getGroupStaredMessages = (groupid) => {
+
   return (dispatch) => {
     axios
       .post(`${process.env.REACT_APP_SERVER}/group/loadstarmessages`, {
@@ -93,16 +95,19 @@ export const getGroupStaredMessages = (groupid) => {
           type: GET_STARED_MESSAGES,
           payload: res.data,
         });
+        // debugger;
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         dispatch({
           type: GET_STARED_MESSAGES,
           payload: [],
         });
+        // debugger;
+        dispatch(setLoading(false));
       });
   };
 };
-
 
 export const getGroupImagesArray = (groupid) => {
   return (dispatch) => {

@@ -1,85 +1,74 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useInsertionEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SideBar from "../../Common/SideBar/SideBar";
-import SearchBar from "Common/SearchBar/SearchBar";
 import ContactList from "../../Common/ContactList/ContactList";
 import DefaultPage from "./DefaultPage/DefaultPage";
 import SingleChatScreen from "../Chat/SingleChat/SingleChatScreen/SingleChatScreen";
 import GroupChatScreen from "../Chat/GroupChat/GroupChatScreen/GroupChatScreen";
 import SingleMediaSection from "../Chat/SingleChat/SingleMediaSection/SingleMediaSection";
 import GroupMediaSection from "./GroupChat/GroupMediaSection/GroupMediaSection";
-import Profile from "../Profile/Profile"
 import { io } from "socket.io-client";
-import {setCurrentOnlinUsers,loadCurrentContacts} from "Redux/Actions/SingleChatActions"
+import {
+  setCurrentOnlinUsers,
+  loadCurrentContacts,
+} from "Redux/Actions/SingleChatActions";
 
 import "./Chat.css";
 
 toast.configure();
 
-
 function Chat() {
-
-  const state = useSelector((state) => state.SingleChatReducer);  
-  const groupstate = useSelector((state) => state.GroupChatReducer);
-  const userstate = useSelector((state) => state.UserReducer);  
-  var {receiverDetails} = state;
-  var {receiverGroupDetails}=groupstate
-  let {view}=userstate;
-  const dispatch=useDispatch();
+  const userstate = useSelector((state) => state.UserReducer);
+  let { view } = userstate;
+  const dispatch = useDispatch();
 
   let navigate = useNavigate();
 
+  const [groupid, setgroupid] = useState("");
 
-  const [groupid,setgroupid] = useState('');
+  var socket = useRef();
 
-  var socket = useRef()
-
+  /*when someone directly puts chat page url in browse and user is not logged in then 
+  it will redirect user to login page*/
   useEffect(() => {
-      var JWTtoken = localStorage.getItem('token');
+    var JWTtoken = localStorage.getItem("token");
 
-      if(JWTtoken)
-      {
-        var jwtPayload = JSON.parse(window.atob(JWTtoken.split('.')[1]))
-    
-        var tokenExpired = (jwtPayload.exp*1000) <= Date.now();
-  
-        if(!tokenExpired){
-  
-          socket.current = io(process.env.REACT_APP_SERVER);
-          socket.current.emit("add-user", localStorage.getItem("userid"));
+    if (JWTtoken) {
+      var jwtPayload = JSON.parse(window.atob(JWTtoken.split(".")[1]));
 
-        }
-        else{
-          localStorage.removeItem('token');
-          localStorage.removeItem('userid');
-          localStorage.removeItem('username');
-          toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
-          navigate('/login');
-        }
+      var tokenExpired = jwtPayload.exp * 1000 <= Date.now();
+
+      if (!tokenExpired) {
+        socket.current = io(process.env.REACT_APP_SERVER);
+        socket.current.emit("add-user", localStorage.getItem("userid"));
+      } else {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userid");
+        localStorage.removeItem("username");
+        toast.warning("You Are Logged out Please Login..!", {
+          autoClose: 2000,
+        });
+        navigate("/login");
       }
-      else{
-  
-        toast.warning('You Are Logged out Please Login..!',{autoClose:2000})
-        navigate('/login');
-      }
-
+    } else {
+      toast.warning("You Are Logged out Please Login..!", { autoClose: 2000 });
+      navigate("/login");
+    }
   }, []);
 
+  // to set current online users available
   useEffect(() => {
-    
-    var JWTtoken = localStorage.getItem('token');
+    var JWTtoken = localStorage.getItem("token");
 
-    if(JWTtoken)
-    {
-      var jwtPayload = JSON.parse(window.atob(JWTtoken.split('.')[1]))
-  
-      var tokenExpired = (jwtPayload.exp*1000) <= Date.now();
+    if (JWTtoken) {
+      var jwtPayload = JSON.parse(window.atob(JWTtoken.split(".")[1]));
 
-      if(!tokenExpired){
+      var tokenExpired = jwtPayload.exp * 1000 <= Date.now();
 
+      if (!tokenExpired) {
         socket.current.on("online-users", (data) => {
           dispatch(setCurrentOnlinUsers(data));
         });
@@ -87,20 +76,13 @@ function Chat() {
         socket.current.on("reload-contacts", (data) => {
           dispatch(loadCurrentContacts());
         });
+      } else {
+        navigate("/");
       }
-      else{
-        navigate('/');
-      }
+    } else {
+      navigate("/");
     }
-    else{
-      navigate('/');
-    }
-
   }, [socket]);
-
-
-  
-
 
   // const changeContact = (showContact) =>{
   //   setContacts(showContact);
@@ -112,20 +94,28 @@ function Chat() {
         <SideBar />
       </section>
       <section className="contact-list">
-         <ContactList socket={socket} /> 
+        <ContactList socket={socket} />
       </section>
 
-      {view=='default' ? (
+      {view === "default" ? (
         <seciton className="default-page">
           <DefaultPage />
         </seciton>
       ) : (
         <>
           <section className="main-chat-screen">
-            {view=='group' ? <GroupChatScreen socket={socket} /> : <SingleChatScreen  socket={socket}/>}
+            {view === "group" ? (
+              <GroupChatScreen socket={socket} />
+            ) : (
+              <SingleChatScreen socket={socket} />
+            )}
           </section>
           <section className="media-section">
-            {view=='group' ? <GroupMediaSection /> : <SingleMediaSection groupid={groupid} socket={socket}/>}
+            {view === "group" ? (
+              <GroupMediaSection />
+            ) : (
+              <SingleMediaSection groupid={groupid} socket={socket} />
+            )}
           </section>
         </>
       )}

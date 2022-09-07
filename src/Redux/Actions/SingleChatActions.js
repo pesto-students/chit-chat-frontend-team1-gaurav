@@ -9,8 +9,9 @@ import {
   GET_STARED_MESSAGES,
   RESET_MESSAGE_ARRAY,
   GET_IMAGES_ARRAY,
-  GET_DOCUMENTS_ARRAY
+  GET_DOCUMENTS_ARRAY,
 } from "../Types/SingleChatTypes";
+import {setLoading} from "Redux/Actions/UserActions";
 
 // export function loadCurrentContacts(){
 //     return {type:'',payload:{}};
@@ -72,12 +73,14 @@ export const getStaredMessages = (chatid) => {
           type: GET_STARED_MESSAGES,
           payload: res.data,
         });
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         dispatch({
           type: GET_STARED_MESSAGES,
           payload: [],
         });
+        dispatch(setLoading(false));
       });
   };
 };

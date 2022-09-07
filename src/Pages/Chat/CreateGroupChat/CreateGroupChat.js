@@ -9,7 +9,7 @@ function CreateGroupChat() {
       <section className="sidebar">
         <SideBar />
       </section>
-      
+
       <section className="contact-list">
         <GroupSearch />
       </section>

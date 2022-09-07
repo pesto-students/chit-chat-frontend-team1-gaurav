@@ -7,7 +7,8 @@ import ChangeContact from "./Change Contact/ChangeContact";
 import defaultimg from "Assets/profile.png";
 import editIcon from "Assets/edit-profile.png";
 import SideBar from "Common/SideBar/SideBar";
-import ProfileEditBlack from "Assets/profileeditblack.png";
+import {setLoading} from "Redux/Actions/UserActions";
+import { useDispatch } from "react-redux";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 toast.configure();
 
 function Profile() {
+
+  const dispatch = useDispatch();
+
 
   AWS.config.update({
     accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
@@ -58,6 +62,9 @@ function Profile() {
   const [s3imgObj, setS3ImgObj] = useState({});
 
   useEffect(() => {
+
+    dispatch(setLoading(true));
+
     var JWTtoken = localStorage.getItem("token");
 
     if (JWTtoken) {
@@ -80,8 +87,10 @@ function Profile() {
             });
 
             getImageFromKey(res.data.profileImg);
+            dispatch(setLoading(false));
           })
           .catch((err) => {
+            dispatch(setLoading(false));
             toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
           });
       } else {
