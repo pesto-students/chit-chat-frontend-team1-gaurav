@@ -7,6 +7,7 @@ import AWS from "aws-sdk";
 import { useDebouncedCallback } from "use-debounce";
 import ReceivedMessages from "./CommonComponents/ReceivedMessages";
 import SentMessages from "./CommonComponents/SentMessages";
+import { getFilteredMessageArrayDayWise } from "Common/Common";
 import groupPic from "Assets/group-icon.png";
 import search from "Assets/search.png";
 import audioCall from "Assets/audio-call.png";
@@ -34,7 +35,6 @@ import "./GroupChatScreen.css";
 toast.configure();
 
 function GroupChatScreen({ socket }) {
-
   // aws config for uploading content
   AWS.config.update({
     accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
@@ -45,7 +45,6 @@ function GroupChatScreen({ socket }) {
     params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
     region: process.env.REACT_APP_AWS_BUCKET_REGION,
   });
-
 
   const dispatch = useDispatch();
 
@@ -69,6 +68,7 @@ function GroupChatScreen({ socket }) {
   const [documentBody, setDocumentBody] = useState({});
   const [lastChatNum, setLastChatNum] = useState(25);
   const [showPopup, setShowPopup] = useState(false);
+  const [displayMessageArray, setDisplayMessageArray] = useState([]);
 
   useEffect(() => {
     var membersarray = receiverGroupDetails.groupmembersarray.map((item) => {
@@ -105,7 +105,8 @@ function GroupChatScreen({ socket }) {
   const handleScroll = (e) => {
     if (
       // (Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1) === (Math.floor(e.target.clientHeight))
-      Math.floor(e.target.scrollHeight + e.target.scrollTop) === Math.floor(e.target.clientHeight)
+      Math.floor(e.target.scrollHeight + e.target.scrollTop) ===
+      Math.floor(e.target.clientHeight)
       // Math.ceil(window.innerHeight + document.documentElement.scrollTop) === document.documentElement.offsetHeight
     ) {
       dispatch(
@@ -118,13 +119,22 @@ function GroupChatScreen({ socket }) {
 
   /* it will get time difference between 2 messages and if it is less than 1 min 
    then it will return true which means message or media should be rounded */
-  const getTimeDifference = (index) => {
+  const getTimeDifference = (index,subArr) => {
+    debugger;
     if (index === 0) {
       return false;
-    } else if (GroupChatMessageArray[index].senderid !==GroupChatMessageArray[index - 1].senderid) {
+    } else if (
+      subArr[index].senderid !==
+      subArr[index - 1].senderid
+    ) {
       return false;
     } else {
-      if ((Number(GroupChatMessageArray[index - 1].timestamp) -Number(GroupChatMessageArray[index].timestamp)) /60000 <1) {
+      if (
+        (Number(subArr[index - 1].timestamp) -
+          Number(subArr[index].timestamp)) /
+          60000 <
+        1
+      ) {
         return true;
       } else {
         return false;
@@ -182,7 +192,6 @@ function GroupChatScreen({ socket }) {
     }
   };
 
-
   const sendImage = () => {
     let nameArray = selectedImage.name.split(".");
 
@@ -208,7 +217,6 @@ function GroupChatScreen({ socket }) {
     // update message array in db as image object
     UpdateChat("image", {}, key);
 
-
     // will update the images array to show uploaded image in media section
     axios
       .post(`${process.env.REACT_APP_SERVER}/group/updateimagesarray`, {
@@ -222,7 +230,6 @@ function GroupChatScreen({ socket }) {
         }
       });
   };
-
 
   const sendDocument = () => {
     let nameArray = selectedDocument.documentName.split(".");
@@ -290,9 +297,7 @@ function GroupChatScreen({ socket }) {
     );
   };
 
-
   const UpdateChat = async (messageType, selectedDocument, key) => {
-
     var updateOrder = false;
     var order = 0;
 
@@ -300,16 +305,19 @@ function GroupChatScreen({ socket }) {
 
     // to update the order of group contacts based on last conversation
     if (orderVar === "") {
-
-      localStorage.setItem("grouporder",JSON.stringify([receiverGroupDetails.groupid, 1]));
+      localStorage.setItem(
+        "grouporder",
+        JSON.stringify([receiverGroupDetails.groupid, 1])
+      );
       updateOrder = true;
       order = 1;
-
     } else if (orderVar !== receiverGroupDetails.groupid) {
-
       updateOrder = true;
       order = JSON.parse(localStorage.getItem("grouporder"))[1] + 1;
-      localStorage.setItem("grouporder",JSON.stringify([receiverGroupDetails.groupid, order]));
+      localStorage.setItem(
+        "grouporder",
+        JSON.stringify([receiverGroupDetails.groupid, order])
+      );
     }
 
     let messagePayload = {
@@ -406,29 +414,37 @@ function GroupChatScreen({ socket }) {
       {/* Main - section  */}
 
       <section className="group-main-section" onScroll={handleScroll}>
-        <fieldset className="day-container">
-          {GroupChatMessageArray.map((message, i) => {
-            if (membersarray.includes(message.senderid)) {
-              return (
-                <ReceivedMessages
-                  messagetype={message.type}
-                  payload={message}
-                  groupid={receiverGroupDetails.groupid}
-                  shouldBeRound={getTimeDifference(i)}
-                />
-              );
-            } else {
-              return (
-                <SentMessages
-                  messagetype={message.type}
-                  payload={message}
-                  groupid={receiverGroupDetails.groupid}
-                  shouldBeRound={getTimeDifference(i)}
-                />
-              );
-            }
-          })}
-        </fieldset>
+        {getFilteredMessageArrayDayWise(GroupChatMessageArray).map((dayObj) => {
+          return (
+            <>
+              <fieldset className="day-container">
+                <legend> {dayObj.label} </legend>
+
+                {dayObj.messageArray.map((message,i) => {
+                  if (membersarray.includes(message.senderid)) {
+                    return (
+                      <ReceivedMessages
+                        messagetype={message.type}
+                        payload={message}
+                        groupid={receiverGroupDetails.groupid}
+                        shouldBeRound={getTimeDifference(i,dayObj.messageArray)}
+                      />
+                    );
+                  } else {
+                    return (
+                      <SentMessages
+                        messagetype={message.type}
+                        payload={message}
+                        groupid={receiverGroupDetails.groupid}
+                        shouldBeRound={getTimeDifference(i,dayObj.messageArray)}
+                      />
+                    );
+                  }
+                })}
+              </fieldset>
+            </>
+          );
+        })}
       </section>
 
       {/* Footer */}

@@ -1,41 +1,43 @@
-
 import {
-    CHANGE_VIEW, SET_LOADING,SET_USER_NAME,SET_USER_PROFILE
+  CHANGE_VIEW,
+  SET_LOADING,
+  SET_USER_NAME,
+  SET_USER_PROFILE,
 } from "../Types/UserTypes";
 
 export const setView = (view) => {
-    return (dispatch) => {
-      dispatch({
-        type:CHANGE_VIEW,
-        payload: view,
-      });
-    };
-  };
-
-export const setLoading=(value)=>{
   return (dispatch) => {
     dispatch({
-      type:SET_LOADING,
+      type: CHANGE_VIEW,
+      payload: view,
+    });
+  };
+};
+
+export const setLoading = (value) => {
+  return (dispatch) => {
+    dispatch({
+      type: SET_LOADING,
       payload: value,
     });
   };
-}  
+};
 
-export const setUserProfile=(value)=>{
+export const setUserProfile = (value) => {
   debugger;
   return (dispatch) => {
     dispatch({
-      type:SET_USER_PROFILE,
+      type: SET_USER_PROFILE,
       payload: value,
     });
   };
-}  
+};
 
-export const setUserName=(value)=>{
+export const setUserName = (value) => {
   return (dispatch) => {
     dispatch({
-      type:SET_USER_NAME,
+      type: SET_USER_NAME,
       payload: value,
     });
   };
-}  
+};

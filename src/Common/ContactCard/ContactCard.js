@@ -19,7 +19,7 @@ import {
   getGroupDocumentsArray,
   getGroupImagesArray,
 } from "../../Redux/Actions/GroupChatActions";
-import { setView } from "../../Redux/Actions/UserActions";
+import {setLoading,setView} from "Redux/Actions/UserActions";
 import doubletick from "Assets/double-tick.png";
 
 import "./ContactCard.css";
@@ -101,6 +101,7 @@ export function ContactCard({
 
   // setting up initial data of receiver user of group initially
   const onClickHandler = () => {
+    dispatch(setLoading(true));
     if (chatType === "single") {
       dispatch(setView("single"));
       dispatch(setReceiverDetails(chatDetails));

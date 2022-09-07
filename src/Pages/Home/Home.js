@@ -6,6 +6,10 @@ import Videogif from "Assets/970-video-conference-gradient.gif";
 import FileGif from "Assets/56-document-gradient.gif";
 import Msggif from "Assets/177-envelope-mail-send-gradient.gif";
 import Logo from "Assets/Logo.png";
+import heroguy from "Assets/hero-guy-1.png";
+import herogirl from "Assets/hero-girl.png";
+import rightImg from "Assets/transparent.png";
+// import 'animate.css';
 import displayImg from "Assets/chat-screen.png"
 import "./Home.css";
 
@@ -27,20 +31,30 @@ function Home() {
             </ul>
           </div>
         </navbar>
-
+        <div className="header-body">
         <div className="header-desc">
-          <h1 className="header-h1">Connect Anywhere, Anytime</h1>
+          <h1 className="header-h1 animate__bounceInLeft">Connect Anywhere, Anytime</h1>
           <p className="header-one-liner">
             we create our buildings and then they create us. Likewise, we help
             you construct your circle of friends and your communities and then
             they construct you
           </p>
+          <div className="get-started">Interested?Get Started</div>
+          <button className="home-login">Login</button>
+        </div>
+        <div className="header-right-section">
+          <img src={rightImg} alt=""></img>
+        </div>
+
+        <div className="hero-guy"><img src={heroguy} alt=""></img></div>
+        <div className="hero-girl"><img src={herogirl} alt=""></img></div>
+
         </div>
 
       </header>
-        <section className="display-image-sec">
+        {/* <section className="display-image-sec">
           <div><img src={displayImg} alt='Chat-Page'></img></div>
-        </section>
+        </section> */}
 
       <section className="features">
         <div className="container-home">

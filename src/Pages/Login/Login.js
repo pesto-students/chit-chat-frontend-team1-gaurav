@@ -55,11 +55,13 @@ function Login() {
       .then((res) => {
         debugger;
         if(res.data.statusCode === 200){
+          // storing jwt token, encrypted userid and user details in localstorage
           localStorage.setItem('token',res.data.token);
           localStorage.setItem('userid',res.data.userid);
           localStorage.setItem('username',res.data.username);
           localStorage.setItem('profilepic',res.data.profileImg);
 
+          // initiates the order of single chat and group chat if it is null
           if(localStorage.getItem('order') === undefined || localStorage.getItem('order') === '' || localStorage.getItem('order') === null){
             localStorage.setItem('order',JSON.stringify(['',0]));
           }
