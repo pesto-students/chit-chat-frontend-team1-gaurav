@@ -10,6 +10,7 @@ import SentMessages from "./CommonComponents/SentMessages";
 import { useDebouncedCallback } from "use-debounce";
 import CryptoJS from "crypto-js";
 import axios from "axios";
+import {getFilteredMessageArrayDayWise} from "Common/Common";
 import InputEmoji from "react-input-emoji";
 import Picker from "emoji-picker-react";
 import singleHeaderImg from "Assets/single-header-img.png";
@@ -106,6 +107,7 @@ function SingleChatScreen({ socket }) {
         setuseronline(false);
       }
     }
+
   }, []);
 
   // for Video Call
@@ -117,7 +119,7 @@ function SingleChatScreen({ socket }) {
         setIncomingCall(false);
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
-          // will set current users video stream 
+          // will set current users video stream
           currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
 
@@ -131,7 +133,6 @@ function SingleChatScreen({ socket }) {
       });
     }
   }, [peerInstance]);
-
 
   // to load received chat real time and set typing status real time
   useEffect(() => {
@@ -216,11 +217,13 @@ function SingleChatScreen({ socket }) {
     }
   }, [onlineUsers]);
 
+
   // to implement lazy loading and infinite scrolling functionality
   const handleScroll = (e) => {
     if (
       // Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 === Math.floor(e.target.clientHeight)
-      Math.ceil(e.target.scrollHeight + e.target.scrollTop) ===Math.floor(e.target.clientHeight)
+      Math.ceil(e.target.scrollHeight + e.target.scrollTop) ===
+      Math.floor(e.target.clientHeight)
     ) {
       // will load next 25 messages
       dispatch(loadCurrentChat(receiverDetails.chatid, lastChatNum, 25));
@@ -228,16 +231,23 @@ function SingleChatScreen({ socket }) {
     }
   };
 
-
-    /* it will get time difference between 2 messages and if it is less than 1 min 
+  /* it will get time difference between 2 messages and if it is less than 1 min 
    then it will return true which means message or media should be rounded */
-  const getTimeDifference = (index) => {
+  const getTimeDifference = (index,subArray) => {
     if (index === 0) {
       return false;
-    } else if (SingleChatMessageArray[index].senderid !==SingleChatMessageArray[index - 1].senderid) {
+    } else if (
+      subArray[index].senderid !==
+      subArray[index - 1].senderid
+    ) {
       return false;
     } else {
-      if ((Number(SingleChatMessageArray[index - 1].timestamp) -Number(SingleChatMessageArray[index].timestamp)) /60000 <1) {
+      if (
+        (Number(subArray[index - 1].timestamp) -
+          Number(subArray[index].timestamp)) /
+          60000 <
+        1
+      ) {
         return true;
       } else {
         return false;
@@ -364,7 +374,7 @@ function SingleChatScreen({ socket }) {
     setDocumentBody("");
     setDocumentToggle(false);
 
-     // will update the documents array to show uploaded image in media section
+    // will update the documents array to show uploaded image in media section
     axios
       .post(`${process.env.REACT_APP_SERVER}/chat/updatedocumentsarray`, {
         chatid: receiverDetails.chatid,
@@ -531,16 +541,7 @@ function SingleChatScreen({ socket }) {
       });
   };
 
-  // const filterChatDateWise = (chatArray) => {
 
-  //   if(chatArray.length > 0){
-  //   let firstDate = chatArray[0].timestamp;
-  //   let lastDate = chatArray[chatArray.length - 1].timestamp;
-
-  //   let hello;
-  //   }
-
-  // }
 
   return (
     <div className="single-main-container">
@@ -684,35 +685,40 @@ function SingleChatScreen({ socket }) {
       {/* Main - section  */}
 
       <section className="single-main-section" onScroll={handleScroll}>
-        <fieldset className="day-container">
-          <legend> Yesterday </legend>
-          {/* {filterChatDateWise(SingleChatMessageArray)} */}
-          {SingleChatMessageArray.map((message, i) => {
-            if (message.senderid === receiverDetails.userid) {
-              return (
-                <ReceivedMessages
-                  key={i}
-                  messagetype={message.type}
-                  payload={message}
-                  chatid={receiverDetails.chatid}
-                  contactid={receiverDetails.userid}
-                  shouldBeRound={getTimeDifference(i)}
-                />
-              );
-            } else {
-              return (
-                <SentMessages
-                  key={i}
-                  messagetype={message.type}
-                  payload={message}
-                  chatid={receiverDetails.chatid}
-                  contactid={receiverDetails.userid}
-                  shouldBeRound={getTimeDifference(i)}
-                />
-              );
-            }
-          })}
-        </fieldset>
+ 
+
+        {getFilteredMessageArrayDayWise(SingleChatMessageArray).map((dayObj) => {
+          return (
+            <>
+              <fieldset className="day-container">
+                <legend> {dayObj.label} </legend>
+                {dayObj.messageArray.map((message, i) => {
+                  if (message.senderid === receiverDetails.userid) {
+                    return (
+                      <ReceivedMessages
+                        messagetype={message.type}
+                        payload={message}
+                        chatid={receiverDetails.chatid}
+                        contactid={receiverDetails.userid}
+                        shouldBeRound={getTimeDifference(i,dayObj.messageArray)}
+                      />
+                    );
+                  } else {
+                    return (
+                      <SentMessages
+                        messagetype={message.type}
+                        payload={message}
+                        chatid={receiverDetails.chatid}
+                        contactid={receiverDetails.userid}
+                        shouldBeRound={getTimeDifference(i,dayObj.messageArray)}
+                      />
+                    );
+                  }
+                })}
+              </fieldset>
+            </>
+          );
+        })}
       </section>
 
       {/* Footer */}
@@ -730,7 +736,7 @@ function SingleChatScreen({ socket }) {
               <div className="single-attachment-icon">
                 <img src={imageAttachment} alt="img-attachment"></img>
               </div>
-              <div className="single-attachment-text">Photo or Video</div>
+              <div className="single-attachment-text">Images</div>
               <input
                 style={{ display: "none" }}
                 ref={inputRef}

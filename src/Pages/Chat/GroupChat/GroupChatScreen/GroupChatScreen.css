@@ -116,6 +116,7 @@
   margin-bottom: 3vh;
   width: 100%;
   align-self: flex-end;
+  margin-top: 4vh;
 }
 
 .day-container:last-child{

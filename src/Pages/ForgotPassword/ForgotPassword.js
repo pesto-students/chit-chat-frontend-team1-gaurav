@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
-import Logo from "../../Assets/Logo.png";
+import Logo from "Assets/Logo.png";
 import "./ForgotPassword.css";
 import "react-toastify/dist/ReactToastify.css";
 
