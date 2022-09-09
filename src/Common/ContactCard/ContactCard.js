@@ -19,7 +19,7 @@ import {
   getGroupDocumentsArray,
   getGroupImagesArray,
 } from "../../Redux/Actions/GroupChatActions";
-import {setLoading,setView} from "Redux/Actions/UserActions";
+import { setLoading, setView } from "Redux/Actions/UserActions";
 import doubletick from "Assets/double-tick.png";
 
 import "./ContactCard.css";
@@ -31,7 +31,6 @@ export function ContactCard({
   activeUserId,
   setActiveUserid,
 }) {
-
   const dispatch = useDispatch();
 
   const [profileimg, setProfileimg] = useState("");
@@ -40,31 +39,42 @@ export function ContactCard({
     if (timestamp === "" || timestamp === undefined || timestamp === null) {
       return "";
     } else {
-      return (
-        new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
-      );
+      return `${new Date(timestamp).getHours() < 10 ? "0" : ""}${new Date(
+        timestamp
+      ).getHours()}:${
+        new Date(timestamp).getMinutes() < 10 ? "0" : ""
+      }${new Date(timestamp).getMinutes()}`;
     }
   };
 
   const getDecryptedMessage = (message) => {
     return message === undefined
       ? ""
-      : CryptoJS.AES.decrypt(message,process.env.REACT_APP_MESSAGE_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+      : CryptoJS.AES.decrypt(
+          message,
+          process.env.REACT_APP_MESSAGE_SECRET_KEY
+        ).toString(CryptoJS.enc.Utf8);
   };
 
   // for Setting up profile images for chats
   useEffect(() => {
     if (chatType === "single") {
-      if (chatDetails.profileImg === "" ||chatDetails.profileImg === undefined) {
+      if (
+        chatDetails.profileImg === "" ||
+        chatDetails.profileImg === undefined
+      ) {
         setProfileimg(Sample);
       } else {
-        setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(chatDetails.profileImg)}`);
+        setProfileimg(
+          `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
+            chatDetails.profileImg
+          )}`
+        );
       }
     } else {
       setProfileimg(groupPic);
     }
   }, []);
-
 
   let mockProps = {
     name: chatDetails ? chatDetails.username : "",
@@ -75,7 +85,6 @@ export function ContactCard({
     unseenMsgs: "2",
   };
 
-  
   if (chatType === "single") {
     var { username } = chatDetails;
   } else {
@@ -97,7 +106,6 @@ export function ContactCard({
       isActive = true;
     }
   }
-
 
   // setting up initial data of receiver user of group initially
   const onClickHandler = () => {

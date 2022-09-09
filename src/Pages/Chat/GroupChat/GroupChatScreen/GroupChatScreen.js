@@ -81,6 +81,12 @@ function GroupChatScreen({ socket }) {
     if (socket.current !== undefined) {
       socket.current.on("receive-message-to-group", (data) => {
           dispatch(updateMessageArray(data));
+          dispatch(loadCurrentGroups());
+          if (data.type === "image")
+          dispatch(getGroupImagesArray(receiverGroupDetails.groupid));
+          if (data.type === "document")
+          dispatch(getGroupDocumentsArray(receiverGroupDetails.groupid));
+
       });
 
       socket.current.on("someone-typing-in-group", (data) => {

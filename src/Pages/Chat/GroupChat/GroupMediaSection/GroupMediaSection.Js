@@ -157,7 +157,7 @@ function GroupMediaSection() {
             }}
           >
             <div>
-              Members <span>14</span>
+              Members <span>{receiverGroupDetails.groupmembersarray.length}</span>
             </div>
             <div className="group-collipsible-icon">
               <img
@@ -363,8 +363,8 @@ function GroupMediaSection() {
                       {getmonth(new Date(message.timestamp).getMonth())}{" "}
                       {new Date(message.timestamp).getFullYear()}{" "}
                       <span>
-                        {new Date(message.timestamp).getHours()}:
-                        {new Date(message.timestamp).getMinutes()}
+                      {(new Date(message.timestamp).getHours()) < 10 ? '0' : ''}{new Date(message.timestamp).getHours()}:
+                      {(new Date(message.timestamp).getMinutes()) < 10 ? '0' : ''}{new Date(message.timestamp).getMinutes()}
                       </span>
                     </div>
                   </>
@@ -385,8 +385,8 @@ function GroupMediaSection() {
                       {getmonth(new Date(message.timestamp).getMonth())}{" "}
                       {new Date(message.timestamp).getFullYear()}{" "}
                       <span>
-                        {new Date(message.timestamp).getHours()}:
-                        {new Date(message.timestamp).getMinutes()}
+                      {(new Date(message.timestamp).getHours()) < 10 ? '0' : ''}{new Date(message.timestamp).getHours()}:
+                      {(new Date(message.timestamp).getMinutes()) < 10 ? '0' : ''}{new Date(message.timestamp).getMinutes()}
                       </span>
                     </div>
                   </>

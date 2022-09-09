@@ -201,8 +201,8 @@ function SingleMediaSection() {
                     {getmonth(new Date(message.timestamp).getMonth())}{" "}
                     {new Date(message.timestamp).getFullYear()}{" "}
                     <span>
-                      {new Date(message.timestamp).getHours()}:
-                      {new Date(message.timestamp).getMinutes()}
+                      {(new Date(message.timestamp).getHours()) < 10 ? '0' : ''}{new Date(message.timestamp).getHours()}:
+                      {(new Date(message.timestamp).getMinutes()) < 10 ? '0' : ''}{new Date(message.timestamp).getMinutes()}
                     </span>
                   </div>
                 </>
@@ -223,8 +223,8 @@ function SingleMediaSection() {
                     {getmonth(new Date(message.timestamp).getMonth())}{" "}
                     {new Date(message.timestamp).getFullYear()}{" "}
                     <span>
-                      {new Date(message.timestamp).getHours()}:
-                      {new Date(message.timestamp).getMinutes()}
+                    {(new Date(message.timestamp).getHours()) < 10 ? '0' : ''}{new Date(message.timestamp).getHours()}:
+                      {(new Date(message.timestamp).getMinutes()) < 10 ? '0' : ''}{new Date(message.timestamp).getMinutes()}
                     </span>
                   </div>
                 </>

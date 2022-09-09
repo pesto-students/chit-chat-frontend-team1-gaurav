@@ -141,6 +141,7 @@ function SingleChatScreen({ socket }) {
       socket.current.on("receive-message", (data) => {
         debugger;
         dispatch(updateCurrentChat(data));
+        dispatch(loadCurrentContacts());
         if (data.type === "image")
           dispatch(getImagesArray(receiverDetails.chatid));
         if (data.type === "document")

@@ -15,9 +15,11 @@ function SentMessages({ messagetype, payload, shouldBeRound, groupid }) {
   const dispatch = useDispatch();
 
   const getDesiredTimeStamp = (timestamp) => {
-    return (
-      new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes()
-    );
+    return `${new Date(timestamp).getHours() < 10 ? "0" : ""}${new Date(
+      timestamp
+    ).getHours()}:${new Date(timestamp).getMinutes() < 10 ? "0" : ""}${new Date(
+      timestamp
+    ).getMinutes()}`;
   };
 
   const getDecryptedMessage = (message) => {
