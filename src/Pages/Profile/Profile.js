@@ -7,7 +7,7 @@ import ChangeContact from "./Change Contact/ChangeContact";
 import defaultimg from "Assets/profile.png";
 import editIcon from "Assets/edit-profile.png";
 import SideBar from "Common/SideBar/SideBar";
-import {setLoading} from "Redux/Actions/UserActions";
+import { setLoading } from "Redux/Actions/UserActions";
 import { useDispatch } from "react-redux";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,9 +16,7 @@ import { useNavigate } from "react-router-dom";
 toast.configure();
 
 function Profile() {
-
   const dispatch = useDispatch();
-
 
   AWS.config.update({
     accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
@@ -29,7 +27,6 @@ function Profile() {
     params: { Bucket: process.env.REACT_APP_AWS_BUCKET_NAME },
     region: process.env.REACT_APP_AWS_BUCKET_REGION,
   });
-
 
   let navigate = useNavigate();
 
@@ -62,7 +59,6 @@ function Profile() {
   const [s3imgObj, setS3ImgObj] = useState({});
 
   useEffect(() => {
-
     dispatch(setLoading(true));
 
     var JWTtoken = localStorage.getItem("token");
@@ -110,14 +106,12 @@ function Profile() {
     }
   }, []);
 
-
   const onChangeHandler = (e) => {
     profileDetails[e.target.name] = e.target.value;
     setProfileDetails({ ...profileDetails });
   };
 
   const fileInputHandler = (e) => {
-
     let selectedImage = e.target.files[0];
 
     setProfileimg(URL.createObjectURL(selectedImage));
@@ -126,18 +120,15 @@ function Profile() {
     let key = `${nameArray[0]}_ ${Date.now()}.${nameArray[1]}`;
 
     // to only make aws call when profile image is changed
-    if(key !== profileDetails.profileImg)
-    {
+    if (key !== profileDetails.profileImg) {
       setProfileImgUpdated(true);
-      setS3ImgObj({body:selectedImage,key})
+      setS3ImgObj({ body: selectedImage, key });
     }
 
     setProfileDetails((prevState) => {
       return { ...prevState, profileImg: key };
     });
-
   };
-
 
   const editUserNameHandler = (e) => {
     setEditStatus({ ...editStatus, userName: !editStatus.userName });
@@ -157,26 +148,25 @@ function Profile() {
     if (key === "") {
       setProfileimg(defaultimg);
     } else {
-      setProfileimg(`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(key)}`); 
+      setProfileimg(
+        `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(key)}`
+      );
     }
   };
 
   const updateClickHandler = (e) => {
+    if (profileImgUpdated) {
+      const params = {
+        ACL: "public-read",
+        Body: s3imgObj.body,
+        Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+        Key: s3imgObj.key,
+      };
+      myBucket.putObject(params).send((err, data) => {
+        if (err) console.log(err);
+      });
 
-    if(profileImgUpdated){
-
-    const params = {
-      ACL: "public-read",
-      Body: s3imgObj.body,
-      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-      Key: s3imgObj.key,
-    };
-    myBucket.putObject(params).send((err, data) => {
-      if (err) console.log(err);
-    });
-
-    localStorage.setItem('profilepic',s3imgObj.key)
-
+      localStorage.setItem("profilepic", s3imgObj.key);
     }
     axios
       .post(`${process.env.REACT_APP_SERVER}/authentication/editprofile`, {
@@ -197,9 +187,12 @@ function Profile() {
       .catch((err) => {
         toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
       });
+
+    axios.post(`${process.env.REACT_APP_SERVER}/group/updateprofilepic`, {
+      userid: localStorage.getItem("userid"),
+      profileImg: s3imgObj.key,
+    });
   };
-
-
 
   return (
     <div className="profilePageContainer">

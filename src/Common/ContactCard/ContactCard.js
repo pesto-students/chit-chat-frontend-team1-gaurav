@@ -18,6 +18,7 @@ import {
   loadCurrentGroupChat,
   getGroupDocumentsArray,
   getGroupImagesArray,
+  getMembersArray
 } from "../../Redux/Actions/GroupChatActions";
 import { setLoading, setView } from "Redux/Actions/UserActions";
 import doubletick from "Assets/double-tick.png";
@@ -129,6 +130,7 @@ export function ContactCard({
       dispatch(loadCurrentGroupChat(chatDetails.groupid, 0, 25));
       dispatch(getGroupImagesArray(chatDetails.groupid));
       dispatch(getGroupDocumentsArray(chatDetails.groupid));
+      dispatch(getMembersArray(chatDetails.groupid));
       dispatch(getGroupStaredMessages(chatDetails.groupid));
       socket.current.emit("join-group", chatDetails.groupid);
     }

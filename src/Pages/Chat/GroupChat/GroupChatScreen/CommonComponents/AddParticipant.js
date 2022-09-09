@@ -5,8 +5,13 @@ import axios from "axios";
 import closeWhite from "Assets/cross-thin.png";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { getMembersArray } from "Redux/Actions/GroupChatActions";
+
 
 function AddParticipant({ setShowPopup, groupid, groupMembers }) {
+
+  const dispatch = useDispatch();
 
   const [contact, setContact] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
@@ -40,9 +45,19 @@ function AddParticipant({ setShowPopup, groupid, groupMembers }) {
         userid: localStorage.getItem("userid"),
         groupid: groupid,
         addParticipants: selectedContacts,
-      });
+      })
+      .then(res => {
+        if(res.data.statusCode === 204){
+          toast.success("Members added");
+          dispatch(getMembersArray(groupid));
+        }
+        else if(res.data.statusCode === 403){
+          toast.warning(res.data.message);
+        }
+      })
       
-      toast.success("Members added");
+      ;
+      
       
     } catch (err) {
       console.log("error", err);

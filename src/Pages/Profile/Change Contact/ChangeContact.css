@@ -105,4 +105,5 @@
     border: none;
     border-radius: 15px;
     padding: calc(1vh + 0.5vw);
+    color: #fff;
   }

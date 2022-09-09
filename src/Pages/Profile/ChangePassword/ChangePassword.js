@@ -6,15 +6,13 @@ import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "../../../Assets/cross.png";
 import axios from "axios";
 
-
 toast.configure();
-
 
 function ChangePassword({ setShowModal }) {
   const [formData, setFormData] = useState({
     oldpassword: "",
     newpassword: "",
-    confirmpassword:""
+    confirmpassword: "",
   });
 
   const onChangeHandler = (e) => {
@@ -28,39 +26,40 @@ function ChangePassword({ setShowModal }) {
     });
   };
 
-
   const updateClickHandler = (e) => {
- 
-      if(formData.oldpassword === ""){
-        toast.warning("Please Enter Old Password", { autoClose: 1000 });
-      }else if(formData.newpassword === ""){
-        toast.warning("Please Enter New Password", { autoClose: 1000 });
-      }else if(formData.confirmpassword === ""){
-        toast.warning("Please Enter Confirm Password", { autoClose: 1000 });
-      }else if(formData.newpassword !== formData.confirmpassword){
-        toast.warning("New Password and Confirm Password Should be same!", { autoClose: 1000 });
-      }else{
-        debugger;
-        let userid = localStorage.getItem("userid");
-        let old = formData.oldpassword;
-        let newrr = formData.newpassword;
-
-    axios
-          .post(`${process.env.REACT_APP_SERVER}/authentication/changepassword`, {
-            userid: localStorage.getItem("userid"),
-            oldpassword: formData.oldpassword,
-            newpassword: formData.newpassword
-          })
-          .then((res) => {
-              debugger
-              if(res.data.statusCode === 202){
-                toast.warning("Please Enter Correct Old Password!", { autoClose: 1000 });
-              }
-          })
-          .catch((err) => {
-            toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
-          });
-      }
+    if (formData.oldpassword === "") {
+      toast.warning("Please Enter Old Password", { autoClose: 1000 });
+    } else if (formData.newpassword === "") {
+      toast.warning("Please Enter New Password", { autoClose: 1000 });
+    } else if (formData.confirmpassword === "") {
+      toast.warning("Please Enter Confirm Password", { autoClose: 1000 });
+    } else if (formData.newpassword !== formData.confirmpassword) {
+      toast.warning("New Password and Confirm Password Should be same!", {
+        autoClose: 1000,
+      });
+    } else {
+      axios
+        .post(`${process.env.REACT_APP_SERVER}/authentication/changepassword`, {
+          userid: localStorage.getItem("userid"),
+          oldpassword: formData.oldpassword,
+          newpassword: formData.newpassword,
+        })
+        .then((res) => {
+          if (res.data.statusCode === 200) {
+            toast.success(res.data.message, { autoClose: 1000 });
+            setShowModal((prev) => {
+              return { ...prev, password: false };
+            });
+          } else if (res.data.statusCode === 202) {
+            toast.warning("Please Enter Correct Old Password!", {
+              autoClose: 1000,
+            });
+          }
+        })
+        .catch((err) => {
+          toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+        });
+    }
   };
 
   return (
@@ -74,7 +73,7 @@ function ChangePassword({ setShowModal }) {
         <div className="form">
           <div className="phoneNumber">
             <input
-            style={{width:'22vw',marginTop:'1vh'}}
+              style={{ width: "22vw", marginTop: "1vh" }}
               className="contactmodalinput"
               value={formData.oldpassword}
               name="oldpassword"
@@ -85,7 +84,7 @@ function ChangePassword({ setShowModal }) {
 
           <div className="phoneNumber">
             <input
-            style={{width:'22vw',marginTop:'1vh'}}
+              style={{ width: "22vw", marginTop: "1vh" }}
               className="contactmodalinput"
               value={formData.newpassword}
               name="newpassword"
@@ -96,7 +95,7 @@ function ChangePassword({ setShowModal }) {
 
           <div className="phoneNumber">
             <input
-            style={{width:'22vw',marginTop:'1vh'}}
+              style={{ width: "22vw", marginTop: "1vh" }}
               className="contactmodalinput"
               value={formData.confirmpassword}
               name="confirmpassword"

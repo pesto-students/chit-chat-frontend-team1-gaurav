@@ -12,10 +12,18 @@ import { useSelector } from "react-redux";
 import "./GroupMediaSection.css";
 
 function GroupMediaSection() {
+
+
   const groupDetails = useSelector((state) => state.GroupChatReducer);
   const state = useSelector((state) => state.SingleChatReducer);
 
-  const { receiverGroupDetails, StaredMessages, imagesArray, documentsArray } =groupDetails;
+  const {
+    receiverGroupDetails,
+    StaredMessages,
+    imagesArray,
+    documentsArray,
+    groupMembers,
+  } = groupDetails;
   const { onlineUsers } = state;
 
   const [activeflags, setActiveFlags] = useState({
@@ -28,29 +36,23 @@ function GroupMediaSection() {
   const [onlineMembers, setonlineMembers] = useState([]);
   const [oflineMembers, setoflineMembers] = useState([]);
 
-
   //for setting online and offline members list initially
   useEffect(() => {
     let onlineusersArray = onlineUsers.map((item) => {
       return item.userid;
     });
 
-    let onlineMembers = receiverGroupDetails.groupmembersarray.filter(
-      (groupMember) => {
-        return onlineusersArray.includes(groupMember.userid);
-      }
-    );
+    let onlineMembers = groupMembers.filter((groupMember) => {
+      return onlineusersArray.includes(groupMember.userid);
+    });
 
     setonlineMembers(onlineMembers);
 
-    let oflineMembers = receiverGroupDetails.groupmembersarray.filter(
-      (groupMember) => {
-        return !onlineusersArray.includes(groupMember.userid);
-      }
-    );
+    let oflineMembers = groupMembers.filter((groupMember) => {
+      return !onlineusersArray.includes(groupMember.userid);
+    });
     setoflineMembers(oflineMembers);
   });
-
 
   // for setting online and offline members list when there is change in socket
   useEffect(() => {
@@ -58,23 +60,18 @@ function GroupMediaSection() {
       return item.userid;
     });
 
-    let onlineMembers = receiverGroupDetails.groupmembersarray.filter(
-      (groupMember) => {
-        return onlineusersArray.includes(groupMember.userid);
-      }
-    );
+    let onlineMembers = groupMembers.filter((groupMember) => {
+      return onlineusersArray.includes(groupMember.userid);
+    });
 
     setonlineMembers(onlineMembers);
 
-    let oflineMembers = receiverGroupDetails.groupmembersarray.filter(
-      (groupMember) => {
-        return !onlineusersArray.includes(groupMember.userid);
-      }
-    );
+    let oflineMembers = groupMembers.filter((groupMember) => {
+      return !onlineusersArray.includes(groupMember.userid);
+    });
     setoflineMembers(oflineMembers);
-  }, [onlineUsers]);
+  }, [onlineUsers, groupMembers]);
 
-  
   const getmonth = (month) => {
     switch (month) {
       case 1:
@@ -123,26 +120,27 @@ function GroupMediaSection() {
   };
 
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
+      documenturl
+    )}`;
     let link = document.createElement("a");
     link.href = url;
     link.click();
   };
 
-
   const getProfileImg = (key) => {
     if (key === "" || key === undefined) {
       return gmi1;
     } else {
-      return `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(key)}`;
+      return `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
+        key
+      )}`;
     }
   };
-
 
   return (
     <>
       <div className="group-media-container">
-
         {/* Online/Offline Members Section */}
         <div className="group-online-section">
           <button
@@ -157,7 +155,8 @@ function GroupMediaSection() {
             }}
           >
             <div>
-              Members <span>{receiverGroupDetails.groupmembersarray.length}</span>
+              Members{" "}
+              <span>{receiverGroupDetails.groupmembersarray.length}</span>
             </div>
             <div className="group-collipsible-icon">
               <img
@@ -167,7 +166,12 @@ function GroupMediaSection() {
             </div>
           </button>
 
-          <div className={"online-collipsible-content " +(!activeflags.members ? "" : "show")}>
+          <div
+            className={
+              "online-collipsible-content " +
+              (!activeflags.members ? "" : "show")
+            }
+          >
             <div className="online-members">Online-{onlineMembers.length}</div>
             <div className="online-list">
               {onlineMembers.map((member) => {
@@ -214,8 +218,7 @@ function GroupMediaSection() {
           </div>
         </div>
 
-
-         {/* images Section      */}
+        {/* images Section      */}
         <div className="group-media-section">
           <button
             className="group-online-collipsible-button"
@@ -247,7 +250,9 @@ function GroupMediaSection() {
                   <>
                     <div className="group-media-file-container">
                       <img
-                        src={`${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(image.key)}`}
+                        src={`${
+                          process.env.REACT_APP_AWS_BUCKET_PATH
+                        }${encodeURIComponent(image.key)}`}
                         alt=""
                       ></img>
                     </div>
@@ -257,7 +262,6 @@ function GroupMediaSection() {
             </div>
           </div>
         </div>
-
 
         {/* documents Section */}
         <div className="group-files-section">
@@ -315,7 +319,6 @@ function GroupMediaSection() {
           </div>
         </div>
 
-
         {/* StarSection   */}
 
         <div className="group-star-messages-section">
@@ -363,8 +366,12 @@ function GroupMediaSection() {
                       {getmonth(new Date(message.timestamp).getMonth())}{" "}
                       {new Date(message.timestamp).getFullYear()}{" "}
                       <span>
-                      {(new Date(message.timestamp).getHours()) < 10 ? '0' : ''}{new Date(message.timestamp).getHours()}:
-                      {(new Date(message.timestamp).getMinutes()) < 10 ? '0' : ''}{new Date(message.timestamp).getMinutes()}
+                        {new Date(message.timestamp).getHours() < 10 ? "0" : ""}
+                        {new Date(message.timestamp).getHours()}:
+                        {new Date(message.timestamp).getMinutes() < 10
+                          ? "0"
+                          : ""}
+                        {new Date(message.timestamp).getMinutes()}
                       </span>
                     </div>
                   </>
@@ -385,8 +392,12 @@ function GroupMediaSection() {
                       {getmonth(new Date(message.timestamp).getMonth())}{" "}
                       {new Date(message.timestamp).getFullYear()}{" "}
                       <span>
-                      {(new Date(message.timestamp).getHours()) < 10 ? '0' : ''}{new Date(message.timestamp).getHours()}:
-                      {(new Date(message.timestamp).getMinutes()) < 10 ? '0' : ''}{new Date(message.timestamp).getMinutes()}
+                        {new Date(message.timestamp).getHours() < 10 ? "0" : ""}
+                        {new Date(message.timestamp).getHours()}:
+                        {new Date(message.timestamp).getMinutes() < 10
+                          ? "0"
+                          : ""}
+                        {new Date(message.timestamp).getMinutes()}
                       </span>
                     </div>
                   </>

@@ -8,6 +8,7 @@ import {
   GET_STARED_MESSAGES,
   GET_IMAGES_ARRAY,
   GET_DOCUMENTS_ARRAY,
+  GET_MEMBERS
 } from "../Types/GroupChatTypes";
 import {setLoading} from "Redux/Actions/UserActions";
 
@@ -97,7 +98,6 @@ export const getGroupStaredMessages = (groupid) => {
           type: GET_STARED_MESSAGES,
           payload: res.data,
         });
-        // debugger;
         dispatch(setLoading(false));
       })
       .catch((err) => {
@@ -105,7 +105,6 @@ export const getGroupStaredMessages = (groupid) => {
           type: GET_STARED_MESSAGES,
           payload: [],
         });
-        // debugger;
         dispatch(setLoading(false));
       });
   };
@@ -147,6 +146,29 @@ export const getGroupDocumentsArray = (groupid) => {
       .catch(() => {
         dispatch({
           type: GET_DOCUMENTS_ARRAY,
+          payload: [],
+        });
+      });
+  };
+};
+
+
+export const getMembersArray = (groupid) => {
+
+  return (dispatch) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER}/group/getgroupmembers`, {
+        groupid: groupid,
+      })
+      .then((res) => {
+        dispatch({
+          type: GET_MEMBERS,
+          payload: res.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_MEMBERS,
           payload: [],
         });
       });

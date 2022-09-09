@@ -356,7 +356,6 @@ function GroupChatScreen({ socket }) {
         if (res.data.message) {
           setNewMessage("");
           res.data.groupid = receiverGroupDetails.groupid;
-          debugger;
           socket.current.emit("send-message-to-group", res.data);
           // dispatch(updateMessageArray(res.data));
           dispatch(loadCurrentGroups());
