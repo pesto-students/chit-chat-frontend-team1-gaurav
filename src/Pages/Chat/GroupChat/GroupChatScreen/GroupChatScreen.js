@@ -68,7 +68,6 @@ function GroupChatScreen({ socket }) {
   const [documentBody, setDocumentBody] = useState({});
   const [lastChatNum, setLastChatNum] = useState(25);
   const [showPopup, setShowPopup] = useState(false);
-  const [displayMessageArray, setDisplayMessageArray] = useState([]);
 
   useEffect(() => {
     var membersarray = receiverGroupDetails.groupmembersarray.map((item) => {
@@ -81,7 +80,6 @@ function GroupChatScreen({ socket }) {
   useEffect(() => {
     if (socket.current !== undefined) {
       socket.current.on("receive-message-to-group", (data) => {
-        if (membersarray.includes(data.senderid))
           dispatch(updateMessageArray(data));
       });
 
@@ -120,7 +118,6 @@ function GroupChatScreen({ socket }) {
   /* it will get time difference between 2 messages and if it is less than 1 min 
    then it will return true which means message or media should be rounded */
   const getTimeDifference = (index,subArr) => {
-    debugger;
     if (index === 0) {
       return false;
     } else if (
@@ -353,8 +350,9 @@ function GroupChatScreen({ socket }) {
         if (res.data.message) {
           setNewMessage("");
           res.data.groupid = receiverGroupDetails.groupid;
+          debugger;
           socket.current.emit("send-message-to-group", res.data);
-          dispatch(updateMessageArray(res.data));
+          // dispatch(updateMessageArray(res.data));
           dispatch(loadCurrentGroups());
         }
       })
@@ -460,11 +458,12 @@ function GroupChatScreen({ socket }) {
             <div className="group-attachment-icon">
               <img src={imageAttachment} alt="img-attachment"></img>
             </div>
-            <div className="group-attachment-text">Photo or Video</div>
+            <div className="group-attachment-text">Images</div>
             <input
               style={{ display: "none" }}
               ref={inputRef}
               type="file"
+              accept="image/*"
               alt="select-image"
               onChange={setImage}
             />

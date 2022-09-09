@@ -178,7 +178,7 @@ function Signup() {
               <div>
                 <img className="header-img-signup" src={Logo} alt="chit-chat" />
               </div>
-              <div onClick={() => { navigate("/"); }}>Home</div>
+              <div onClick={() => { navigate("/home"); }}>Home</div>
               <div onClick={() => { navigate("/login"); }}>Get Started</div>
             </header>
 

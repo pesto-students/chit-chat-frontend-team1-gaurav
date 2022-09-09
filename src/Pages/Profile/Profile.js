@@ -100,11 +100,13 @@ function Profile() {
         toast.warning("You Are Logged out Please Login..!", {
           autoClose: 2000,
         });
-        navigate("/");
+        dispatch(setLoading(false));
+        navigate("/home");
       }
     } else {
       toast.warning("You Are Logged out Please Login..!", { autoClose: 2000 });
-      navigate("/");
+      dispatch(setLoading(false));
+      navigate("/home");
     }
   }, []);
 
