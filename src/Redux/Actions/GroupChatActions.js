@@ -158,6 +158,7 @@ export const getMembersArray = (groupid) => {
   return (dispatch) => {
     axios
       .post(`${process.env.REACT_APP_SERVER}/group/getgroupmembers`, {
+        userid : localStorage.getItem("userid"),
         groupid: groupid,
       })
       .then((res) => {
