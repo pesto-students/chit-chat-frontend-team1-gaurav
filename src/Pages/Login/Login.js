@@ -74,11 +74,13 @@ function Login() {
         }
         else if(res.data.statusCode === 202){
           toast.warning("Invalid Credentials!", { autoClose: 1000 });
+          dispatch(setLoading(false));
         }
         else{
           toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });
+          dispatch(setLoading(false));
         }
-        dispatch(setLoading(false));
+        
       })
       .catch((err) => {
         toast.error("Oops! Something Went Wrong!", { autoClose: 1000 });

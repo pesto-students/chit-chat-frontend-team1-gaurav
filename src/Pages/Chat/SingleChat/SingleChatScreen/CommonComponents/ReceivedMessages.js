@@ -17,13 +17,15 @@ function ReceivedMessages({
   contactid,
   shouldBeRound,
 }) {
-
   const dispatch = useDispatch();
 
   const getDesiredTimeStamp = (timestamp) => {
-    return (new Date(timestamp).getHours() + ":" + new Date(timestamp).getMinutes());
+    return `${new Date(timestamp).getHours() < 10 ? "0" : ""}${new Date(
+      timestamp
+    ).getHours()}:${new Date(timestamp).getMinutes() < 10 ? "0" : ""}${new Date(
+      timestamp
+    ).getMinutes()}`;
   };
-
 
   const getDecryptedMessage = (message) => {
     return CryptoJS.AES.decrypt(
@@ -32,9 +34,10 @@ function ReceivedMessages({
     ).toString(CryptoJS.enc.Utf8);
   };
 
-
   const downloadDocumentToLocal = (documenturl) => {
-    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(documenturl)}`;
+    let url = `${process.env.REACT_APP_AWS_BUCKET_PATH}${encodeURIComponent(
+      documenturl
+    )}`;
     let link = document.createElement("a");
     link.href = url;
     link.click();
@@ -63,7 +66,7 @@ function ReceivedMessages({
       });
   };
 
-// Normal Message With round border
+  // Normal Message With round border
   if (messagetype === "message" && shouldBeRound) {
     return (
       <div className="single-message ">
@@ -76,7 +79,7 @@ function ReceivedMessages({
       </div>
     );
 
-// normal Message with one side sharp edge
+    // normal Message with one side sharp edge
   } else if (messagetype === "message" && !shouldBeRound) {
     return (
       <div className="single-message">
@@ -95,7 +98,7 @@ function ReceivedMessages({
       </div>
     );
 
-// Normal image With round border
+    // Normal image With round border
   } else if (messagetype === "image" && shouldBeRound) {
     return (
       <div className="single-image">
@@ -118,7 +121,7 @@ function ReceivedMessages({
       </div>
     );
 
-// normal image with one side sharp edge
+    // normal image with one side sharp edge
   } else if (messagetype === "image" && !shouldBeRound) {
     return (
       <div className="single-image">
@@ -141,7 +144,7 @@ function ReceivedMessages({
       </div>
     );
 
-// Normal document With round border
+    // Normal document With round border
   } else if (messagetype === "document" && shouldBeRound) {
     return (
       <div className="single-image">
@@ -171,7 +174,7 @@ function ReceivedMessages({
       </div>
     );
 
-// normal document with one side sharp edge
+    // normal document with one side sharp edge
   } else if (messagetype === "document" && !shouldBeRound) {
     return (
       <div className="single-image">

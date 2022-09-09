@@ -22,12 +22,14 @@ export const loadCurrentGroups = () => {
           type: LOAD_CURRENT_GROUPS,
           payload: res.data,
         });
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         dispatch({
           type: LOAD_CURRENT_GROUPS,
           payload: [],
         });
+        dispatch(setLoading(false));
       });
   };
 };
