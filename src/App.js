@@ -39,11 +39,12 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={loggedin() ? <Chat /> : <Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/profile" element={loggedin ? <Profile /> : <Home />} />
-          <Route path="/Chat" element={loggedin ? <Chat /> : <Home />} />
+          <Route path="/Chat" element={ <Chat /> } />
           <Route
             path="/search"
             element={loggedin ? <SearchSingleContact /> : <Home />}

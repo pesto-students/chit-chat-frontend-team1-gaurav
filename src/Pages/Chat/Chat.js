@@ -35,8 +35,7 @@ function Chat() {
   it will redirect user to login page*/
   useEffect(() => {
     var JWTtoken = localStorage.getItem("token");
-
-    if (JWTtoken) {
+    if (JWTtoken !== null && JWTtoken !== undefined && JWTtoken !== '') {
       var jwtPayload = JSON.parse(window.atob(JWTtoken.split(".")[1]));
 
       var tokenExpired = jwtPayload.exp * 1000 <= Date.now();
@@ -51,11 +50,11 @@ function Chat() {
         toast.warning("You Are Logged out Please Login..!", {
           autoClose: 2000,
         });
-        navigate("/login");
+        navigate("/home");
       }
     } else {
       toast.warning("You Are Logged out Please Login..!", { autoClose: 2000 });
-      navigate("/login");
+      navigate("/home");
     }
   }, []);
 
@@ -63,7 +62,7 @@ function Chat() {
   useEffect(() => {
     var JWTtoken = localStorage.getItem("token");
 
-    if (JWTtoken) {
+    if (JWTtoken !== null && JWTtoken !== undefined && JWTtoken !== '') {
       var jwtPayload = JSON.parse(window.atob(JWTtoken.split(".")[1]));
 
       var tokenExpired = jwtPayload.exp * 1000 <= Date.now();
@@ -77,21 +76,29 @@ function Chat() {
           dispatch(loadCurrentContacts());
         });
       } else {
-        navigate("/");
+        navigate("/home");
       }
     } else {
-      navigate("/");
+      navigate("/home");
     }
   }, [socket]);
 
-  // const changeContact = (showContact) =>{
-  //   setContacts(showContact);
-  // }
+ const getToken = () =>{
+  var JWTtoken = localStorage.getItem("token");
+
+  if (JWTtoken !== null && JWTtoken !== undefined && JWTtoken !== '') {
+    return true;
+  }
+  else{
+    return false;
+  }
+ }
 
   return (
     <div className="main-container">
+      {getToken() ? <>
       <section className="sidebar">
-        <SideBar />
+        <SideBar socket={socket} />
       </section>
       <section className="contact-list">
         <ContactList socket={socket} />
@@ -119,6 +126,8 @@ function Chat() {
           </section>
         </>
       )}
+
+</>:<></>     }
     </div>
   );
 }

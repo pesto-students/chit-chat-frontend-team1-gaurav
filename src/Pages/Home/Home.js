@@ -9,8 +9,9 @@ import Logo from "Assets/Logo.png";
 import heroguy from "Assets/hero-guy-1.png";
 import herogirl from "Assets/hero-girl.png";
 import rightImg from "Assets/transparent.png";
+import latestoffer from "Assets/latest-offer.png";
 // import 'animate.css';
-import displayImg from "Assets/chat-screen.png"
+import displayImg from "Assets/chat-screen.png";
 import "./Home.css";
 
 function Home() {
@@ -24,35 +25,39 @@ function Home() {
           </div>
           <div className="nav-links">
             <ul>
-              <li onClick={() => navigate('/')}>Home</li>
-              <li onClick={() => navigate('/login')}>Login</li>
-              <li onClick={() => navigate('/signup')}>Signup</li>
+              <li onClick={() => navigate("/")}>Home</li>
+              <li onClick={() => navigate("/login")}>Login</li>
+              <li onClick={() => navigate("/signup")}>Signup</li>
               <li>Blog</li>
             </ul>
           </div>
         </navbar>
         <div className="header-body">
-        <div className="header-desc">
-          <h1 className="header-h1 animate__bounceInLeft">Connect Anywhere, Anytime</h1>
-          <p className="header-one-liner">
-            we create our buildings and then they create us. Likewise, we help
-            you construct your circle of friends and your communities and then
-            they construct you
-          </p>
-          <div className="get-started">Interested?Get Started</div>
-          <button className="home-login">Login</button>
-        </div>
-        <div className="header-right-section">
-          <img src={rightImg} alt=""></img>
-        </div>
+          <div className="header-desc">
+            <h1 className="header-h1 animate__bounceInLeft">
+              Connect Anywhere, Anytime
+            </h1>
+            <p className="header-one-liner">
+              we create our buildings and then they create us. Likewise, we help
+              you construct your circle of friends and your communities and then
+              they construct you
+            </p>
+            <div className="get-started">Interested?Get Started</div>
+            <button className="home-login">Login</button>
+          </div>
+          <div className="header-right-section">
+            <img src={rightImg} alt=""></img>
+          </div>
 
-        <div className="hero-guy"><img src={heroguy} alt=""></img></div>
-        <div className="hero-girl"><img src={herogirl} alt=""></img></div>
-
+          <div className="hero-guy">
+            <img src={heroguy} alt=""></img>
+          </div>
+          <div className="hero-girl">
+            <img src={herogirl} alt=""></img>
+          </div>
         </div>
-
       </header>
-        {/* <section className="display-image-sec">
+      {/* <section className="display-image-sec">
           <div><img src={displayImg} alt='Chat-Page'></img></div>
         </section> */}
 
@@ -117,6 +122,27 @@ function Home() {
                 </p>
               </div>
             </container>
+          </div>
+        </div>
+      </section>
+
+      <section className="write-us">
+        <h1 className="feature-header">Subscribe Us!</h1>
+        <div className="offer-container">
+          <div class="latest-caption">
+            <h2>
+              Get Our
+              <br />
+              Latest Offers News
+            </h2>
+            <p>Subscribe news latter</p>
+          </div>
+
+          <div class="latest-subscribe">
+            <form action="#">
+              <input type="email" placeholder="Your email here" />
+              <button>Subscribe</button>
+            </form>
           </div>
         </div>
       </section>

@@ -49,7 +49,7 @@ function GroupMediaSection() {
       }
     );
     setoflineMembers(oflineMembers);
-  }, []);
+  });
 
 
   // for setting online and offline members list when there is change in socket

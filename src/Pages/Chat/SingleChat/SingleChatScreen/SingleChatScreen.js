@@ -82,7 +82,6 @@ function SingleChatScreen({ socket }) {
   const state = useSelector((state) => state.SingleChatReducer);
   var { SingleChatMessageArray, SingleChatInfo, onlineUsers, receiverDetails } =
     state;
-
   // to get stream of audio or video from device
   var getUserMedia =
     navigator.getUserMedia ||
@@ -90,6 +89,7 @@ function SingleChatScreen({ socket }) {
     navigator.mozkitGetUserMedia;
 
   useEffect(() => {
+    debugger;
     const peer = new Peer();
 
     peer.on("open", (id) => {
@@ -98,6 +98,7 @@ function SingleChatScreen({ socket }) {
 
     peerInstance.current = peer;
 
+    debugger;
     // Checks if Receiver is online when we start conversation
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
@@ -108,7 +109,7 @@ function SingleChatScreen({ socket }) {
       }
     }
 
-  }, []);
+  });
 
   // for Video Call
   useEffect(() => {
@@ -207,6 +208,7 @@ function SingleChatScreen({ socket }) {
 
   // set receiver online status real time
   useEffect(() => {
+    debugger;
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);

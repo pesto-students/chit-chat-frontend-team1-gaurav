@@ -8,7 +8,7 @@ import logout from "Assets/logout.png";
 import { useNavigate } from "react-router-dom";
 import "./SideBar.css";
 
-export default function SideBar() {
+export default function SideBar({socket}) {
 
   let navigate = useNavigate();
 
@@ -38,7 +38,8 @@ export default function SideBar() {
     localStorage.removeItem("token");
     localStorage.removeItem("userid");
     localStorage.removeItem("username");
-    navigate("/login");
+    socket.current.disconnect();
+    navigate("/home");
   };
 
   // set active in side bar 
