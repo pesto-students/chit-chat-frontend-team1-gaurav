@@ -7,6 +7,7 @@ import {
   GET_STARED_MESSAGES,
   GET_IMAGES_ARRAY,
   GET_DOCUMENTS_ARRAY,
+  GET_MEMBERS
 } from "../Types/GroupChatTypes";
 
 var GroupChatState = {
@@ -18,6 +19,7 @@ var GroupChatState = {
   StaredMessages: [],
   imagesArray: [],
   documentsArray: [],
+  groupMembers:[]
 };
 
 export function GroupChatReducer(currentState = GroupChatState, action) {
@@ -65,6 +67,11 @@ export function GroupChatReducer(currentState = GroupChatState, action) {
         ...currentState,
         GroupChatMessageArray: [],
       };
+      case GET_MEMBERS:
+        return {
+          ...currentState,
+          groupMembers: action.payload,
+        };
     default:
       return currentState;
   }

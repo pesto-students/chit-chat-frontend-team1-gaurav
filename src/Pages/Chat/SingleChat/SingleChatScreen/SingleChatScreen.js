@@ -63,7 +63,7 @@ function SingleChatScreen({ socket }) {
   const [showAttachment, setAttachmentToggle] = useState(false);
   const [showMediaScreen, setMediaToggle] = useState(false);
   const [showDocumentScreen, setDocumentToggle] = useState(false);
-  const [isuseronline, setuseronline] = useState(true);
+  const [isuseronline, setuseronline] = useState(false);
   const [isreceivertyping, setreceivertyping] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [calling, setCalling] = useState(false);
@@ -89,7 +89,6 @@ function SingleChatScreen({ socket }) {
     navigator.mozkitGetUserMedia;
 
   useEffect(() => {
-    debugger;
     const peer = new Peer();
 
     peer.on("open", (id) => {
@@ -98,7 +97,6 @@ function SingleChatScreen({ socket }) {
 
     peerInstance.current = peer;
 
-    debugger;
     // Checks if Receiver is online when we start conversation
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
@@ -139,7 +137,6 @@ function SingleChatScreen({ socket }) {
   useEffect(() => {
     if (socket.current !== undefined) {
       socket.current.on("receive-message", (data) => {
-        debugger;
         dispatch(updateCurrentChat(data));
         dispatch(loadCurrentContacts());
         if (data.type === "image")
@@ -209,7 +206,6 @@ function SingleChatScreen({ socket }) {
 
   // set receiver online status real time
   useEffect(() => {
-    debugger;
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);
