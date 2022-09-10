@@ -26,7 +26,8 @@ function Login() {
   const dispatch=useDispatch();
 
   const phoneNumberHandler = (e) => {
-    phoneNumberValidator(e.target.value)
+   console.log('num....',error.phoneNumber)
+   error.phoneNumber &&  phoneNumberValidator(e.target.value)
     setPhoneNumber(e.target.value);
   };
 
@@ -35,7 +36,7 @@ function Login() {
   };
 
   const phoneNumberValidator=(value)=>{
-  let phonereg=/^[0-9]*$/
+  let phonereg=/^[0-9]{10}$/
   let result=value.match(phonereg);
   if(!result){
     setError((prev)=>{return {...prev,phoneNumber:'Enter a valid phone number'}})
@@ -112,7 +113,7 @@ function Login() {
             <span className="span">Please enter your details</span>
             <>
             <div class="row login-phone">
-              <input className="input-login" name='phone-number' value={phoneNumber} onChange={phoneNumberHandler} placeholder="Phone Number"/>
+              <input className="input-login" name='phone-number' value={phoneNumber} onBlur={(e)=>phoneNumberValidator(e.target.value)} onChange={phoneNumberHandler} placeholder="Phone Number"/>
               <div className="phone-icon-login"></div>
             </div>
            {error.phoneNumber && <span className="error-msg">{error.phoneNumber}</span>}
