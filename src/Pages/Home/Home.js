@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
 import GroupIcon from "Assets/group-chat.gif";
 import SecurityIcon from "Assets/946-equity-security-gradient.gif";
@@ -9,13 +9,32 @@ import Logo from "Assets/Logo.png";
 import heroguy from "Assets/hero-guy-1.png";
 import herogirl from "Assets/hero-girl.png";
 import rightImg from "Assets/transparent.png";
-import latestoffer from "Assets/latest-offer.png";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // import 'animate.css';
-import displayImg from "Assets/chat-screen.png";
 import "./Home.css";
+
+
+toast.configure();
+
+
 
 function Home() {
   let navigate = useNavigate();
+
+  const[email,setEmail] = useState('')
+
+  const subscribe = () => {
+    if(email === ''){
+      toast.warning("Please Enter Email", { autoClose: 1000 });
+    }
+    else{
+      toast.success("Subscribed Successfully", { autoClose: 1000 });
+      setEmail('')
+    }
+  }
+
   return (
     <>
       <header className="header">
@@ -71,8 +90,8 @@ function Home() {
                 <img className="feature-logo" src={Msggif} alt=""></img>
                 <p className="feature-name">Messaging</p>
                 <p className="feature-description">
-                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
-                  Design, Web App
+                  Seamless Messaging Experience, message anyone, anywhere, anytime.
+                  Connect with your friend and family.
                 </p>
               </div>
             </container>
@@ -82,8 +101,7 @@ function Home() {
                 <img className="feature-logo" src={GroupIcon} alt=""></img>
                 <p className="feature-name">Group Chat</p>
                 <p className="feature-description">
-                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
-                  Design, Web App
+                  We provide feature to create group chat room where u can chill with buddies,family or colleagues.
                 </p>
               </div>
             </container>
@@ -93,8 +111,7 @@ function Home() {
                 <img className="feature-logo" src={Videogif} alt=""></img>
                 <p className="feature-name">Video Call</p>
                 <p className="feature-description">
-                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
-                  Design, Web App
+                  Communicate via video call to your faviourite person or business partner.
                 </p>
               </div>
             </container>
@@ -106,8 +123,7 @@ function Home() {
                 <img className="feature-logo" src={FileGif} alt=""></img>
                 <p className="feature-name">File Sharing</p>
                 <p className="feature-description">
-                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
-                  Design, Web App
+                  Transfer images or document via media sharing feature. stay updated to latest trends.
                 </p>
               </div>
             </container>
@@ -117,8 +133,7 @@ function Home() {
                 <img className="feature-logo" src={SecurityIcon} alt=""></img>
                 <p className="feature-name">Privacy & Security</p>
                 <p className="feature-description">
-                  Landing Pages, User Flow, Wireframing, Prototyping, Mobile App
-                  Design, Web App
+                  Communicate fully securirly via end-to-end encryption. your data is also secure with us.
                 </p>
               </div>
             </container>
@@ -140,8 +155,8 @@ function Home() {
 
           <div class="latest-subscribe">
             <form action="#">
-              <input type="email" placeholder="Your email here" />
-              <button>Subscribe</button>
+              <input type="email" value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder="Your email here" />
+              <button onClick={subscribe}>Subscribe</button>
             </form>
           </div>
         </div>
