@@ -307,6 +307,7 @@ body{
   padding: 1vh 2vw;
   border: 1px solid #fff;
   border-radius: 30px;
+  outline: none;
 }
 
 .latest-subscribe form button {

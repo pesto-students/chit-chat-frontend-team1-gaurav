@@ -97,7 +97,10 @@ function SingleChatScreen({ socket }) {
 
     peerInstance.current = peer;
 
-    // Checks if Receiver is online when we start conversation
+  },[]);
+  
+  // Checks if Receiver is online when we start conversation
+  useEffect(() => {
     for (const user of onlineUsers) {
       if (user.userid === receiverDetails.userid) {
         setuseronline(true);
@@ -106,13 +109,15 @@ function SingleChatScreen({ socket }) {
         setuseronline(false);
       }
     }
+  })
 
-  });
 
   // for Video Call
   useEffect(() => {
+    debugger;
     if (peerInstance.current !== null) {
       peerInstance.current.on("call", (call) => {
+        debugger;
         setVideoScreen(true);
         setShowHeader(true);
         setIncomingCall(false);
@@ -174,6 +179,7 @@ function SingleChatScreen({ socket }) {
       });
 
       socket.current.on("call-Accepted", (data) => {
+        debugger;
         setVideoScreen(true);
         setCalling(false);
         setShowHeader(true);
