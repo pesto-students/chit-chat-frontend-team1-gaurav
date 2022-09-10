@@ -44,18 +44,26 @@ function Signup() {
 
 
   const onChangeHandler = (e) => {
-    
     switch(e.target.name){
-      case 'phoneNumber': {phoneNumberValidator(e.target.value)} break;
-      case 'email': {emailVaildator(e.target.value)}  break;
-      case 'password': {passwordValidator(e.target.value)} break;
-      case 'confirmPassword': {confirmPasswordValidator(e.target.value)} break;
+      case 'phoneNumber': {error.phoneNumber && phoneNumberValidator(e.target.value)} break;
+      case 'email': {error.email && emailVaildator(e.target.value)}  break;
+      case 'password': {error.password && passwordValidator(e.target.value)} break;
+      case 'confirmPassword': { error.confirmPassword && confirmPasswordValidator(e.target.value)} break;
     }
 
 
     formData[e.target.name] = e.target.value;
     setFormData({ ...formData });
   };
+
+  const validator =(e)=>{
+    switch(e.target.name){
+      case 'phoneNumber': { phoneNumberValidator(e.target.value)} break;
+      case 'email': { emailVaildator(e.target.value)}  break;
+      case 'password': { passwordValidator(e.target.value)} break;
+      case 'confirmPassword': {  confirmPasswordValidator(e.target.value)} break;
+    }
+  }
 
 
 
@@ -147,6 +155,7 @@ function Signup() {
     let passwordreg=/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/   
     let result=value.match(passwordreg);
     if(!result){
+      let errorMsg='Password should contain at least 1 lowercase letter, 1 uppercase letter ,1 digit ,1 special character and atleast 8 characters long'
       setError((prev)=>{return {...prev,password:'Enter a strong password'}})
     }
     else{
@@ -192,7 +201,7 @@ function Signup() {
 
             <div class="row">
               <div className="fullname">
-                <input className="sighup-input" name="firstName" onChange={debounce(onChangeHandler,200)} type="text" placeholder="Full Name" />
+                <input className="sighup-input" name="firstName" onBlur={validator} onChange={debounce(onChangeHandler,200)} type="text" placeholder="Full Name" />
                 {/* <span className="error-message">error message here</span> */}
                 <div className="base-icon user-icon-fullname"></div>
               </div>
@@ -200,7 +209,7 @@ function Signup() {
 
               <div>
                 <div className="username">
-                  <input className="sighup-input" name="userName"  onChange={debounce(onChangeHandler,200)} type="text" placeholder="User Name" />
+                  <input className="sighup-input" name="userName" onBlur={validator}  onChange={debounce(onChangeHandler,200)} type="text" placeholder="User Name" />
                   <div className="base-icon user-icon-fullname"></div>
                 </div>
               </div>
@@ -210,7 +219,7 @@ function Signup() {
             <>
             <div class="row">
               <div className="parentdiv email">
-                <input className="sighup-input" name="email"  onChange={debounce(onChangeHandler,200)} type="email" placeholder="Enter Email" />
+                <input className="sighup-input" name="email" onBlur={validator}  onChange={debounce(onChangeHandler,200)} type="email" placeholder="Enter Email" />
                 <div className="base-icon email-icon"></div>
               </div>
             </div>
@@ -220,7 +229,7 @@ function Signup() {
             <>
             <div class="row">
               <div className="parentdiv phonenumber">
-                <input className="sighup-input" name="phoneNumber" onChange={debounce(onChangeHandler,200)} placeholder="Phone Number" />
+                <input className="sighup-input" name="phoneNumber"  onBlur={validator} onChange={debounce(onChangeHandler,200)} placeholder="Phone Number" />
                 <div className="base-icon phone-icon"></div>
               </div>
               <div className="otp" onClick={sendOTP}>Get OTP</div>
@@ -233,7 +242,7 @@ function Signup() {
 
             <div class="row">
               <div className="parentdiv firstName">
-                <input className="sighup-input" name="OTP"  onChange={debounce(onChangeHandler,200)} type="text" placeholder="Enter OTP" />
+                <input className="sighup-input" name="OTP" onBlur={validator}  onChange={debounce(onChangeHandler,200)} type="text" placeholder="Enter OTP" />
                 {/* <OtpInput value={formData.OTP} onChange={onOTPChange} numInputs={6} separator={<span> </span>} /> */}
 
               </div>
@@ -243,7 +252,7 @@ function Signup() {
             <>
             <div class="row">
               <div className="parentdiv password">
-                <input className="sighup-input" name="password"  onChange={debounce(onChangeHandler,200)} type={showPassword?'text':'password'} placeholder="Enter Password" />
+                <input className="sighup-input" name="password" onBlur={validator}  onChange={debounce(onChangeHandler,200)} type={showPassword?'text':'password'} placeholder="Enter Password" />
                 <div className="base-icon password-icon" onClick={() => setShowPassword(!showPassword)}><img src={showPassword?eyeClose:eye} alt="show-Password"></img></div>
               </div>
             </div>
@@ -254,7 +263,7 @@ function Signup() {
             <>
             <div class="row">
               <div className="parentdiv confpassword">
-                <input className="sighup-input" name="confirmPassword"  onChange={debounce(onChangeHandler,200)} type={showConfirmPassword?'text':'password'} placeholder="Confirm Password" />
+                <input className="sighup-input" name="confirmPassword" onBlur={validator}  onChange={debounce(onChangeHandler,200)} type={showConfirmPassword?'text':'password'} placeholder="Confirm Password" />
                 <div className="base-icon eye-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}><img src={showConfirmPassword?eyeClose:eye} alt="show-Password"></img></div>
               </div>
             </div>

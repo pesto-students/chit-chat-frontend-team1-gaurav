@@ -16,7 +16,6 @@
   width: 80px;
 }
 
-
 .backgroundImage {
   height: 100vh;
   width: 100vw;
@@ -51,7 +50,7 @@
   margin-top: 1vh;
 }
 
-.h1-signup{
+.h1-signup {
   color: #ffffff;
 }
 
@@ -138,7 +137,7 @@
   right: 11px;
 }
 
-.password-icon img{
+.password-icon img {
   height: 100%;
   width: 100%;
 }
@@ -165,11 +164,11 @@
   color: #000000;
   cursor: pointer;
   align-self: center;
-  padding: calc(.6vh + .5vw) calc(.5vh + .2vw);
+  padding: calc(0.6vh + 0.5vw) calc(0.5vh + 0.2vw);
   word-wrap: none;
   font-weight: 700;
   transition: 0.4s ease;
-  font-size: calc(1.1vh + .4vw);
+  font-size: calc(1.1vh + 0.4vw);
   line-height: 1.5;
 }
 
@@ -202,10 +201,10 @@
   font-weight: 600;
 }
 
-.btnSignup button:disabled{
-  background-color:#89cff0;
-color: white;
-} 
+.btnSignup button:disabled {
+  background-color: #89cff0;
+  color: white;
+}
 
 .btnSignup button:hover {
   cursor: pointer;
@@ -213,94 +212,87 @@ color: white;
 }
 
 @media screen and (height>820px) {
-  .sighup-input{
+  .sighup-input {
     line-height: 2;
   }
-  .signup{
+  .signup {
     margin-top: 8vh;
   }
-  .base-icon{
-    top:10px
+  .base-icon {
+    top: 10px;
   }
 }
 
 @media screen and (height<830px) {
-  .signup{
+  .signup {
     max-height: 80vh;
-    overflow: scroll;
+    /* overflow: scroll; */
   }
 }
 
-
-@media screen and (height>=1080px){
-  .signup{
+@media screen and (height>=1080px) {
+  .signup {
     margin-top: 12vh;
   }
 }
 
-
-@media screen and  (width>=1484px) {
-  
-  .btnSignup button{
-    padding:0.8rem;
+@media screen and (width>=1484px) {
+  .btnSignup button {
+    padding: 0.8rem;
   }
 }
 
-
-
-@media screen and  (width<1310px) {
-
-  .h1-signup{
+@media screen and (width<1310px) {
+  .h1-signup {
     font-size: 1.9rem;
   }
-
 }
 
-@media screen and  (width<1200px){
-  .container{
+@media screen and (width<1200px) {
+  .container {
     width: 100vw;
   }
 }
 
-@media screen and  (width<=912px){
- .backgroundImage{
-  background-image: none;
- }
- .mainContent{
-  background: #272a37;
- }
+@media screen and (width<=912px) {
+  .backgroundImage {
+    background-image: none;
+  }
+  .mainContent {
+    background: #272a37;
+  }
 }
 
-@media screen and  (width<=540px){
- .signup{
-  width: 70%;
- }
- .h1-signup{
-  font-size: 1.5rem;
- }
- }
-
- @media screen and  (width<=414px){
-  .signup{
-   width: 75%;
+@media screen and (width<=540px) {
+  .signup {
+    width: 70%;
   }
-  .sighup-input{
+  .h1-signup {
+    font-size: 1.5rem;
+  }
+}
+
+@media screen and (width<=414px) {
+  .signup {
+    width: 75%;
+  }
+  .sighup-input {
     line-height: 1 !important;
   }
-  .login-link{
-    font-size: .8rem;
+  .login-link {
+    font-size: 0.8rem;
     cursor: pointer;
   }
-  .base-icon{
-    top:4px !important;
+  .base-icon {
+    top: 4px !important;
   }
-  }
+}
 
-  @media screen and  (width<=376px){
-    .signup{
-     width: 80%;
-    }
-    .h1-signup{
-      font-size: 1.2rem ;
-    }
-    }
+@media screen and (width<=376px) {
+  .signup {
+    width: 80%;
+  }
+  .h1-signup {
+    font-size: 1.2rem;
+  }
+}
