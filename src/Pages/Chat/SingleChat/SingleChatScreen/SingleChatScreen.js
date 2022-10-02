@@ -96,6 +96,7 @@ function SingleChatScreen({ socket }) {
     });
 
     peerInstance.current = peer;
+    setLastChatNum(25);
 
   },[]);
   
@@ -109,15 +110,18 @@ function SingleChatScreen({ socket }) {
         setuseronline(false);
       }
     }
+    debugger;
+    setLastChatNum(25);
+
   })
 
 
   // for Video Call
   useEffect(() => {
-    debugger;
+    
     if (peerInstance.current !== null) {
       peerInstance.current.on("call", (call) => {
-        debugger;
+        
         setVideoScreen(true);
         setShowHeader(true);
         setIncomingCall(false);
@@ -179,7 +183,7 @@ function SingleChatScreen({ socket }) {
       });
 
       socket.current.on("call-Accepted", (data) => {
-        debugger;
+        
         setVideoScreen(true);
         setCalling(false);
         setShowHeader(true);
@@ -226,10 +230,11 @@ function SingleChatScreen({ socket }) {
   // to implement lazy loading and infinite scrolling functionality
   const handleScroll = (e) => {
     if (
-      // Math.floor(e.target.scrollHeight + e.target.scrollTop) - 1 === Math.floor(e.target.clientHeight)
-      Math.ceil(e.target.scrollHeight + e.target.scrollTop) ===
-      Math.floor(e.target.clientHeight)
+      // (e.target.scrollHeight + e.target.scrollTop) - 1 === e.target.clientHeight
+      Math.ceil(e.target.scrollHeight + e.target.scrollTop) -
+      Math.floor(e.target.clientHeight) <= 1
     ) {
+      
       // will load next 25 messages
       dispatch(loadCurrentChat(receiverDetails.chatid, lastChatNum, 25));
       setLastChatNum(lastChatNum + 25);
@@ -691,7 +696,8 @@ function SingleChatScreen({ socket }) {
 
       <section className="single-main-section" onScroll={handleScroll}>
  
-
+        {console.clear()}
+        {console.log(SingleChatMessageArray)}
         {getFilteredMessageArrayDayWise(SingleChatMessageArray).map((dayObj) => {
           return (
             <>

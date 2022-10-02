@@ -54,7 +54,7 @@ function SearchBar({ changescreen }) {
         </div>
       </div>
 
-      <h2 className="recent-heading">Recent Chat</h2>
+      <h2 className="recent-heading">Recent Contacts</h2>
       <div className="recent-chat">
         {contact.map((contact,index) => {
           let chatDetails = {

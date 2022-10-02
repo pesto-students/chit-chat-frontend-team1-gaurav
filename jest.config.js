@@ -26,6 +26,7 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest',
     '^.+\\.js$': 'babel-jest',
   },
-  testEnvironment: 'jsdom'
+  testEnvironment: 'jsdom',
+  moduleDirectories: ["node_modules", "src"],
 
 };

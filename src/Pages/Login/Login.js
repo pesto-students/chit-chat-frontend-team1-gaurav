@@ -16,8 +16,8 @@ toast.configure();
 
 
 function Login() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("9638704512");
+  const [password, setPassword] = useState("Dhruvin@777");
   const [showPassword, setShowPassword] = useState(false);
 
   const [error,setError]=useState({phoneNumber:'',password:''});
