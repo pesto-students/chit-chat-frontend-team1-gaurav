@@ -121,8 +121,8 @@
 
 
     .single-file-icon{
-        height: calc(.5vh +1.5vw) !important;
-        width: calc(.5vh +1.5vw);
+        height: calc(1.5vh +1.5vw) !important;
+        width: calc(2.5vh +1.5vw);
         cursor: pointer;
     }
     
