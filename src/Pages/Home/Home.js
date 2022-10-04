@@ -62,7 +62,7 @@ function Home() {
               they construct you
             </p>
             <div className="get-started">Interested?Get Started</div>
-            <button className="home-login">Login</button>
+            <button className="home-login" onClick={() => navigate("/login")}>Login</button>
           </div>
           <div className="header-right-section">
             <img src={rightImg} alt=""></img>
