@@ -1,0 +1,141 @@
+.profilePageContainer {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+}
+
+.sidebar {
+  width: 5%;
+}
+
+.Profilepage-sub-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background-color: #0a0a0e;
+}
+
+.profilepage-content {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.my-profile {
+  margin-top: 5vh;
+  color: #ffffff;
+  font-size: 2rem;
+}
+
+.profileCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2.5rem 0;
+}
+
+.profilePic {
+  position: relative;
+}
+.profilepic-image {
+  height: 7vmax;
+  width: 7vmax;
+  border-radius: 50%;
+}
+
+.profilePic .profileImgEdit {
+  position: absolute;
+  top: 0;
+  left: 6vmax;
+  height: 2vmax;
+  width: 2vmax;
+  cursor: pointer;
+}
+
+.username-profile {
+  position: relative;
+  width: 35%;
+  margin-left: 4vw;
+}
+
+.username-profile input {
+  background: transparent;
+  outline: none;
+  border: none;
+  color: #ffffff;
+  font-size: 2rem;
+  /* text-align: end; */
+}
+
+.username-profile .usernameEdit {
+  position: absolute;
+  height: 1.5vmax;
+  width: 1.5vmax;
+  cursor: pointer;
+  top: -6px;
+  right: 4vw;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  width: 40vmax;
+  background-color: #2b2c34;
+  border-radius: 15px;
+}
+
+.inner-profile {
+  display: flex;
+  padding: 1rem 1.5rem;
+  justify-content: space-between;
+}
+.left-profile {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.left-profile label {
+  color: #808080;
+  font-size: 1rem;
+}
+
+.left-profile input {
+  background: transparent;
+  border: none;
+  outline: none;
+  margin-top: 1vh;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.inner-profile button {
+  background: #3b3546;
+  border: none;
+  color: #f7e6a6;
+  font-weight: 600;
+  /* height: 50%; */
+  padding: 0.1rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  width: calc(8vh + 2vw);
+}
+
+.updateButton-profile {
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #f7e6a6;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.4s ease;
+  font-size: calc(1.5vh + .4vw);
+}
+
+.updateButton-profile:hover {
+  transform: translateY(-2px);
+}

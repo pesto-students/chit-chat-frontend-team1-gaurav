@@ -1,0 +1,210 @@
+.login-header {
+  display: flex;
+  color: #ffffff;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 5vw;
+  padding-top: 4vh;
+}
+
+.login-header div {
+  cursor: pointer;
+}
+
+.login-header-img {
+  height: 80px;
+  width: 80px;
+}
+
+
+.backgroundImage-login {
+    height: 100vh;
+    width: 100vw;
+    background-image: url('../../Assets/Background.png');
+  }
+  
+  .mainContent-login {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(
+      90deg,
+      #272a37 0%,
+      #272a37 48.37%,
+      rgba(17, 18, 18, 0.74) 100%
+    );
+  }
+  
+  .container-login {
+    height: 100vh;
+    width: 50vw;
+  }
+  
+  .login {
+    width: 50%;
+    margin: auto;
+    margin-top: 4vh;
+    text-align: left;
+  }
+ 
+  
+  .h1{
+    color: #ffffff;
+    margin-top: 11vh;
+    font-size: 2.3rem;
+  }
+
+  .span{
+    color: #808080;
+    margin-top: 4vh !important;
+  }
+
+ 
+
+  .login-phone{
+    position: relative;
+    margin-top: 4vh !important;
+  }
+
+  .login-pass{
+    position: relative;
+  }
+
+  .input-login {
+    background-color: #323644;
+    outline: none;
+    border: none;
+    padding: 0.7rem;
+    border-radius: 13px;
+    width: 100%;
+    line-height: 1.5;
+    color: white;
+    font-size: 1rem;
+  }
+  
+  ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    font-size: 16px;
+    color: #808080;
+    opacity: 1; /* Firefox */
+  }
+  
+.phone-icon-login{
+  position: absolute;
+  top: 3px;
+  right: 11px;
+  height: 35px;
+  width: 35px;
+  background-image: url("../../Assets/phone.png");
+  background-repeat: no-repeat;
+}
+
+.password-icon-login{
+  position: absolute;
+  height: calc(1.5vh + 1vw);
+  width: calc(1.5vh + 1vw);
+  top: 8px;
+  right: 13px;
+  /* background-image: url("../../Assets/password.png"); */
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.password-icon-login img{
+  height: 100%;
+  width: 100%;
+}
+
+  .forgotPassword-login {
+    color: white;
+    margin-top: 2vh;
+    text-align: end;
+  }
+  
+  .forgotPassword-login a {
+    text-decoration: none;
+    color: #89cff0;
+  }
+
+  .btnLogin{
+    text-align: center;
+  }
+  
+  .btnLogin button {
+    color: #ffffff;
+    background-color: #1d90f5;
+    padding: 0.9rem;
+    border-radius: 30px;
+    width: 50%;
+    margin: auto;
+    margin-top: 3vh;
+    text-align: center;
+    transition: 0.4s ease;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .btnLogin button:disabled{
+    background-color:#89cff0;
+    color: white;
+  }
+  
+  .btnLogin button:hover {
+    cursor: pointer;
+    transform: translateY(-2px);
+  }
+  
+    
+  @media screen and (width <= 820px)  {
+    .container-login {
+      width: 100vw;
+    }
+    .backgroundImage-login{
+      background-image: none;
+    }
+    .mainContent-login{
+      background: #272a37;
+    }
+  }
+
+  @media screen and (height > 1080px) and (width<=912px)  {
+    .container-login {
+      width: 100vw;
+    }
+    .backgroundImage-login{
+      background-image: none;
+    }
+    .mainContent-login{
+      background: #272a37;
+    }
+    .h1{
+      margin-top: 20vh;
+    }
+    
+  }
+
+
+  @media screen and  (width<=768px)  {
+    .h1{
+      font-size: 2rem;
+      margin-top: 15vh;
+    }
+    
+  }
+
+
+  @media screen and  (width<420px)  {
+    .h1{
+      font-size: 2rem;
+      margin-top: 13vh;
+    }
+    .span{
+      font-size: 1rem;
+    }
+    .login{
+      width: 75%;
+    }
+    
+  }
+
+
+ 
