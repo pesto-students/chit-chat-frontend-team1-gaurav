@@ -1,6 +1,6 @@
-# Pro DB kit
+# Chit-Chat
 
-![ProDB-kit Logo](./src/assets/database-icon.svg)
+![ProDB-kit Logo](./src/Assets/Logo.png)
 
 Chit-Chat is a real time chat application where you can send messages,
 share media files like images, documents, videos etc. You can also
@@ -61,7 +61,7 @@ We tried to use a completely modern tech stack while testing out some new techno
 
 # Authors
 
--[@dhruvinbhuva] (https://github.com/Dhruvin-github)
+-[@dhruvinbhuva] (https://github.com/Dhruvin-github) <br/>
 -[@tarunsai] (https://github.com/tarunsai217)
 
 <br/>
